@@ -7,14 +7,14 @@
 #define HIGH ((uint8_t)01)
 
 typedef struct {
-    GPIO *gpio;
+    GPIO_t *gpio;
     uint8_t Mode;
-} LED;
+} LED_t;
 
-void LED_Init(LED *led);
+void LED_Init(LED_t *self);
 
-void LED_On(LED *led);
-void LED_Off(LED *led);
-void LED_Turn(LED *led);
+void LED_On(LED_t *self);
+void LED_Off(LED_t *self);
+void LED_Turn(LED_t *self);
 
 #endif

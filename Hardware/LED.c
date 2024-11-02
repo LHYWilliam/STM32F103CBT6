@@ -1,18 +1,18 @@
 #include "LED.h"
 
-void LED_Init(LED *led) { GPIO_Init_(led->gpio); }
+void LED_Init(LED_t *self) { GPIO_Init_(self->gpio); }
 
-void LED_On(LED *led) {
-    GPIO_WriteBit(led->gpio->GPIOx, led->gpio->GPIO_Pin,
-                  (BitAction)(led->Mode));
+void LED_On(LED_t *self) {
+    GPIO_WriteBit(self->gpio->GPIOx, self->gpio->GPIO_Pin,
+                  (BitAction)(self->Mode));
 }
 
-void LED_Off(LED *led) {
-    GPIO_WriteBit(led->gpio->GPIOx, led->gpio->GPIO_Pin,
-                  (BitAction)(!led->Mode));
+void LED_Off(LED_t *self) {
+    GPIO_WriteBit(self->gpio->GPIOx, self->gpio->GPIO_Pin,
+                  (BitAction)(!self->Mode));
 }
 
-void LED_Turn(LED *led) {
-    uint8_t now = GPIO_ReadOutputDataBit(led->gpio->GPIOx, led->gpio->GPIO_Pin);
-    GPIO_WriteBit(led->gpio->GPIOx, led->gpio->GPIO_Pin, (BitAction)(!now));
+void LED_Turn(LED_t *self) {
+    uint8_t now = GPIO_ReadOutputDataBit(self->gpio->GPIOx, self->gpio->GPIO_Pin);
+    GPIO_WriteBit(self->gpio->GPIOx, self->gpio->GPIO_Pin, (BitAction)(!now));
 }

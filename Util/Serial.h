@@ -33,19 +33,19 @@ typedef struct {
     uint8_t ByteData;
     uint8_t HexData[32];
     char StringData[32];
-} Serial;
+} Serial_t;
 
-void Serial_Init(Serial *serial);
+void Serial_Init(Serial_t *self);
 
-void Serial_SendByte(Serial *serial, uint8_t byte);
-void Serial_SendHex(Serial *serial, uint8_t byte);
-void Serial_SendString(Serial *serial, char *format, ...);
+void Serial_SendByte(Serial_t *self, uint8_t byte);
+void Serial_SendHex(Serial_t *self, uint8_t byte);
+void Serial_SendString(Serial_t *self, char *format, ...);
 
-void Serial_SendHexPack(Serial *serial, uint8_t *array, uint16_t length);
-void Serial_SendStringPack(Serial *serial, char *string);
+void Serial_SendHexPack(Serial_t *self, uint8_t *array, uint16_t length);
+void Serial_SendStringPack(Serial_t *self, char *string);
 
-void Serial_Parse(Serial *serial);
+void Serial_Parse(Serial_t *self);
 
-void Serial_Clear(Serial *serial);
+void Serial_Clear(Serial_t *self);
 
 #endif

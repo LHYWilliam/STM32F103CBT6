@@ -23,10 +23,10 @@ typedef struct {
     uint16_t IN2_GPIO_Pin;
 
     void (*TIM_SetCompare)(TIM_TypeDef *TIMx, uint16_t Compare1);
-} Motor;
+} Motor_t;
 
-void Motor_Init(Motor *motor);
+void Motor_Init(Motor_t *self);
 
-void Motor_Set(Motor *motor, int16_t speed);
+void Motor_Set(Motor_t *self, int16_t speed);
 
 #endif

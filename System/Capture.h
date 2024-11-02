@@ -11,8 +11,8 @@ typedef struct {
     uint16_t TIM_ICSelection;
     uint16_t TIM_ICFilter;
     uint16_t (*TIM_GetCapture)(TIM_TypeDef *TIMx);
-} Capture;
+} Capture_t;
 
-void Capture_Init(Capture *capture);
+void Capture_Init(Capture_t *self);
 
 #endif

@@ -7,12 +7,12 @@
 #define HIGH ((uint8_t)1)
 
 typedef struct {
-    GPIO *gpio;
+    GPIO_t *gpio;
     uint8_t Mode;
-} Key;
+} Key_t;
 
-void Key_Init(Key *key);
+void Key_Init(Key_t *self);
 
-uint8_t Key_Read(Key *key);
+uint8_t Key_Read(Key_t *self);
 
 #endif

@@ -50,9 +50,9 @@ typedef struct {
     uint8_t M2M;
 
     DMA_Channel_TypeDef *DMAy_Channelx;
-} DMA;
+} DMA_t;
 
-void DMA_Init_(DMA *dma);
-void DMA_Start(DMA *dma);
+void DMA_Init_(DMA_t *self);
+void DMA_Start(DMA_t *self);
 
 #endif

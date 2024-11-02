@@ -76,8 +76,8 @@ typedef struct {
 
     GPIO_TypeDef *GPIOx;
     uint16_t GPIO_Pin;
-} GPIO;
+} GPIO_t;
 
-void GPIO_Init_(GPIO *gpio);
+void GPIO_Init_(GPIO_t *self);
 
 #endif

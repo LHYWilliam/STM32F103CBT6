@@ -20,10 +20,10 @@ typedef struct {
     uint32_t last_time;
 
     uint8_t NaN;
-} PID;
+} PID_t;
 
-void PID_Init(PID *pid);
+void PID_Init(PID_t *self);
 
-int16_t PID_Caculate(PID *pid, float error);
+int16_t PID_Caculate(PID_t *self, float error);
 
 #endif

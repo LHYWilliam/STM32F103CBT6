@@ -1,15 +1,15 @@
 #include "Delay.h"
 #include "Key.h"
 
-void Key_Init(Key *key) { GPIO_Init_(key->gpio); }
+void Key_Init(Key_t *self) { GPIO_Init_(self->gpio); }
 
-uint8_t Key_Read(Key *key) {
+uint8_t Key_Read(Key_t *self) {
     uint8_t if_key = 0;
-    if (GPIO_ReadInputDataBit(key->gpio->GPIOx, key->gpio->GPIO_Pin) ==
-        key->Mode) {
+    if (GPIO_ReadInputDataBit(self->gpio->GPIOx, self->gpio->GPIO_Pin) ==
+        self->Mode) {
         Delay_ms(20);
-        while (GPIO_ReadInputDataBit(key->gpio->GPIOx, key->gpio->GPIO_Pin) ==
-               key->Mode)
+        while (GPIO_ReadInputDataBit(self->gpio->GPIOx, self->gpio->GPIO_Pin) ==
+               self->Mode)
             ;
         Delay_ms(20);
         if_key = 1;

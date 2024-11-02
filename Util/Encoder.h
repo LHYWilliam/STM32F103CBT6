@@ -10,10 +10,10 @@ typedef struct {
     TIM_TypeDef *TIMx;
 
     uint8_t invert;
-} Encoder;
+} Encoder_t;
 
-void Encoder_Init(Encoder *encoder);
+void Encoder_Init(Encoder_t *self);
 
-int16_t Encoder_Get(Encoder *encoder);
+int16_t Encoder_Get(Encoder_t *self);
 
 #endif

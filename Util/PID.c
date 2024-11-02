@@ -6,50 +6,50 @@
 
 float RC = 1 / (2 * 3.14 * 20);
 
-void PID_Init(PID *pid) {
-    pid->NaN = RESET;
-    pid->last_time = 0;
-    pid->last_error = 0.;
-    pid->integrator = 0.;
-    pid->last_derivative = 0.;
+void PID_Init(PID_t *self) {
+    self->NaN = RESET;
+    self->last_time = 0;
+    self->last_error = 0.;
+    self->integrator = 0.;
+    self->last_derivative = 0.;
 }
 
-int16_t PID_Caculate(PID *pid, float error) {
+int16_t PID_Caculate(PID_t *self, float error) {
     float output = 0;
     uint32_t now = RTC_time_ms();
-    float dt = (float)(now - pid->last_time) / 1000;
+    float dt = (float)(now - self->last_time) / 1000;
 
-    if (pid->last_time == 0 || dt > 1) {
-        pid->integrator = dt = 0;
-        pid->NaN = SET;
+    if (self->last_time == 0 || dt > 1) {
+        self->integrator = dt = 0;
+        self->NaN = SET;
     }
-    pid->last_time = now;
+    self->last_time = now;
 
-    output += error * pid->Kp;
+    output += error * self->Kp;
 
-    if (pid->Kd && dt) {
+    if (self->Kd && dt) {
         float derivative;
-        if (pid->NaN == SET) {
+        if (self->NaN == SET) {
             derivative = 0;
-            pid->last_derivative = 0;
-            pid->NaN = RESET;
+            self->last_derivative = 0;
+            self->NaN = RESET;
         } else {
-            derivative = (error - pid->last_error) / dt;
+            derivative = (error - self->last_error) / dt;
         }
 
-        derivative = pid->last_derivative +
-                     (dt / (RC + dt)) * (derivative - pid->last_derivative);
-        pid->last_error = error;
-        pid->last_derivative = derivative;
+        derivative = self->last_derivative +
+                     (dt / (RC + dt)) * (derivative - self->last_derivative);
+        self->last_error = error;
+        self->last_derivative = derivative;
 
-        output += pid->Kd * derivative;
+        output += self->Kd * derivative;
     }
 
-    if (pid->Ki && dt) {
-        pid->integrator += error * pid->Ki * dt;
-        LIMIT(pid->integrator, -pid->imax, pid->imax);
+    if (self->Ki && dt) {
+        self->integrator += error * self->Ki * dt;
+        LIMIT(self->integrator, -self->imax, self->imax);
 
-        output += pid->integrator;
+        output += self->integrator;
     }
 
     return (int32_t)output;

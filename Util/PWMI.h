@@ -6,15 +6,15 @@
 #include "TIM.h"
 
 typedef struct {
-    GPIO *gpio;
-    Capture *frequency;
-    Capture *duty;
-    TIM *tim;
-} PWMI;
+    GPIO_t *gpio;
+    Capture_t *frequency;
+    Capture_t *duty;
+    TIM_t *tim;
+} PWMI_t;
 
-void PWMI_Init(PWMI *pwmi);
+void PWMI_Init(PWMI_t *self);
 
-uint16_t PWMI_GetFrequency(PWMI *pwmi);
-uint16_t PWMI_GetDuty(PWMI *pwmi);
+uint16_t PWMI_GetFrequency(PWMI_t *self);
+uint16_t PWMI_GetDuty(PWMI_t *self);
 
 #endif

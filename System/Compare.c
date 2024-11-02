@@ -1,11 +1,11 @@
 #include "Compare.h"
 
-void Compare_Init(Compare *compare) {
+void Compare_Init(Compare_t *self) {
     TIM_OCInitTypeDef TIM_OCInitStruct = {
         .TIM_OCMode = TIM_OCMode_PWM1,
         .TIM_OCPolarity = TIM_OCPolarity_High,
         .TIM_OutputState = TIM_OutputState_Enable,
-        .TIM_Pulse = compare->TIM_Pulse,
+        .TIM_Pulse = self->TIM_Pulse,
     };
-    compare->TIM_OCInit(compare->TIMx, &TIM_OCInitStruct);
+    self->TIM_OCInit(self->TIMx, &TIM_OCInitStruct);
 }

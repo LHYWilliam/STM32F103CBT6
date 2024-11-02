@@ -15,8 +15,8 @@ typedef struct {
     USART_TypeDef *USARTx;
     uint16_t USART_Mode;
 
-} USART;
+} USART_t;
 
-void USART_Init_(USART *usart);
+void USART_Init_(USART_t *self);
 
 #endif

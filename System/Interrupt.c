@@ -1,51 +1,51 @@
 #include "Interrupt.h"
 
-void GPIO_Interrupt_Init(GPIO_Interrut *interrupt) {
+void GPIO_Interrupt_Init(GPIOInterrut_t *self) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    GPIO_EXTILineConfig(interrupt->GPIO_PortSource, interrupt->GPIO_PinSource);
+    GPIO_EXTILineConfig(self->GPIO_PortSource, self->GPIO_PinSource);
 
     EXTI_InitTypeDef EXTI_InitStruct = {
-        interrupt->EXTI_Line,
+        self->EXTI_Line,
         EXTI_Mode_Interrupt,
-        interrupt->EXTI_Trigger,
+        self->EXTI_Trigger,
         ENABLE,
     };
     EXTI_Init(&EXTI_InitStruct);
 
-    NVIC_PriorityGroupConfig(interrupt->NVIC_PriorityGroup);
+    NVIC_PriorityGroupConfig(self->NVIC_PriorityGroup);
     NVIC_InitTypeDef NVIC_InitStruct = {
-        interrupt->NVIC_IRQChannel,
-        interrupt->NVIC_IRQChannelPreemptionPriority,
-        interrupt->NVIC_IRQChannelSubPriority,
+        self->NVIC_IRQChannel,
+        self->NVIC_IRQChannelPreemptionPriority,
+        self->NVIC_IRQChannelSubPriority,
         ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);
 }
 
-void TIM_Interrupt_Init(TIM_Interrupt *interrupt) {
-    TIM_ITConfig(interrupt->TIMx, TIM_IT_Update, ENABLE);
+void TIM_Interrupt_Init(TIMInterrupt_t *self) {
+    TIM_ITConfig(self->TIMx, TIM_IT_Update, ENABLE);
 
-    NVIC_PriorityGroupConfig(interrupt->NVIC_PriorityGroup);
+    NVIC_PriorityGroupConfig(self->NVIC_PriorityGroup);
     NVIC_InitTypeDef NVIC_InitStruct = {
-        interrupt->NVIC_IRQChannel,
-        interrupt->NVIC_IRQChannelPreemptionPriority,
-        interrupt->NVIC_IRQChannelSubPriority,
+        self->NVIC_IRQChannel,
+        self->NVIC_IRQChannelPreemptionPriority,
+        self->NVIC_IRQChannelSubPriority,
         ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);
 
-    TIM_Cmd(interrupt->TIMx, ENABLE);
+    TIM_Cmd(self->TIMx, ENABLE);
 }
 
-void USART_Interrupt_Init(USART_Interrupt *interrupt) {
-    USART_ITConfig(interrupt->USARTx, interrupt->USART_IT, ENABLE);
+void USART_Interrupt_Init(USARTInterrupt_t *self) {
+    USART_ITConfig(self->USARTx, self->USART_IT, ENABLE);
 
-    NVIC_PriorityGroupConfig(interrupt->NVIC_PriorityGroup);
+    NVIC_PriorityGroupConfig(self->NVIC_PriorityGroup);
 
     NVIC_InitTypeDef NVIC_InitStruct = {
-        interrupt->NVIC_IRQChannel,
-        interrupt->NVIC_IRQChannelPreemptionPriority,
-        interrupt->NVIC_IRQChannelSubPriority,
+        self->NVIC_IRQChannel,
+        self->NVIC_IRQChannelPreemptionPriority,
+        self->NVIC_IRQChannelSubPriority,
         ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);

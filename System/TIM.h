@@ -25,25 +25,25 @@ typedef struct {
     uint16_t TIM_ExtTRGPrescaler;
     uint16_t TIM_ExtTRGPolarity;
     uint16_t ExtTRGFilter;
-} ClockSource_Config;
+} ClockSourceConfig_t;
 
 typedef struct {
     TIM_TypeDef *TIMx;
-    void (*ClockSource)(TIM_TypeDef *TIMx, ClockSource_Config *config);
+    void (*ClockSource)(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
     uint16_t Prescaler;
     uint16_t Period;
     uint8_t CMD_Mode;
-} TIM;
+} TIM_t;
 
 typedef struct Timer {
     TIM_TypeDef *TIMx;
     uint16_t ms;
-} Timer;
+} Timer_t;
 
-void TIM_Init(TIM *tim, ClockSource_Config *config);
-void Timer_Init(Timer *timer);
+void TIM_Init(TIM_t *self, ClockSourceConfig_t *config);
+void Timer_Init(Timer_t *self);
 
-void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSource_Config *config);
-void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSource_Config *config);
+void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
+void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
 
 #endif

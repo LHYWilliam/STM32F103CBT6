@@ -12,10 +12,10 @@ typedef struct {
     uint8_t TIM_Init;
 
     void (*TIM_SetCompare[2])(TIM_TypeDef *TIMx, uint16_t Compare);
-} Servo;
+} Servo_t;
 
-void Servo_Init(Servo *servo);
+void Servo_Init(Servo_t *self);
 
-void Servo_set(Servo *servo, float angle1, float angle2);
+void Servo_set(Servo_t *self, float angle1, float angle2);
 
 #endif

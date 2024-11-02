@@ -16,7 +16,7 @@ typedef struct {
     uint8_t NVIC_IRQChannelPreemptionPriority;
     uint8_t NVIC_IRQChannelSubPriority;
 
-} GPIO_Interrut;
+} GPIOInterrut_t;
 
 typedef struct {
     TIM_TypeDef *TIMx;
@@ -25,7 +25,7 @@ typedef struct {
     uint32_t NVIC_PriorityGroup;
     uint8_t NVIC_IRQChannelPreemptionPriority;
     uint8_t NVIC_IRQChannelSubPriority;
-} TIM_Interrupt;
+} TIMInterrupt_t;
 
 typedef struct {
     USART_TypeDef *USARTx;
@@ -37,10 +37,10 @@ typedef struct {
     uint8_t NVIC_IRQChannelPreemptionPriority;
     uint8_t NVIC_IRQChannelSubPriority;
 
-} USART_Interrupt;
+} USARTInterrupt_t;
 
-void GPIO_Interrupt_Init(GPIO_Interrut *interrupt);
-void TIM_Interrupt_Init(TIM_Interrupt *interrupt);
-void USART_Interrupt_Init(USART_Interrupt *interrupt);
+void GPIO_Interrupt_Init(GPIOInterrut_t *self);
+void TIM_Interrupt_Init(TIMInterrupt_t *self);
+void USART_Interrupt_Init(USARTInterrupt_t *self);
 
 #endif

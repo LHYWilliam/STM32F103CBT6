@@ -14,11 +14,11 @@ typedef struct {
     void (*TIM_SetCompare[4])(TIM_TypeDef *TIMx, uint16_t Compare);
 
     uint8_t TIM_Init;
-} PWM;
+} PWM_t;
 
-void PWM_Init(PWM *pwm);
+void PWM_Init(PWM_t *self);
 
-void PWM_SetPrescaler(PWM *pwm, uint16_t val);
-void PWM_SetPulse(PWM *pwm, uint8_t channel, uint16_t pulse);
+void PWM_SetPrescaler(PWM_t *self, uint16_t val);
+void PWM_SetPulse(PWM_t *self, uint8_t channel, uint16_t pulse);
 
 #endif

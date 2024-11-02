@@ -29,11 +29,11 @@ typedef struct {
     char channel[32];
 
     uint8_t DMA;
-} ADC;
+} ADC_t;
 
-void ADC_Init_(ADC *adc);
-void ADC_Start(ADC *adc);
+void ADC_Init_(ADC_t *self);
+void ADC_Start(ADC_t *self);
 
-uint16_t ADC_Get(ADC *adc);
+uint16_t ADC_Get(ADC_t *self);
 
 #endif
