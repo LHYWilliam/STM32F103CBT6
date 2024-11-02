@@ -6,6 +6,11 @@ project:
     - pack: ARM::CMSIS-DSP
   setups:
     - setup: Options for STM32F103CBT6
+      add-path:
+        - Util
+        - System
+        - Hardware
+        - Hardware/OLED
       debug: "on"
       misc:
         - C:
@@ -16,9 +21,12 @@ project:
             - -fshort-enums
             - -fshort-wchar
             - -ffunction-sections
-            - -Wall
-            - -Wextra
             - -Wno-packed
+            - -Wno-missing-variable-declarations
+            - -Wno-missing-prototypes
+            - -Wno-missing-noreturn
+            - -Wno-sign-conversion
+            - -Wno-nonportable-include-path
             - -Wno-reserved-id-macro
             - -Wno-unused-macros
             - -Wno-documentation-unknown-command
@@ -49,6 +57,53 @@ project:
     - group: Source
       files:
         - file: Source/main.c
+    - group: Util
+      files:
+        - file: Util/Delay.c
+        - file: Util/Delay.h
+        - file: Util/Encoder.c
+        - file: Util/Encoder.h
+        - file: Util/PID.c
+        - file: Util/PID.h
+        - file: Util/PWM.c
+        - file: Util/PWM.h
+        - file: Util/PWMI.c
+        - file: Util/PWMI.h
+        - file: Util/Serial.c
+        - file: Util/Serial.h
+    - group: Systrm
+      files:
+        - file: System/ADC.c
+        - file: System/ADC.h
+        - file: System/Capture.c
+        - file: System/Capture.h
+        - file: System/Compare.c
+        - file: System/Compare.h
+        - file: System/DMA.c
+        - file: System/DMA.h
+        - file: System/GPIO.c
+        - file: System/GPIO.h
+        - file: System/Interrupt.c
+        - file: System/Interrupt.h
+        - file: System/RTC.c
+        - file: System/RTC.h
+        - file: System/TIM.c
+        - file: System/TIM.h
+        - file: System/USART.c
+        - file: System/USART.h
+    - group: Hardware
+      files:
+        - file: Hardware/Key.c
+        - file: Hardware/Key.h
+        - file: Hardware/LED.c
+        - file: Hardware/LED.h
+        - file: Hardware/Motor.c
+        - file: Hardware/Motor.h
+        - file: Hardware/Servo.c
+        - file: Hardware/Servo.h
+        - file: Hardware/OLED/OLED.c
+        - file: Hardware/OLED/OLED.h
+        - file: Hardware/OLED/OLED_Font.h
   components:
     - component: ARM::CMSIS:CORE
     - component: Keil::Device:Startup
