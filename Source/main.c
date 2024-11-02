@@ -1,4 +1,5 @@
-#include "stm32f10x.h"
+#include "RTE_Components.h"
+#include CMSIS_device_header
 
 int main() {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
