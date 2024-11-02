@@ -9,7 +9,7 @@ void Encoder_Init(Encoder_t *self) {
     GPIO_t gpio = {
         .Mode = GPIO_Mode_IPU,
     };
-    strcpy(gpio.GPIOxPiny, self->gpio);
+    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
     GPIO_Init_(&gpio);
 
     TIM_t tim = {

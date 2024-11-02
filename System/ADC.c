@@ -7,7 +7,7 @@ void ADC_Init_(ADC_t *self) {
     GPIO_t gpio = {
         .Mode = GPIO_Mode_AIN,
     };
-    strcpy(gpio.GPIOxPiny, self->gpio);
+    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
     GPIO_Init_(&gpio);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx(self->ADCx), ENABLE);

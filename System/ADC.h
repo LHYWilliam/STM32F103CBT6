@@ -23,7 +23,7 @@
                      : NULL)
 
 typedef struct {
-    char gpio[32];
+    char GPIOxPiny[32];
 
     ADC_TypeDef *ADCx;
     char channel[32];

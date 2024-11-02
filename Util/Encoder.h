@@ -5,7 +5,7 @@
 #include CMSIS_device_header
 
 typedef struct {
-    char gpio[12];
+    char GPIOxPiny[12];
 
     TIM_TypeDef *TIMx;
 
