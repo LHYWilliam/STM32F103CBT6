@@ -1,0 +1,14 @@
+{
+    "clangd.arguments": [
+        "--compile-commands-dir=c:\\code\\STM32F103CBT6\\out\\STM32F103CBT6\\STM32F103CBT6"
+    ],
+    "cmsis-csolution.actions": [
+        {
+            "path": "STM32F103CBT6.csolution.yml",
+            "target": "STM32F103CBT6",
+            "config": {
+                "run": "Flash Device"
+            }
+        }
+    ]
+}

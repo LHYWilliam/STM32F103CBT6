@@ -1,0 +1,77 @@
+project:
+  packs:
+    - pack: Keil::STM32F1xx_DFP
+    - pack: ARM::CMSIS
+    - pack: ARM::CMSIS-NN
+    - pack: ARM::CMSIS-DSP
+  setups:
+    - setup: Options for STM32F103CBT6
+      debug: "on"
+      misc:
+        - C:
+            - -std=c99
+          C-CPP:
+            - -fno-rtti
+            - -funsigned-char
+            - -fshort-enums
+            - -fshort-wchar
+            - -ffunction-sections
+            - -Wall
+            - -Wextra
+            - -Wno-packed
+            - -Wno-reserved-id-macro
+            - -Wno-unused-macros
+            - -Wno-documentation-unknown-command
+            - -Wno-documentation
+            - -Wno-license-management
+            - -Wno-parentheses-equality
+          CPP:
+            - -xc++
+            - -std=c++11
+          ASM:
+            - -masm=auto
+          Link:
+            - --map
+            - --load_addr_map_info
+            - --xref
+            - --callgraph
+            - --symbols
+            - --info sizes
+            - --info totals
+            - --info unused
+            - --info veneers
+            - --strict
+            - --summary_stderr
+            - --info summarysizes
+  linker:
+    - script: STM32F103CBT6_STM32F103CBT6.sct
+  groups:
+    - group: Source
+      files:
+        - file: Source/main.c
+  components:
+    - component: ARM::CMSIS:CORE
+    - component: Keil::Device:Startup
+    - component: Keil::Device:StdPeriph Drivers:ADC
+    - component: Keil::Device:StdPeriph Drivers:BKP
+    - component: Keil::Device:StdPeriph Drivers:CAN
+    - component: Keil::Device:StdPeriph Drivers:CEC
+    - component: Keil::Device:StdPeriph Drivers:CRC
+    - component: Keil::Device:StdPeriph Drivers:DAC
+    - component: Keil::Device:StdPeriph Drivers:DBGMCU
+    - component: Keil::Device:StdPeriph Drivers:DMA
+    - component: Keil::Device:StdPeriph Drivers:EXTI
+    - component: Keil::Device:StdPeriph Drivers:FSMC
+    - component: Keil::Device:StdPeriph Drivers:Flash
+    - component: Keil::Device:StdPeriph Drivers:Framework
+    - component: Keil::Device:StdPeriph Drivers:GPIO
+    - component: Keil::Device:StdPeriph Drivers:I2C
+    - component: Keil::Device:StdPeriph Drivers:IWDG
+    - component: Keil::Device:StdPeriph Drivers:PWR
+    - component: Keil::Device:StdPeriph Drivers:RCC
+    - component: Keil::Device:StdPeriph Drivers:RTC
+    - component: Keil::Device:StdPeriph Drivers:SDIO
+    - component: Keil::Device:StdPeriph Drivers:SPI
+    - component: Keil::Device:StdPeriph Drivers:TIM
+    - component: Keil::Device:StdPeriph Drivers:USART
+    - component: Keil::Device:StdPeriph Drivers:WWDG
