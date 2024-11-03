@@ -73,6 +73,8 @@ project:
         - file: Util/Serial.h
         - file: Util/Sampler.c
         - file: Util/Sampler.h
+        - file: Util/Timer.c
+        - file: Util/Timer.h
     - group: Systrm
       files:
         - file: System/ADC.c

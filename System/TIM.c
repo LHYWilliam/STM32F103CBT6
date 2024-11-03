@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-#include "Interrupt.h"
 #include "Tim.h"
 
 void TIM_Init(TIM_t *self, ClockSourceConfig_t *config) {
@@ -31,26 +30,6 @@ void TIM_Init(TIM_t *self, ClockSourceConfig_t *config) {
         TIM_Cmd(self->TIMx, ENABLE);
         TIM_ClearFlag(self->TIMx, TIM_FLAG_Update);
     }
-}
-
-void Timer_Init(Timer_t *self) {
-    TIM_t tim = {
-        .TIMx = self->TIMx,
-        .ClockSource = TIM_InternalClock,
-        .Prescaler = 7200 - 1,
-        .Period = self->ms * 10 - 1,
-        .CMD_Mode = UNCMD,
-    };
-    TIM_Init(&tim, NULL);
-
-    TIMInterrupt_t TIM_interrupt = {
-        .TIMx = self->TIMx,
-        .NVIC_IRQChannel = TIMx_IRQn(self->TIMx),
-        .NVIC_PriorityGroup = NVIC_PriorityGroup_2,
-        .NVIC_IRQChannelPreemptionPriority = 0,
-        .NVIC_IRQChannelSubPriority = 2,
-    };
-    TIM_Interrupt_Init(&TIM_interrupt);
 }
 
 void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *config) {

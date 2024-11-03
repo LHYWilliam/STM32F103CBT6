@@ -4,6 +4,7 @@
 #include "OLED.h"
 #include "RTC.h"
 #include "Sampler.h"
+#include "Timer.h"
 
 LED_t LED = {
     .GPIOxPiny = B2,
@@ -21,17 +22,24 @@ OLED_t OLED = {
 };
 
 #define LENGTH 2
-uint16_t ADC_Value[LENGTH];
+uint16_t Data[LENGTH];
 
 Sampler_t Sampler = {
-    .Data = ADC_Value,
+    .Data = Data,
     .Length = LENGTH,
+
     .ADCx = ADC1,
+    .Continuous = ENABLE,
     .ADC_Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
-    .Continuous = ENABLE,
+
     .DMAx = DMA1,
     .DMA_Channel = 1,
+};
+
+Timer_t Timer = {
+    .TIMx = TIM2,
+    .ms = 1000,
 };
 
 int main() {
@@ -41,7 +49,8 @@ int main() {
     Key_Init(&Key);
 
     OLED_Init(&OLED);
-    Sampler_Init_(&Sampler);
+    Sampler_Init(&Sampler);
+    Timer_Init(&Timer);
 
     for (;;) {
         OLED_ShowNum(&OLED, 1, 1, Sampler.Data[0], 6);
@@ -50,5 +59,13 @@ int main() {
         if (Key_Read(&Key)) {
             LED_Turn(&LED);
         }
+    }
+}
+
+void TIM2_IRQHandler() {
+    if (TIM_GetITStatus(Timer.TIMx, TIM_IT_Update)) {
+        LED_Turn(&LED);
+
+        TIM_ClearITPendingBit(Timer.TIMx, TIM_IT_Update);
     }
 }

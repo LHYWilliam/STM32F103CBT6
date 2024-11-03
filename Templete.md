@@ -56,7 +56,7 @@ Sampler_t Sampler = {
     .Continuous = ENABLE,
 };
 
-Sampler_Init_(&Sampler);
+Sampler_Init(&Sampler);
 
 Sampler_Get(&Sampler, 1);
 ```
@@ -70,7 +70,7 @@ Sampler_t Sampler = {
     .Continuous = DISABLE,
 };
 
-Sampler_Init_(&Sampler);
+Sampler_Init(&Sampler);
 
 
 Sampler_Get(&Sampler, 1);
@@ -80,21 +80,40 @@ Sampler_Get(&Sampler, 2);
 # DMA多通道
 ```
 #define LENGTH 2
-uint16_t ADC_Value[LENGTH];
+uint16_t Data[LENGTH];
 
 Sampler_t Sampler = {
-    .Data = ADC_Value,
+    .Data = Data,
     .Length = LENGTH,
+
     .ADCx = ADC1,
+    .Continuous = ENABLE,
     .ADC_Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
-    .Continuous = ENABLE,
+
     .DMAx = DMA1,
     .DMA_Channel = 1,
 };
 
-Sampler_Init_(&Sampler);
+Sampler_Init(&Sampler);
 
 Sampler.Data[0]
 Sampler.Data[1]
+```
+
+# Timer
+```
+Timer_t Timer = {
+    .TIMx = TIM2,
+    .ms = 1000,
+};
+
+Timer_Init(&Timer);
+
+void TIM?_IRQHandler() {
+    if (TIM_GetITStatus(Timer.TIMx, TIM_IT_Update)) {
+
+        TIM_ClearITPendingBit(Timer.TIMx, TIM_IT_Update);
+    }
+}
 ```

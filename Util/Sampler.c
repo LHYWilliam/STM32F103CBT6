@@ -5,7 +5,7 @@
 #include "GPIO.h"
 #include "Sampler.h"
 
-void Sampler_Init_(Sampler_t *self) {
+void Sampler_Init(Sampler_t *self) {
     GPIO_t GPIO = {
         .Mode = GPIO_Mode_AIN,
     };
