@@ -10,7 +10,7 @@ void Timer_Init(Timer_t *self) {
         .ClockSource = TIM_InternalClock,
         .Prescaler = 7200 - 1,
         .Period = self->ms * 10 - 1,
-        .CMD_Mode = UNCMD,
+        .Cmd = DISABLE,
     };
     TIM_Init(&tim, NULL);
 

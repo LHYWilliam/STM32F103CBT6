@@ -4,8 +4,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#define UNCMD ((uint8_t)0)
-#define CMD   ((uint8_t)1)
+#define RCC_APBxPeriphClockCmd(x)                                              \
+    ((x) == TIM1 ? RCC_APB2PeriphClockCmd : RCC_APB1PeriphClockCmd)
 
 #define RCC_APBxPeriph_TIMx(x)                                                 \
     ((x) == TIM1   ? RCC_APB2Periph_TIM1                                       \
@@ -30,9 +30,11 @@ typedef struct {
 typedef struct {
     TIM_TypeDef *TIMx;
     void (*ClockSource)(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
+
     uint16_t Prescaler;
     uint16_t Period;
-    uint8_t CMD_Mode;
+
+    uint8_t Cmd;
 } TIM_t;
 
 void TIM_Init(TIM_t *self, ClockSourceConfig_t *config);

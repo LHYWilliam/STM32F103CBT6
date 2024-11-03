@@ -17,7 +17,7 @@ void Encoder_Init(Encoder_t *self) {
         .ClockSource = NULL,
         .Prescaler = 1 - 1,
         .Period = 65536 - 1,
-        .CMD_Mode = UNCMD,
+        .Cmd = DISABLE,
     };
     TIM_Init(&tim, NULL);
 

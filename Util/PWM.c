@@ -11,7 +11,7 @@ void PWM_Init(PWM_t *self) {
             .ClockSource = TIM_InternalClock,
             .Prescaler = self->Prescaler,
             .Period = self->Period,
-            .CMD_Mode = CMD,
+            .Cmd = ENABLE,
         };
         TIM_Init(&tim, NULL);
     }
