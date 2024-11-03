@@ -17,7 +17,7 @@ void PWM_Init(PWM_t *self) {
     }
 
     uint8_t count = 0;
-    char *temp = self->channel;
+    char *temp = self->Channel;
     do {
         Compare_t compare = {
             .TIMx = self->TIMx,

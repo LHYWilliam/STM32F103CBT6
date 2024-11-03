@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 
 #include "GPIO.h"
@@ -5,11 +6,24 @@
 #include "PWM.h"
 
 void Motor_Init(Motor_t *self) {
-    GPIO_t PWM_gpio = {
+    PWM_t PWM = {
+        .TIMx = self->TIMx,
+        .Prescaler = 100 - 1,
+        .Period = 7200 - 1,
+        .TIM_Init = self->TIM_Init,
+    };
+    char Channel[4];
+    sprintf(Channel, "%d", self->Channel);
+    strcpy(PWM.Channel, Channel);
+    PWM_Init(&PWM);
+
+    self->TIM_SetCompare = PWM.TIM_SetCompare[0];
+
+    GPIO_t PWM_ = {
         .Mode = GPIO_Mode_AF_PP,
     };
-    strcpy(PWM_gpio.GPIOxPiny, self->PWM);
-    GPIO_Init_(&PWM_gpio);
+    strcpy(PWM_.GPIOxPiny, self->PWM);
+    GPIO_Init_(&PWM_);
 
     GPIO_t IN1 = {
         .Mode = GPIO_Mode_Out_PP,
@@ -27,23 +41,11 @@ void Motor_Init(Motor_t *self) {
     self->IN1_GPIO_Pin = IN1.GPIO_Pin;
     self->IN2_GPIOx = IN2.GPIOx;
     self->IN2_GPIO_Pin = IN2.GPIO_Pin;
-
-    PWM_t pwm = {
-        .TIMx = self->TIMx,
-        .Prescaler = 100 - 1,
-        .Period = 7200 - 1,
-        .TIM_Init = self->TIM_Init,
-    };
-    strcpy(pwm.channel, self->channel);
-    PWM_Init(&pwm);
-
-    self->TIM_SetCompare = pwm.TIM_SetCompare[0];
-    self->set_Mode = self->invert ? Bit_SET : Bit_RESET;
 }
 void Motor_Set(Motor_t *self, int16_t speed) {
     GPIO_WriteBit(self->IN1_GPIOx, self->IN1_GPIO_Pin,
-                  speed >= 0 ? self->set_Mode : !self->set_Mode);
+                  (BitAction)(speed >= 0 ? self->Invert : !self->Invert));
     GPIO_WriteBit(self->IN2_GPIOx, self->IN2_GPIO_Pin,
-                  speed >= 0 ? !self->set_Mode : self->set_Mode);
+                  (BitAction)(speed >= 0 ? !self->Invert : self->Invert));
     self->TIM_SetCompare(self->TIMx, (uint16_t)(speed >= 0 ? speed : -speed));
 }

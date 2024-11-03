@@ -5,15 +5,14 @@
 #include CMSIS_device_header
 
 typedef struct {
-    TIM_TypeDef *TIMx;
-    char channel[16];
+    char Channel[16];
 
+    TIM_TypeDef *TIMx;
     uint16_t Prescaler;
     uint16_t Period;
+    uint8_t TIM_Init;
 
     void (*TIM_SetCompare[4])(TIM_TypeDef *TIMx, uint16_t Compare);
-
-    uint8_t TIM_Init;
 } PWM_t;
 
 void PWM_Init(PWM_t *self);

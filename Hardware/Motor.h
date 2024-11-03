@@ -10,11 +10,10 @@ typedef struct {
     char IN2[4];
 
     TIM_TypeDef *TIMx;
-    char channel[16];
-    uint8_t TIM_Init;
+    uint8_t Channel;
 
-    uint8_t invert;
-    BitAction set_Mode;
+    uint8_t Invert;
+    uint8_t TIM_Init;
 
     GPIO_TypeDef *IN1_GPIOx;
     uint16_t IN1_GPIO_Pin;
