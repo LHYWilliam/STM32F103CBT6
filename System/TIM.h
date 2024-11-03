@@ -35,6 +35,8 @@ typedef struct {
     uint16_t Period;
 
     uint8_t Cmd;
+
+    uint16_t TRGO;
 } TIM_t;
 
 void TIM_Init(TIM_t *self, ClockSourceConfig_t *config);

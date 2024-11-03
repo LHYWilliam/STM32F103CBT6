@@ -12,6 +12,8 @@ void LED_Init(LED_t *self) {
 
     self->GPIOx = GPIO.GPIOx;
     self->GPIO_Pin = GPIO.GPIO_Pin;
+
+    LED_Off(self);
 }
 
 void LED_On(LED_t *self) {

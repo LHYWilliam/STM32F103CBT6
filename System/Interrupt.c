@@ -36,8 +36,8 @@ void TIM_Interrupt_Init(TIMInterrupt_t *self) {
     };
     NVIC_Init(&NVIC_InitStruct);
 
-    TIM_Cmd(self->TIMx, ENABLE);
     TIM_ClearFlag(self->TIMx, TIM_FLAG_Update);
+    TIM_Cmd(self->TIMx, ENABLE);
 }
 
 void USART_Interrupt_Init(USARTInterrupt_t *self) {

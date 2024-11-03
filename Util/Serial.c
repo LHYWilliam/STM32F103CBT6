@@ -38,9 +38,8 @@ void Serial_Init(Serial_t *self) {
             .USARTx = self->USARTx,
             .USART_IT = USART_IT_RXNE,
             .NVIC_IRQChannel = USARTx_IRQn(self->USARTx),
-            .NVIC_PriorityGroup = NVIC_PriorityGroup_2,
+            .NVIC_PriorityGroup = NVIC_PriorityGroup_4,
             .NVIC_IRQChannelPreemptionPriority = 2,
-            .NVIC_IRQChannelSubPriority = 0,
         };
         USART_Interrupt_Init(&interrupt);
     }

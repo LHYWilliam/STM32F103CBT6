@@ -4,6 +4,7 @@
 #include "DMA.h"
 #include "GPIO.h"
 #include "Sampler.h"
+#include "Timer.h"
 
 void Sampler_Init(Sampler_t *self) {
     GPIO_t GPIO = {
@@ -17,6 +18,7 @@ void Sampler_Init(Sampler_t *self) {
         .Cmd = DISABLE,
         .Continuous = self->Continuous,
         .DMA = self->DMAx ? ENABLE : DISABLE,
+        .TRGO = ADC_ExternalTrigConv_Tx_TRGO(self->TIMx),
     };
     strcpy(ADC.Channel, self->ADC_Channel);
     ADC_Init_(&ADC);
@@ -40,6 +42,14 @@ void Sampler_Init(Sampler_t *self) {
     }
 
     ADC_Cmd_(&ADC);
+
+    Timer_t Timer = {
+        .TIMx = self->TIMx,
+        .Hz = self->Hz,
+        .ms = self->ms,
+        .TRGO = TIM_TRGOSource_Update,
+    };
+    Timer_Init(&Timer);
 }
 
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {

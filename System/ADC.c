@@ -9,19 +9,25 @@ void ADC_Init_(ADC_t *self) {
     uint8_t NbrOfChannel = 1;
     char *temp = self->Channel;
     do {
-        if (self->Continuous == ENABLE) {
+        if (self->Continuous == ENABLE || self->TRGO) {
             ADC_RegularChannelConfig(self->ADCx, ADC_Channel_x(temp),
                                      NbrOfChannel, ADC_SampleTime_55Cycles5);
         }
     } while ((temp = strchr(temp, '|'), temp) && (temp = temp + 2) &&
              (NbrOfChannel = NbrOfChannel + 1));
 
+    if (self->TRGO) {
+        ADC_ExternalTrigConvCmd(self->ADCx, ENABLE);
+    }
+
     ADC_InitTypeDef ADC_InitTStruct = {
         .ADC_NbrOfChannel = NbrOfChannel,
-        .ADC_ExternalTrigConv = ADC_ExternalTrigConv_None,
+        .ADC_ExternalTrigConv =
+            self->TRGO ? self->TRGO : ADC_ExternalTrigConv_None,
         .ADC_ContinuousConvMode = self->Continuous,
         .ADC_ScanConvMode =
-            (NbrOfChannel > 1 && self->Continuous) ? ENABLE : DISABLE,
+            (NbrOfChannel > 1 && (self->Continuous || self->TRGO)) ? ENABLE
+                                                                   : DISABLE,
     };
     ADC_Init(self->ADCx, &ADC_InitTStruct);
 
@@ -44,7 +50,7 @@ void ADC_Cmd_(ADC_t *self) {
     while (ADC_GetCalibrationStatus(self->ADCx) == SET)
         ;
 
-    if (self->Continuous == ENABLE) {
+    if (self->Continuous) {
         ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
     }
 }

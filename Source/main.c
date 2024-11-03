@@ -2,7 +2,6 @@
 #include "Key.h"
 #include "LED.h"
 #include "OLED.h"
-#include "RTC.h"
 #include "Sampler.h"
 #include "Timer.h"
 
@@ -29,22 +28,24 @@ Sampler_t Sampler = {
     .Length = LENGTH,
 
     .ADCx = ADC1,
-    .Continuous = ENABLE,
     .ADC_Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
+
+    .TIMx = TIM3,
+    .Hz = 10,
 };
 
 Timer_t Timer = {
     .TIMx = TIM2,
     .ms = 1000,
+    .Interrupt = ENABLE,
+    .Priority = 15,
 };
 
 int main() {
-    RTC_Init();
-
     LED_Init(&LED);
     Key_Init(&Key);
 

@@ -22,6 +22,11 @@
      : (x[0]) == '9' ? ADC_Channel_9                                           \
                      : NULL)
 
+#define ADC_ExternalTrigConv_Tx_TRGO(x)                                        \
+    ((x) == TIM3   ? ADC_ExternalTrigConv_T3_TRGO                              \
+     : (x) == TIM8 ? ADC_ExternalTrigConv_T8_TRGO                              \
+                   : NULL)
+
 static uint8_t ADC_Channel[] = {
     ADC_Channel_0, ADC_Channel_1, ADC_Channel_2, ADC_Channel_3, ADC_Channel_4,
     ADC_Channel_5, ADC_Channel_6, ADC_Channel_7, ADC_Channel_8, ADC_Channel_9,
@@ -34,6 +39,8 @@ typedef struct {
     uint8_t Cmd;
     uint8_t DMA;
     uint8_t Continuous;
+
+    uint32_t TRGO;
 } ADC_t;
 
 void ADC_Init_(ADC_t *self);

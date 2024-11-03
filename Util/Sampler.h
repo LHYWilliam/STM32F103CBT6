@@ -18,6 +18,7 @@ typedef struct {
     uint8_t DMA_Channel;
 
     TIM_TypeDef *TIMx;
+    uint16_t ms;
     uint16_t Hz;
 } Sampler_t;
 
