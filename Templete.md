@@ -47,7 +47,7 @@ Motor_Init(&Motor);
 
 
 # Sampler
-## 软件单通道
+### 软件单通道
 ```
 Sampler_t Sampler = {
     .ADCx = ADC1,
@@ -61,7 +61,7 @@ Sampler_Init(&Sampler);
 Sampler_Get(&Sampler, 1);
 ```
 
-## 软件多通道
+### 软件多通道
 ```
 Sampler_t Sampler = {
     .ADCx = ADC1,
@@ -77,7 +77,7 @@ Sampler_Get(&Sampler, 1);
 Sampler_Get(&Sampler, 2);
 ```
 
-# DMA多通道
+### DMA多通道
 ```
 #define LENGTH 2
 uint16_t Data[LENGTH];
@@ -100,6 +100,33 @@ Sampler_Init(&Sampler);
 Sampler.Data[0]
 Sampler.Data[1]
 ```
+
+### DMA + TIM 多通道
+```
+#define LENGTH 2
+uint16_t Data[LENGTH];
+
+Sampler_t Sampler = {
+    .Data = Data,
+    .Length = LENGTH,
+
+    .ADCx = ADC1,
+    .ADC_Channel = "1 | 2",
+    .GPIOxPiny = "A1 | A2",
+
+    .DMAx = DMA1,
+    .DMA_Channel = 1,
+
+    .TIMx = TIM3,
+    .Hz = 10,
+};
+
+Sampler_Init(&Sampler);
+
+Sampler.Data[0]
+Sampler.Data[1]
+```
+
 
 # Timer
 ```
