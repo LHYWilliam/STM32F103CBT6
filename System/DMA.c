@@ -28,4 +28,4 @@ void DMA_Init_(DMA_t *self) {
     DMA_Init(self->DMAy_Channelx, &DMA_InitStruct);
 }
 
-void DMA_Start(DMA_t *self) { DMA_Cmd(self->DMAy_Channelx, ENABLE); }
+void DMA_Cmd_(DMA_t *self) { DMA_Cmd(self->DMAy_Channelx, ENABLE); }

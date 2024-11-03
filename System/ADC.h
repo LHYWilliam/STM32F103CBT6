@@ -31,12 +31,12 @@ typedef struct {
     ADC_TypeDef *ADCx;
     char Channel[32];
 
-    uint8_t Continuous;
+    uint8_t Cmd;
     uint8_t DMA;
+    uint8_t Continuous;
 } ADC_t;
 
 void ADC_Init_(ADC_t *self);
-
-uint16_t ADC_Get(ADC_t *self, uint8_t Channel);
+void ADC_Cmd_(ADC_t *self);
 
 #endif

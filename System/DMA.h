@@ -53,6 +53,6 @@ typedef struct {
 } DMA_t;
 
 void DMA_Init_(DMA_t *self);
-void DMA_Start(DMA_t *self);
+void DMA_Cmd_(DMA_t *self);
 
 #endif

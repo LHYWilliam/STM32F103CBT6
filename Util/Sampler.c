@@ -1,27 +1,49 @@
 #include <string.h>
 
 #include "ADC.h"
+#include "DMA.h"
 #include "GPIO.h"
 #include "Sampler.h"
 
 void Sampler_Init_(Sampler_t *self) {
-    ADC_t ADC = {
-        .ADCx = self->ADCx,
-        .Continuous = self->Continuous,
-        .DMA = self->DMA,
-    };
-    strcpy(ADC.Channel, self->Channel);
-    ADC_Init_(&ADC);
-
     GPIO_t GPIO = {
         .Mode = GPIO_Mode_AIN,
     };
     strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
     GPIO_Init_(&GPIO);
+
+    ADC_t ADC = {
+        .ADCx = self->ADCx,
+        .Cmd = DISABLE,
+        .Continuous = self->Continuous,
+        .DMA = self->DMAx ? ENABLE : DISABLE,
+    };
+    strcpy(ADC.Channel, self->ADC_Channel);
+    ADC_Init_(&ADC);
+
+    if (self->DMAx) {
+        DMA_t DMA = {
+            .DMAx = self->DMAx,
+            .channel = self->DMA_Channel,
+            .sourceAddr = (uint32_t) & (self->ADCx->DR),
+            .sourceInc = DISABLE,
+            .targetAddr = (uint32_t)self->Data,
+            .targetInc = ENABLE,
+            .DataSize = 16,
+            .BufferSize = self->Length,
+            .Circular = ENABLE,
+            .M2M = DISABLE,
+        };
+
+        DMA_Init_(&DMA);
+        DMA_Cmd_(&DMA);
+    }
+
+    ADC_Cmd_(&ADC);
 }
 
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {
-    if (self->Continuous == DISABLE) {
+    if (self->Continuous == DISABLE && self->DMAx == NULL) {
         ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
                                  ADC_SampleTime_55Cycles5);
 

@@ -1,7 +1,6 @@
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
-#include "Motor.h"
 #include "OLED.h"
 #include "RTC.h"
 #include "Sampler.h"
@@ -21,20 +20,18 @@ OLED_t OLED = {
     .SDA = B9,
 };
 
-Motor_t Motor = {
-    .PWM = A8,
-    .IN1 = A9,
-    .IN2 = A10,
-    .TIMx = TIM1,
-    .Channel = 1,
-    .TIM_Init = ENABLE,
-};
+#define LENGTH 2
+uint16_t ADC_Value[LENGTH];
 
 Sampler_t Sampler = {
+    .Data = ADC_Value,
+    .Length = LENGTH,
     .ADCx = ADC1,
-    .Channel = "1 | 2",
+    .ADC_Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
-    .Continuous = DISABLE,
+    .Continuous = ENABLE,
+    .DMAx = DMA1,
+    .DMA_Channel = 1,
 };
 
 int main() {
@@ -44,12 +41,12 @@ int main() {
     Key_Init(&Key);
 
     OLED_Init(&OLED);
-    // Motor_Init(&Motor);
     Sampler_Init_(&Sampler);
 
     for (;;) {
-        OLED_ShowNum(&OLED, 1, 1, Sampler_Get(&Sampler, 1), 6);
-        OLED_ShowNum(&OLED, 2, 1, Sampler_Get(&Sampler, 2), 6);
+        OLED_ShowNum(&OLED, 1, 1, Sampler.Data[0], 6);
+        OLED_ShowNum(&OLED, 2, 1, Sampler.Data[1], 6);
+
         if (Key_Read(&Key)) {
             LED_Turn(&LED);
         }

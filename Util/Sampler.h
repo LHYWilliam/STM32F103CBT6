@@ -5,13 +5,18 @@
 #include CMSIS_device_header
 
 typedef struct {
+    uint16_t *Data;
+    uint16_t Length;
+
     ADC_TypeDef *ADCx;
-    char Channel[32];
+    char ADC_Channel[32];
 
     char GPIOxPiny[32];
 
+    DMA_TypeDef *DMAx;
+    uint8_t DMA_Channel;
+
     uint8_t Continuous;
-    uint8_t DMA;
 } Sampler_t;
 
 void Sampler_Init_(Sampler_t *self);

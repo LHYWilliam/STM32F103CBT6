@@ -25,6 +25,12 @@ void ADC_Init_(ADC_t *self) {
     };
     ADC_Init(self->ADCx, &ADC_InitTStruct);
 
+    if (self->Cmd) {
+        ADC_Cmd_(self);
+    }
+}
+
+void ADC_Cmd_(ADC_t *self) {
     if (self->DMA) {
         ADC_DMACmd(self->ADCx, ENABLE);
     }
@@ -41,11 +47,4 @@ void ADC_Init_(ADC_t *self) {
     if (self->Continuous == ENABLE) {
         ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
     }
-}
-
-uint16_t ADC_Get(ADC_t *self, uint8_t Channel) {
-    while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
-        ;
-
-    return ADC_GetConversionValue(self->ADCx);
 }
