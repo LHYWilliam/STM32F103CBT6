@@ -5,7 +5,7 @@
 #include CMSIS_device_header
 
 #define UNCMD ((uint8_t)0)
-#define CMD ((uint8_t)1)
+#define CMD   ((uint8_t)1)
 
 #define RCC_APBxPeriph_TIMx(x)                                                 \
     ((x) == TIM1   ? RCC_APB2Periph_TIM1                                       \

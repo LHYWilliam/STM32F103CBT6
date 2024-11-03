@@ -1,14 +1,18 @@
 #ifndef __KEY_H
 #define __KEY_H
 
-#include "GPIO.h"
+#include "RTE_Components.h"
+#include CMSIS_device_header
 
-#define LOW ((uint8_t)0)
-#define HIGH ((uint8_t)1)
+#define LOW  0
+#define HIGH 1
 
 typedef struct {
-    GPIO_t *gpio;
+    char GPIOxPiny[32];
     uint8_t Mode;
+
+    GPIO_TypeDef *GPIOx;
+    uint16_t GPIO_Pin;
 } Key_t;
 
 void Key_Init(Key_t *self);

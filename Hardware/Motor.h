@@ -4,7 +4,6 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-
 typedef struct {
     char PWM[4];
     char IN1[4];

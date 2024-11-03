@@ -9,7 +9,7 @@ void DMA_Init_(DMA_t *self) {
         .DMA_PeripheralBaseAddr = self->sourceAddr,
         .DMA_PeripheralDataSize = DMA_PeripheralDataSize(self->DataSize),
         .DMA_PeripheralInc = self->sourceInc ? DMA_PeripheralInc_Enable
-                                            : DMA_PeripheralInc_Disable,
+                                             : DMA_PeripheralInc_Disable,
 
         .DMA_MemoryBaseAddr = self->targetAddr,
         .DMA_MemoryDataSize = DMA_MemoryDataSize(self->DataSize),

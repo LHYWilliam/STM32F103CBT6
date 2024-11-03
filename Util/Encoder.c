@@ -43,7 +43,7 @@ void Encoder_Init(Encoder_t *self) {
 
     TIM_EncoderInterfaceConfig(self->TIMx, TIM_EncoderMode_TI12,
                                self->invert ? TIM_ICPolarity_Falling
-                                               : TIM_ICPolarity_Rising,
+                                            : TIM_ICPolarity_Rising,
                                TIM_ICPolarity_Rising);
 
     TIM_Cmd(self->TIMx, ENABLE);

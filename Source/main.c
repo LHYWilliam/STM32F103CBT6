@@ -1,23 +1,35 @@
-#include "RTE_Components.h"
-#include CMSIS_device_header
-
+#include "Key.h"
+#include "LED.h"
 #include "OLED.h"
+#include "RTC.h"
+
+LED_t LED = {
+    .GPIOxPiny = "B2",
+    .Mode = HIGH,
+};
+
+Key_t Key = {
+    .GPIOxPiny = "A0",
+    .Mode = HIGH,
+};
+
+OLED_t OLED = {
+    .SCL = "B8",
+    .SDA = "B9",
+};
 
 int main() {
-    OLED_Init();
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    RTC_Init();
 
-    GPIO_InitTypeDef GPIO_InitStructure = {
-        .GPIO_Pin = GPIO_Pin_2,
-        .GPIO_Mode = GPIO_Mode_Out_PP,
-        .GPIO_Speed = GPIO_Speed_50MHz,
-    };
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    LED_Init(&LED);
+    Key_Init(&Key);
 
-    GPIO_WriteBit(GPIOB, GPIO_Pin_2, Bit_SET);
-
-    OLED_ShowString(1, 1, "Hello World");
+    OLED_Init(&OLED);
 
     for (;;) {
+        OLED_ShowNum(&OLED, 1, 1, RTC_time_s(), 6);
+        if (Key_Read(&Key)) {
+            LED_Turn(&LED);
+        }
     }
 }
