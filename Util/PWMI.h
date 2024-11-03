@@ -1,5 +1,5 @@
-#ifndef __PWMI_H
-#define __PWMI_H
+#ifndef PWMI_H
+#define PWMI_H
 
 #include "Capture.h"
 #include "GPIO.h"

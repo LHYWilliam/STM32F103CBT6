@@ -1,5 +1,5 @@
-#ifndef __INTERRUPT_H
-#define __INTERRUPT_H
+#ifndef INTERRUPT_H
+#define INTERRUPT_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

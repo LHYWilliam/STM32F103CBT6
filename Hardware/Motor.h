@@ -1,5 +1,5 @@
-#ifndef __MOTOR_H
-#define __MOTOR_H
+#ifndef MOTOR_H
+#define MOTOR_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

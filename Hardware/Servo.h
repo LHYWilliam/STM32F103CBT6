@@ -1,5 +1,5 @@
-#ifndef __SERVO_H
-#define __SERVO_H
+#ifndef SERVO_H
+#define SERVO_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

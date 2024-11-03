@@ -1,5 +1,5 @@
-#ifndef __GPIO_H
-#define __GPIO_H
+#ifndef GPIO_H
+#define GPIO_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

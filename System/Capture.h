@@ -1,5 +1,5 @@
-#ifndef __CAPTURE_H
-#define __CAPTURE_H
+#ifndef CAPTURE_H
+#define CAPTURE_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

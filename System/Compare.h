@@ -1,5 +1,5 @@
-#ifndef __COMPARE_H
-#define __COMPARE_H
+#ifndef COMPARE_H
+#define COMPARE_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

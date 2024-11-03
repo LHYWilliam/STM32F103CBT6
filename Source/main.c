@@ -1,3 +1,4 @@
+#include "ADC.h"
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
@@ -29,6 +30,20 @@ Motor_t Motor = {
     .TIM_Init = ENABLE,
 };
 
+// ADC_t ADC = {
+//     .ADCx = ADC1,
+//     .Channel = "1",
+//     .GPIOxPiny = A1,
+//     .Continuous = ENABLE,
+// };
+
+ADC_t ADC = {
+    .ADCx = ADC1,
+    .Channel = "1 | 2",
+    .GPIOxPiny = "A1 | A2",
+    .Continuous = DISABLE,
+};
+
 int main() {
     RTC_Init();
 
@@ -36,10 +51,12 @@ int main() {
     Key_Init(&Key);
 
     OLED_Init(&OLED);
-    Motor_Init(&Motor);
+    // Motor_Init(&Motor);
+    ADC_Init_(&ADC);
 
     for (;;) {
-        OLED_ShowNum(&OLED, 1, 1, RTC_time_s(), 6);
+        OLED_ShowNum(&OLED, 1, 1, ADC_Get(&ADC, 1), 6);
+        OLED_ShowNum(&OLED, 2, 1, ADC_Get(&ADC, 2), 6);
         if (Key_Read(&Key)) {
             LED_Turn(&LED);
         }

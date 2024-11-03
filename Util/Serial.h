@@ -1,5 +1,5 @@
-#ifndef __SERIAL_H
-#define __SERIAL_H
+#ifndef SERIAL_H
+#define SERIAL_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

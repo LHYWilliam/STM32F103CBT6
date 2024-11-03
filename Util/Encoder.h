@@ -1,5 +1,5 @@
-#ifndef __ENCODER_H
-#define __ENCODER_H
+#ifndef ENCODER_H
+#define ENCODER_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

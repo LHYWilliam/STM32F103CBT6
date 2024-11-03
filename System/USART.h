@@ -1,5 +1,5 @@
-#ifndef __USART_H_
-#define __USART_H_
+#ifndef USART_H_
+#define USART_H_
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

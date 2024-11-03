@@ -1,5 +1,5 @@
-#ifndef __INIT_H
-#define __INIT_H
+#ifndef TIM_H
+#define TIM_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header

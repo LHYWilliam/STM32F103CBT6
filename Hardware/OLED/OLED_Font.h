@@ -1,5 +1,5 @@
-#ifndef __OLED_FONT_H
-#define __OLED_FONT_H
+#ifndef OLED_FONT_H
+#define OLED_FONT_H
 
 /*OLED字模库，宽8像素，高16像素*/
 const unsigned char OLED_F8x16[][16] = {

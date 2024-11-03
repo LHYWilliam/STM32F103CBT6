@@ -1,5 +1,5 @@
-#ifndef __OLED_H
-#define __OLED_H
+#ifndef OLED_H
+#define OLED_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header
