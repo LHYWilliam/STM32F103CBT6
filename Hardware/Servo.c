@@ -5,23 +5,23 @@
 #include "Servo.h"
 
 void Servo_Init(Servo_t *self) {
-    GPIO_t PWM_gpio = {
+    GPIO_t PWM_GPIO = {
         .Mode = GPIO_Mode_AF_PP,
     };
-    strcpy(PWM_gpio.GPIOxPiny, self->PWM);
-    GPIO_Init_(&PWM_gpio);
+    strcpy(PWM_GPIO.GPIOxPiny, self->PWM);
+    GPIO_Init_(&PWM_GPIO);
 
-    PWM_t pwm = {
+    PWM_t PWM = {
         .TIMx = self->TIMx,
         .Prescaler = 72 - 1,
         .Period = 20000 - 1,
         .TIM_Init = self->TIM_Init,
     };
-    strcpy(pwm.Channel, self->channel);
-    PWM_Init(&pwm);
+    strcpy(PWM.Channel, self->channel);
+    PWM_Init(&PWM);
 
-    self->TIM_SetCompare[0] = pwm.TIM_SetCompare[0];
-    self->TIM_SetCompare[1] = pwm.TIM_SetCompare[1];
+    self->TIM_SetCompare[0] = PWM.TIM_SetCompare[0];
+    self->TIM_SetCompare[1] = PWM.TIM_SetCompare[1];
 }
 
 void Servo_set(Servo_t *self, float angle1, float angle2) {

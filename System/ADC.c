@@ -4,35 +4,34 @@
 #include "GPIO.h"
 
 void ADC_Init_(ADC_t *self) {
-    GPIO_t gpio = {
+    GPIO_t GPIO = {
         .Mode = GPIO_Mode_AIN,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&gpio);
+    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
+    GPIO_Init_(&GPIO);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx(self->ADCx), ENABLE);
     RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
     uint8_t NbrOfChannel = 1;
-    char *temp = self->channel;
+    char *temp = self->Channel;
     do {
-        ADC_RegularChannelConfig(self->ADCx, ADC_Channel_x(temp), NbrOfChannel,
-                                 ADC_SampleTime_55Cycles5);
+        if (self->Continuous == ENABLE) {
+            ADC_RegularChannelConfig(self->ADCx, ADC_Channel_x(temp),
+                                     NbrOfChannel, ADC_SampleTime_55Cycles5);
+        }
     } while ((temp = strchr(temp, '|'), temp) && (temp = temp + 2) &&
              (NbrOfChannel = NbrOfChannel + 1));
 
     ADC_InitTypeDef ADC_InitTStruct = {
-        .ADC_Mode = ADC_Mode_Independent,
         .ADC_NbrOfChannel = NbrOfChannel,
-        .ADC_DataAlign = ADC_DataAlign_Right,
         .ADC_ExternalTrigConv = ADC_ExternalTrigConv_None,
-        .ADC_ContinuousConvMode = ENABLE,
-        .ADC_ScanConvMode = NbrOfChannel > 1 ? ENABLE : DISABLE,
+        .ADC_ContinuousConvMode = self->Continuous,
+        .ADC_ScanConvMode =
+            (NbrOfChannel > 1 && self->Continuous) ? ENABLE : DISABLE,
     };
     ADC_Init(self->ADCx, &ADC_InitTStruct);
-}
 
-void ADC_Start(ADC_t *self) {
     if (self->DMA) {
         ADC_DMACmd(self->ADCx, ENABLE);
     }
@@ -46,10 +45,19 @@ void ADC_Start(ADC_t *self) {
     while (ADC_GetCalibrationStatus(self->ADCx) == SET)
         ;
 
-    ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
+    if (self->Continuous == ENABLE) {
+        ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
+    }
 }
 
-uint16_t ADC_Get(ADC_t *self) {
+uint16_t ADC_Get(ADC_t *self, uint8_t Channel) {
+    if (self->Continuous == DISABLE) {
+        ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
+                                 ADC_SampleTime_55Cycles5);
+
+        ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
+    }
+
     while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
         ;
 

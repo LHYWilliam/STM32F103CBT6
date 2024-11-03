@@ -1,8 +1,4 @@
-#include "RTE_Components.h"
-#include "stm32f10x_gpio.h"
-#include CMSIS_device_header
-
-#include "string.h"
+#include <string.h>
 
 #include "GPIO.h"
 #include "OLED.h"

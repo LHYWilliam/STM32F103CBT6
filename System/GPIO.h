@@ -49,9 +49,14 @@
 #define RCC_APB2Periph_GPIOx(x)                                                \
     ((x[0]) == 'A'   ? RCC_APB2Periph_GPIOA                                    \
      : (x[0]) == 'B' ? RCC_APB2Periph_GPIOB                                    \
+     : (x[0]) == 'C' ? RCC_APB2Periph_GPIOC                                    \
                      : NULL)
 
-#define GPIOx(x) ((x[0]) == 'A' ? GPIOA : (x[0]) == 'B' ? GPIOB : NULL)
+#define GPIOx(x)                                                               \
+    ((x[0]) == 'A'   ? GPIOA                                                   \
+     : (x[0]) == 'B' ? GPIOB                                                   \
+     : (x[0]) == 'C' ? GPIOC                                                   \
+                     : NULL)
 
 #define GPIO_Pinx(x)                                                           \
     ((x[1]) == '0'   ? GPIO_Pin_0                                              \

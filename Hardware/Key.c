@@ -5,14 +5,14 @@
 #include "Key.h"
 
 void Key_Init(Key_t *self) {
-    GPIO_t gpio = {
+    GPIO_t GPIO = {
         .Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&gpio);
+    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
+    GPIO_Init_(&GPIO);
 
-    self->GPIOx = gpio.GPIOx;
-    self->GPIO_Pin = gpio.GPIO_Pin;
+    self->GPIOx = GPIO.GPIOx;
+    self->GPIO_Pin = GPIO.GPIO_Pin;
 }
 
 uint8_t Key_Read(Key_t *self) {

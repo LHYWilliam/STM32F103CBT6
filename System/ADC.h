@@ -2,6 +2,7 @@
 #define __ADC_H
 
 #include "RTE_Components.h"
+#include <stdint.h>
 #include CMSIS_device_header
 
 #define RCC_APB2Periph_ADCx(x)                                                 \
@@ -22,18 +23,23 @@
      : (x[0]) == '9' ? ADC_Channel_9                                           \
                      : NULL)
 
+static uint8_t ADC_Channel[] = {
+    ADC_Channel_0, ADC_Channel_1, ADC_Channel_2, ADC_Channel_3, ADC_Channel_4,
+    ADC_Channel_5, ADC_Channel_6, ADC_Channel_7, ADC_Channel_8, ADC_Channel_9,
+};
+
 typedef struct {
+    ADC_TypeDef *ADCx;
+    char Channel[32];
+
     char GPIOxPiny[32];
 
-    ADC_TypeDef *ADCx;
-    char channel[32];
-
+    uint8_t Continuous;
     uint8_t DMA;
 } ADC_t;
 
 void ADC_Init_(ADC_t *self);
-void ADC_Start(ADC_t *self);
 
-uint16_t ADC_Get(ADC_t *self);
+uint16_t ADC_Get(ADC_t *self, uint8_t Channel);
 
 #endif

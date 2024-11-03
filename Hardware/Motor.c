@@ -19,11 +19,11 @@ void Motor_Init(Motor_t *self) {
 
     self->TIM_SetCompare = PWM.TIM_SetCompare[0];
 
-    GPIO_t PWM_ = {
+    GPIO_t PWM_GPIO = {
         .Mode = GPIO_Mode_AF_PP,
     };
-    strcpy(PWM_.GPIOxPiny, self->PWM);
-    GPIO_Init_(&PWM_);
+    strcpy(PWM_GPIO.GPIOxPiny, self->PWM);
+    GPIO_Init_(&PWM_GPIO);
 
     GPIO_t IN1 = {
         .Mode = GPIO_Mode_Out_PP,

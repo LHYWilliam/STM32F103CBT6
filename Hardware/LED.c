@@ -4,14 +4,14 @@
 #include "LED.h"
 
 void LED_Init(LED_t *self) {
-    GPIO_t gpio = {
+    GPIO_t GPIO = {
         .Mode = GPIO_Mode_Out_PP,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&gpio);
+    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
+    GPIO_Init_(&GPIO);
 
-    self->GPIOx = gpio.GPIOx;
-    self->GPIO_Pin = gpio.GPIO_Pin;
+    self->GPIOx = GPIO.GPIOx;
+    self->GPIO_Pin = GPIO.GPIO_Pin;
 }
 
 void LED_On(LED_t *self) {
