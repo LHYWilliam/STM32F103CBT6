@@ -2,7 +2,6 @@
 #define ADC_H
 
 #include "RTE_Components.h"
-#include <stdint.h>
 #include CMSIS_device_header
 
 #define RCC_APB2Periph_ADCx(x)                                                 \
@@ -31,8 +30,6 @@ static uint8_t ADC_Channel[] = {
 typedef struct {
     ADC_TypeDef *ADCx;
     char Channel[32];
-
-    char GPIOxPiny[32];
 
     uint8_t Continuous;
     uint8_t DMA;

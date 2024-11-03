@@ -1,10 +1,10 @@
-#include "ADC.h"
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
 #include "Motor.h"
 #include "OLED.h"
 #include "RTC.h"
+#include "Sampler.h"
 
 LED_t LED = {
     .GPIOxPiny = B2,
@@ -30,14 +30,7 @@ Motor_t Motor = {
     .TIM_Init = ENABLE,
 };
 
-// ADC_t ADC = {
-//     .ADCx = ADC1,
-//     .Channel = "1",
-//     .GPIOxPiny = A1,
-//     .Continuous = ENABLE,
-// };
-
-ADC_t ADC = {
+Sampler_t Sampler = {
     .ADCx = ADC1,
     .Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
@@ -52,11 +45,11 @@ int main() {
 
     OLED_Init(&OLED);
     // Motor_Init(&Motor);
-    ADC_Init_(&ADC);
+    Sampler_Init_(&Sampler);
 
     for (;;) {
-        OLED_ShowNum(&OLED, 1, 1, ADC_Get(&ADC, 1), 6);
-        OLED_ShowNum(&OLED, 2, 1, ADC_Get(&ADC, 2), 6);
+        OLED_ShowNum(&OLED, 1, 1, Sampler_Get(&Sampler, 1), 6);
+        OLED_ShowNum(&OLED, 2, 1, Sampler_Get(&Sampler, 2), 6);
         if (Key_Read(&Key)) {
             LED_Turn(&LED);
         }

@@ -1,15 +1,8 @@
 #include <string.h>
 
 #include "ADC.h"
-#include "GPIO.h"
 
 void ADC_Init_(ADC_t *self) {
-    GPIO_t GPIO = {
-        .Mode = GPIO_Mode_AIN,
-    };
-    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&GPIO);
-
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx(self->ADCx), ENABLE);
     RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
@@ -51,13 +44,6 @@ void ADC_Init_(ADC_t *self) {
 }
 
 uint16_t ADC_Get(ADC_t *self, uint8_t Channel) {
-    if (self->Continuous == DISABLE) {
-        ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
-                                 ADC_SampleTime_55Cycles5);
-
-        ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
-    }
-
     while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
         ;
 

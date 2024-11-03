@@ -454,6 +454,16 @@
               <FileType>5</FileType>
               <FilePath>.\Util\Serial.h</FilePath>
             </File>
+            <File>
+              <FileName>Sampler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\Sampler.c</FilePath>
+            </File>
+            <File>
+              <FileName>Sampler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\Sampler.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
