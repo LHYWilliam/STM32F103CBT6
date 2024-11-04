@@ -47,6 +47,8 @@ void Sampler_Init(Sampler_t *self) {
             .TIMx = self->TIMx,
             .Hz = self->Hz,
             .ms = self->ms,
+            .Interrupt = ENABLE,
+            .Priority = self->Priority,
             .TRGO = TIM_TRGOSource_Update,
         };
         Timer_Init(&Timer);

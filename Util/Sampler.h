@@ -22,6 +22,7 @@ typedef struct {
     TIM_TypeDef *TIMx;
     uint16_t ms;
     uint16_t Hz;
+    uint8_t Priority;
 
     uint16_t NbrOfChannel;
 } Sampler_t;
