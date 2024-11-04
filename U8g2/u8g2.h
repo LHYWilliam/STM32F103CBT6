@@ -2946,6 +2946,9 @@ typedef struct  {
   char SCL[4];
   char SDA[4];
 
+  uint16_t Width;
+  uint16_t Height;
+
   uint8_t SendBuffer[128];
 
   u8g2_t u8g2;
