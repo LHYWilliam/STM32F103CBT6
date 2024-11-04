@@ -20,7 +20,7 @@ OLED_t OLED = {
     .SDA = B9,
 };
 
-#define LENGTH 2
+#define LENGTH 1
 uint16_t Data[LENGTH];
 
 Sampler_t Sampler = {
@@ -28,8 +28,8 @@ Sampler_t Sampler = {
     .Length = LENGTH,
 
     .ADCx = ADC1,
-    .ADC_Channel = "1 | 2",
-    .GPIOxPiny = "A1 | A2",
+    .ADC_Channel = "1",
+    .GPIOxPiny = "A1",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
@@ -53,9 +53,12 @@ int main() {
     Sampler_Init(&Sampler);
     Timer_Init(&Timer);
 
+    OLED_ShowString(&OLED, 1, 2, ".   V");
     for (;;) {
-        OLED_ShowNum(&OLED, 1, 1, Sampler.Data[0], 6);
-        OLED_ShowNum(&OLED, 2, 1, Sampler.Data[1], 6);
+        uint16_t data1 = Sampler.Data[0];
+        OLED_ShowNum(&OLED, 1, 1, (uint16_t)(data1 * 3.3 / 4095.), 1);
+        OLED_ShowNum(&OLED, 1, 3,
+                     (uint16_t)(data1 * 3.3 / 4095. * 1000.) % 1000, 3);
 
         if (Key_Read(&Key)) {
             LED_Turn(&LED);

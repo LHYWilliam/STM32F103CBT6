@@ -2,10 +2,12 @@
 #define SAMPLER_H
 
 #include "RTE_Components.h"
+#include <stdint.h>
 #include CMSIS_device_header
 
 typedef struct {
     uint16_t *Data;
+    uint16_t Index;
     uint16_t Length;
 
     char GPIOxPiny[32];
@@ -20,6 +22,8 @@ typedef struct {
     TIM_TypeDef *TIMx;
     uint16_t ms;
     uint16_t Hz;
+
+    uint16_t NbrOfChannel;
 } Sampler_t;
 
 void Sampler_Init(Sampler_t *self);

@@ -47,27 +47,12 @@ Motor_Init(&Motor);
 
 
 # Sampler
-### 软件单通道
-```
-Sampler_t Sampler = {
-    .ADCx = ADC1,
-    .ADC_Channel = "1",
-    .GPIOxPiny = "A1",
-    .Continuous = ENABLE,
-};
-
-Sampler_Init(&Sampler);
-
-Sampler_Get(&Sampler, 1);
-```
-
-### 软件多通道
+### Soft
 ```
 Sampler_t Sampler = {
     .ADCx = ADC1,
     .ADC_Channel = "1 | 2",
     .GPIOxPiny = "A1 | A2",
-    .Continuous = DISABLE,
 };
 
 Sampler_Init(&Sampler);
@@ -77,7 +62,7 @@ Sampler_Get(&Sampler, 1);
 Sampler_Get(&Sampler, 2);
 ```
 
-### DMA多通道
+### DMA
 ```
 #define LENGTH 2
 uint16_t Data[LENGTH];
@@ -101,7 +86,7 @@ Sampler.Data[0]
 Sampler.Data[1]
 ```
 
-### DMA + TIM 多通道
+### DMA + TIM
 ```
 #define LENGTH 2
 uint16_t Data[LENGTH];

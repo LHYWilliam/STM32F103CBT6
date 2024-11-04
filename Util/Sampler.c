@@ -34,7 +34,6 @@ void Sampler_Init(Sampler_t *self) {
             .DataSize = 16,
             .BufferSize = self->Length,
             .Circular = ENABLE,
-            .M2M = DISABLE,
         };
 
         DMA_Init_(&DMA);
@@ -43,25 +42,39 @@ void Sampler_Init(Sampler_t *self) {
 
     ADC_Cmd_(&ADC);
 
-    Timer_t Timer = {
-        .TIMx = self->TIMx,
-        .Hz = self->Hz,
-        .ms = self->ms,
-        .TRGO = TIM_TRGOSource_Update,
-    };
-    Timer_Init(&Timer);
+    if (self->TIMx) {
+        Timer_t Timer = {
+            .TIMx = self->TIMx,
+            .Hz = self->Hz,
+            .ms = self->ms,
+            .TRGO = TIM_TRGOSource_Update,
+        };
+        Timer_Init(&Timer);
+    }
+
+    self->Index = self->Length - 1;
+    self->NbrOfChannel = ADC.NbrOfChannel;
 }
 
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {
-    if (self->Continuous == DISABLE && self->DMAx == NULL) {
+    if (self->NbrOfChannel > 1) {
         ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
                                  ADC_SampleTime_55Cycles5);
+    }
 
+    if (self->Continuous == NULL) {
         ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
     }
 
     while (ADC_GetFlagStatus(self->ADCx, ADC_FLAG_EOC) == RESET)
         ;
 
-    return ADC_GetConversionValue(self->ADCx);
+    if (self->Data) {
+        self->Index = (self->Index + 1) % self->Length;
+        self->Data[self->Index] = ADC_GetConversionValue(self->ADCx);
+
+        return self->Data[self->Index];
+    } else {
+        return ADC_GetConversionValue(self->ADCx);
+    }
 }
