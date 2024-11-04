@@ -1,9 +1,9 @@
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
-#include "OLED.h"
 #include "Sampler.h"
 #include "Timer.h"
+#include "u8g2.h"
 
 LED_t LED = {
     .GPIOxPiny = B2,
@@ -15,7 +15,7 @@ Key_t Key = {
     .Mode = HIGH,
 };
 
-OLED_t OLED = {
+U8G2_t U8G2 = {
     .SCL = B8,
     .SDA = B9,
 };
@@ -50,22 +50,24 @@ int main() {
     LED_Init(&LED);
     Key_Init(&Key);
 
-    OLED_Init(&OLED);
+    U8G2_Init(&U8G2);
     Sampler_Init(&Sampler);
     Timer_Init(&Timer);
 
-    OLED_ShowString(&OLED, 2, 2, ".   V");
+    u8g2_SetFont(&U8G2.u8g2, u8g2_font_t0_16_me);
     for (;;) {
-        OLED_ShowNum(&OLED, 1, 1, Sampler.Index, 3);
+        u8g2_ClearBuffer(&U8G2.u8g2);
+
+        U8G2_Printf(&U8G2, 1, 16, "%d", Sampler.Index);
 
         uint16_t temp = Sampler.Data[Sampler.Index];
-        OLED_ShowNum(&OLED, 2, 1, (uint16_t)(temp * 3.3 / 4095.), 1);
-        OLED_ShowNum(&OLED, 2, 3, (uint16_t)(temp * 3.3 / 4095. * 1000.) % 1000,
-                     3);
+        U8G2_Printf(&U8G2, 1, 32, "%.3f V", temp * 3.3 / 4095.);
 
         if (Key_Read(&Key)) {
             LED_Turn(&LED);
         }
+
+        u8g2_SendBuffer(&U8G2.u8g2);
     }
 }
 
