@@ -60,46 +60,23 @@ int main() {
     for (;;) {
         u8g2_ClearBuffer(&U8G2.u8g2);
 
-        for (uint16_t i = Sampler.Index + 1; i < Sampler.Length - 1; i++) {
+        uint16_t x = 0;
+        uint16_t Index = (Sampler.Index + 1) % Sampler.Length;
+        do {
             u8g2_DrawLine(
-                &U8G2.u8g2,
-                (float)(i - (Sampler.Index + 1)) * U8G2.Width / Sampler.Length,
+                &U8G2.u8g2, (float)x * U8G2.Width / Sampler.Length,
                 U8G2.Height -
-                    ((float)Sampler.Data[i] * U8G2.Height / 2. / 4095. +
+                    ((float)Sampler.Data[Index] * U8G2.Height / 2. / 4095. +
                      U8G2.Height / 4.),
-                (float)(i - (Sampler.Index + 1) + 1) * U8G2.Width /
-                    Sampler.Length,
+                (float)(x + 1) * U8G2.Width / Sampler.Length,
                 U8G2.Height -
-                    ((float)Sampler.Data[i + 1] * U8G2.Height / 2. / 4095. +
+                    ((float)Sampler.Data[(Index + 1) % Sampler.Length] *
+                         U8G2.Height / 2. / 4095. +
                      U8G2.Height / 4.));
-        }
 
-        u8g2_DrawLine(&U8G2.u8g2,
-                      (float)(Sampler.Length - Sampler.Index - 2) * U8G2.Width /
-                          Sampler.Length,
-                      U8G2.Height - ((float)Sampler.Data[Sampler.Length - 1] *
-                                         U8G2.Height / 2. / 4095. +
-                                     U8G2.Height / 4.),
-                      (float)(Sampler.Length - Sampler.Index - 1) * U8G2.Width /
-                          Sampler.Length,
-                      U8G2.Height -
-                          ((float)Sampler.Data[0] * U8G2.Height / 2. / 4095. +
-                           U8G2.Height / 4.));
-
-        for (uint16_t i = 0; i < Sampler.Index; i++) {
-            u8g2_DrawLine(
-                &U8G2.u8g2,
-                (float)(i + Sampler.Length - (Sampler.Index + 1)) * U8G2.Width /
-                    Sampler.Length,
-                U8G2.Height -
-                    ((float)Sampler.Data[i] * U8G2.Height / 2. / 4095. +
-                     U8G2.Height / 4.),
-                (float)(i + Sampler.Length - (Sampler.Index + 1) + 1) *
-                    U8G2.Width / Sampler.Length,
-                U8G2.Height -
-                    ((float)Sampler.Data[i + 1] * U8G2.Height / 2. / 4095. +
-                     U8G2.Height / 4.));
-        }
+            x++;
+            Index = (Index + 1) % Sampler.Length;
+        } while (x < U8G2.Width - 1);
 
         U8G2_Printf(&U8G2, 1 - 1, 64 - 1, "%.3f V",
                     Sampler.Data[Sampler.Index] * 3.3 / 4095.);
