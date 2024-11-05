@@ -3,9 +3,6 @@ cbuild-pack:
     - resolved-pack: ARM::CMSIS@6.1.0
       selected-by-pack:
         - ARM::CMSIS
-    - resolved-pack: ARM::CMSIS-DSP@1.16.2
-      selected-by-pack:
-        - ARM::CMSIS-DSP
     - resolved-pack: ARM::CMSIS-FreeRTOS@11.1.0
       selected-by-pack:
         - ARM::CMSIS-FreeRTOS

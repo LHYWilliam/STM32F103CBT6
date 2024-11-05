@@ -4,8 +4,8 @@
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
+#include "OLED.h"
 #include "Sampler.h"
-#include "u8g2.h"
 
 LED_t LED = {
     .GPIOxPiny = B2,
@@ -17,11 +17,13 @@ Key_t Key = {
     .Mode = HIGH,
 };
 
-U8G2_t U8G2 = {
+OLED_t OLED = {
     .SCL = B8,
     .SDA = B9,
     .Width = 128,
     .Height = 64,
+    .I2C = ENABLE,
+    .U8g2 = ENABLE,
 };
 
 #define LENGTH 64
@@ -57,8 +59,8 @@ int main() {
 
     Sampler_Init(&Sampler);
 
-    U8G2_Init(&U8G2);
-    u8g2_SetFont(&U8G2.u8g2, u8g2_font_t0_16_me);
+    OLED_Init(&OLED);
+    u8g2_SetFont(&OLED.u8g2, u8g2_font_t0_16_me);
 
     vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);

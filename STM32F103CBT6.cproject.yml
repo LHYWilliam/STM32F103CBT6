@@ -3,7 +3,6 @@ project:
     - pack: Keil::STM32F1xx_DFP
     - pack: ARM::CMSIS
     - pack: ARM::CMSIS-FreeRTOS
-    - pack: ARM::CMSIS-DSP
   setups:
     - setup: Options for STM32F103CBT6
       add-path:
@@ -117,7 +116,6 @@ project:
         - file: U8g2/mui.h
         - file: U8g2/mui_u8g2.c
         - file: U8g2/mui_u8g2.h
-        - file: U8g2/u8g2.c
         - file: U8g2/u8g2.h
         - file: U8g2/u8g2_arc.c
         - file: U8g2/u8g2_bitmap.c

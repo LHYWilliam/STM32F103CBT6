@@ -253,6 +253,26 @@ void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
     }
 }
 
+#if U8G2
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "Delay.h"
+
+GPIO_TypeDef *SCL_GPIOx;
+uint32_t SCL_GPIO_Pin;
+GPIO_TypeDef *SDA_GPIOx;
+uint32_t SDA_GPIO_Pin;
+
+uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
+                                   U8X8_UNUSED uint8_t msg,
+                                   U8X8_UNUSED uint8_t arg_int,
+                                   U8X8_UNUSED void *arg_ptr);
+
+#endif
+
 /**
  * @brief  OLED初始化
  * @param  无
@@ -268,6 +288,24 @@ void OLED_Init(OLED_t *self) {
     }
 
     OLED_I2C_Init(self); // 端口初始化
+
+#if U8G2
+
+    SCL_GPIOx = self->SCL_GPIOx;
+    SCL_GPIO_Pin = self->SCL_GPIO_Pin;
+    SDA_GPIOx = self->SDA_GPIOx;
+    SDA_GPIO_Pin = self->SDA_GPIO_Pin;
+
+    if (self->I2C) {
+        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
+    }
+
+    u8g2_InitDisplay(&self->u8g2); // send init sequence to the display, display
+                                   // is in sleep mode after this,
+    u8g2_SetPowerSave(&self->u8g2, 0); // wake up display
+
+#else
 
     OLED_WriteCommand(self, 0xAE); // 关闭显示
 
@@ -308,4 +346,71 @@ void OLED_Init(OLED_t *self) {
     OLED_WriteCommand(self, 0xAF); // 开启显示
 
     OLED_Clear(self); // OLED清屏
+
+#endif
 }
+
+#if U8G2
+
+void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
+                 ...) {
+    va_list arg;
+    va_start(arg, format);
+    vsprintf((char *)self->Buffer, format, arg);
+    va_end(arg);
+
+    u8g2_DrawUTF8(&self->u8g2, x, y, (char *)self->Buffer);
+}
+
+uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
+                                   U8X8_UNUSED uint8_t msg,
+                                   U8X8_UNUSED uint8_t arg_int,
+                                   U8X8_UNUSED void *arg_ptr) {
+    switch (msg) {
+    // Initialize SPI peripheral
+    case U8X8_MSG_GPIO_AND_DELAY_INIT:
+        /* HAL initialization contains all what we need so we can skip this
+         * part. */
+
+        break;
+
+    // Function which implements a delay, arg_int contains the amount of ms
+    case U8X8_MSG_DELAY_MILLI:
+        Delay_ms(arg_int);
+
+        break;
+    // Function which delays 10us
+    case U8X8_MSG_DELAY_10MICRO:
+        Delay_us(10);
+
+        break;
+    // Function which delays 100ns
+    case U8X8_MSG_DELAY_100NANO:
+        __NOP();
+
+        break;
+    // Function to define the logic level of the clockline
+    case U8X8_MSG_GPIO_I2C_CLOCK:
+        if (arg_int)
+            GPIO_WriteBit(SCL_GPIOx, SCL_GPIO_Pin, Bit_SET);
+        else
+            GPIO_WriteBit(SCL_GPIOx, SCL_GPIO_Pin, Bit_RESET);
+
+        break;
+    // Function to define the logic level of the data line to the display
+    case U8X8_MSG_GPIO_I2C_DATA:
+        if (arg_int)
+            GPIO_WriteBit(SDA_GPIOx, SDA_GPIO_Pin, Bit_SET);
+        else
+            GPIO_WriteBit(SDA_GPIOx, SDA_GPIO_Pin, Bit_RESET);
+
+        break;
+    default:
+        return 0; // A message was received which is not implemented, return 0
+                  // to indicate an error
+    }
+
+    return 1; // command processed successfully.
+}
+
+#endif

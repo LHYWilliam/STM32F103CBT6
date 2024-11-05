@@ -665,11 +665,6 @@
               <FilePath>.\U8g2\mui_u8g2.h</FilePath>
             </File>
             <File>
-              <FileName>u8g2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\U8g2\u8g2.c</FilePath>
-            </File>
-            <File>
               <FileName>u8g2.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\U8g2\u8g2.h</FilePath>
