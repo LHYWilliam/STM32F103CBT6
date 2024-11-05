@@ -60,8 +60,8 @@ int main() {
     U8G2_Init(&U8G2);
     u8g2_SetFont(&U8G2.u8g2, u8g2_font_t0_16_me);
 
-    vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(1000), pdTRUE,
-                             (void *)0, vLEDTimerCallback);
+    vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
+                             vLEDTimerCallback);
     vU8G2Timer = xTimerCreate("vU8G2Timer", pdMS_TO_TICKS(100), pdTRUE,
                               (void *)1, vU8G2TimerCallback);
 
