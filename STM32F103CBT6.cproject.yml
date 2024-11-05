@@ -2,7 +2,7 @@ project:
   packs:
     - pack: Keil::STM32F1xx_DFP
     - pack: ARM::CMSIS
-    - pack: ARM::CMSIS-NN
+    - pack: ARM::CMSIS-FreeRTOS
     - pack: ARM::CMSIS-DSP
   setups:
     - setup: Options for STM32F103CBT6
@@ -58,6 +58,8 @@ project:
     - group: Source
       files:
         - file: Source/main.c
+        - file: Source/task.c
+        - file: Source/interrupt.c
     - group: Util
       files:
         - file: Util/Delay.c
@@ -160,6 +162,13 @@ project:
         - file: U8g2/u8x8_u16toa.c
   components:
     - component: ARM::CMSIS:CORE
+    - component: ARM::CMSIS:OS Tick:SysTick
+    - component: ARM::CMSIS:RTOS2:FreeRTOS&Cortex-M
+    - component: ARM::RTOS&FreeRTOS:Config&CMSIS RTOS2
+    - component: ARM::RTOS&FreeRTOS:Core&Cortex-M
+    - component: ARM::RTOS&FreeRTOS:Event Groups
+    - component: ARM::RTOS&FreeRTOS:Heap&Heap_4
+    - component: ARM::RTOS&FreeRTOS:Timers
     - component: Keil::Device:Startup
     - component: Keil::Device:StdPeriph Drivers:ADC
     - component: Keil::Device:StdPeriph Drivers:BKP

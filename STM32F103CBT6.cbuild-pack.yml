@@ -6,9 +6,9 @@ cbuild-pack:
     - resolved-pack: ARM::CMSIS-DSP@1.16.2
       selected-by-pack:
         - ARM::CMSIS-DSP
-    - resolved-pack: ARM::CMSIS-NN@6.0.0
+    - resolved-pack: ARM::CMSIS-FreeRTOS@11.1.0
       selected-by-pack:
-        - ARM::CMSIS-NN
+        - ARM::CMSIS-FreeRTOS
     - resolved-pack: Keil::STM32F1xx_DFP@2.4.1
       selected-by-pack:
         - Keil::STM32F1xx_DFP

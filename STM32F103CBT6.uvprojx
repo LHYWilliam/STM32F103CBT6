@@ -389,6 +389,16 @@
               <FileType>1</FileType>
               <FilePath>.\Source\main.c</FilePath>
             </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\task.c</FilePath>
+            </File>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\interrupt.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -877,15 +887,73 @@
         <Group>
           <GroupName>::Device</GroupName>
         </Group>
+        <Group>
+          <GroupName>::RTOS</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>
 
   <RTE>
-    <apis/>
+    <apis>
+      <api Capiversion="1.0.1" Cclass="CMSIS" Cgroup="OS Tick" exclusive="1">
+        <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </api>
+      <api Capiversion="2.3.0" Cclass="CMSIS" Cgroup="RTOS2" exclusive="1">
+        <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </api>
+    </apis>
     <components>
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Capiversion="1.0.1" Cclass="CMSIS" Cgroup="OS Tick" Csub="SysTick" Cvendor="ARM" Cversion="1.0.5" condition="OS Tick SysTick">
+        <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Capiversion="2.3.0" Cclass="CMSIS" Cgroup="RTOS2" Csub="FreeRTOS" Cvariant="Cortex-M" Cvendor="ARM" Cversion="11.1.0" condition="CMSIS RTOS2 FreeRTOS CortexM">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Config" Cvariant="CMSIS RTOS2" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Config CMSIS RTOS2">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Core" Cvariant="Cortex-M" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Core CM">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Event Groups" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Event Groups">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Heap" Cvariant="Heap_4" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Heap">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Timers" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Timers">
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
         <targetInfos>
           <targetInfo name="STM32F103CBT6"/>
         </targetInfos>
@@ -1064,6 +1132,14 @@
         <instance index="0">RTE\Device\STM32F103CB\system_stm32f10x.c</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="1.0.0" condition="STM32F1xx CMSIS"/>
         <package name="STM32F1xx_DFP" schemaVersion="1.7.2" url="https://www.keil.com/pack/" vendor="Keil" version="2.4.1"/>
+        <targetInfos>
+          <targetInfo name="STM32F103CBT6"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="header" name="CMSIS\RTOS2\FreeRTOS\Config\FreeRTOSConfig.h" version="10.6.0">
+        <instance index="0">RTE\RTOS\FreeRTOSConfig.h</instance>
+        <component Cbundle="FreeRTOS" Cclass="RTOS" Cgroup="Config" Cvariant="CMSIS RTOS2" Cvendor="ARM" Cversion="11.1.0" condition="FreeRTOS Config CMSIS RTOS2"/>
+        <package name="CMSIS-FreeRTOS" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="11.1.0"/>
         <targetInfos>
           <targetInfo name="STM32F103CBT6"/>
         </targetInfos>
