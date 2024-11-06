@@ -5,77 +5,208 @@
 #include CMSIS_device_header
 
 #define BITBAND(addr, bitnum)                                                  \
-    ((addr & 0xF0000000) + 0x2000000 + ((addr & 0xFFFFF) << 5) + (bitnum << 2))
-#define MEM_ADDR(addr)         *((volatile unsigned long *)(addr))
-#define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
+    (((addr) & 0xF0000000) + 0x2000000 + (((addr) & 0xFFFFF) << 5) +           \
+     ((bitnum) << 2))
+#define MEM_ADDR(addr)         *((volatile uint32_t *)(addr))
+#define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND((addr), (bitnum)))
 
-#define GPIOA_ODR_Addr         (GPIOA_BASE + 12)
-#define GPIOB_ODR_Addr         (GPIOB_BASE + 12)
-#define GPIOC_ODR_Addr         (GPIOC_BASE + 12)
-#define GPIOD_ODR_Addr         (GPIOD_BASE + 12)
-#define GPIOE_ODR_Addr         (GPIOE_BASE + 12)
-#define GPIOF_ODR_Addr         (GPIOF_BASE + 12)
-#define GPIOG_ODR_Addr         (GPIOG_BASE + 12)
+#define GPIOA_CRL              (GPIOA_BASE + 0)
+#define GPIOB_CRL              (GPIOB_BASE + 0)
+#define GPIOC_CRL              (GPIOC_BASE + 0)
 
-#define GPIOA_IDR_Addr         (GPIOA_BASE + 8)
-#define GPIOB_IDR_Addr         (GPIOB_BASE + 8)
-#define GPIOC_IDR_Addr         (GPIOC_BASE + 8)
-#define GPIOD_IDR_Addr         (GPIOD_BASE + 8)
-#define GPIOE_IDR_Addr         (GPIOE_BASE + 8)
-#define GPIOF_IDR_Addr         (GPIOF_BASE + 8)
-#define GPIOG_IDR_Addr         (GPIOG_BASE + 8)
+#define GPIOA_CRH              (GPIOA_BASE + 4)
+#define GPIOB_CRH              (GPIOB_BASE + 4)
+#define GPIOC_CRH              (GPIOC_BASE + 4)
 
-#define PAout(n)               BIT_ADDR(GPIOA_ODR_Addr, n)
-#define PAin(n)                BIT_ADDR(GPIOA_IDR_Addr, n)
+#define GPIOA_IDR              (GPIOA_BASE + 8)
+#define GPIOB_IDR              (GPIOB_BASE + 8)
+#define GPIOC_IDR              (GPIOC_BASE + 8)
 
-#define PBout(n)               BIT_ADDR(GPIOB_ODR_Addr, n)
-#define PBin(n)                BIT_ADDR(GPIOB_IDR_Addr, n)
+#define GPIOA_ODR              (GPIOA_BASE + 12)
+#define GPIOB_ODR              (GPIOB_BASE + 12)
+#define GPIOC_ODR              (GPIOC_BASE + 12)
 
-#define PCout(n)               BIT_ADDR(GPIOC_ODR_Addr, n)
-#define PCin(n)                BIT_ADDR(GPIOC_IDR_Addr, n)
+#define PAin(n)                BIT_ADDR(GPIOA_IDR, (n))
+#define PBin(n)                BIT_ADDR(GPIOB_IDR, (n))
+#define PCin(n)                BIT_ADDR(GPIOC_IDR, (n))
 
-#define PDout(n)               BIT_ADDR(GPIOD_ODR_Addr, n)
-#define PDin(n)                BIT_ADDR(GPIOD_IDR_Addr, n)
+#define PAout(n)               BIT_ADDR(GPIOA_ODR, (n))
+#define PBout(n)               BIT_ADDR(GPIOB_ODR, (n))
+#define PCout(n)               BIT_ADDR(GPIOC_ODR, (n))
 
-#define PEout(n)               BIT_ADDR(GPIOE_ODR_Addr, n)
-#define PEin(n)                BIT_ADDR(GPIOE_IDR_Addr, n)
+#define GPIO_CR(x)                                                             \
+    (x[0] == 'A' && ((x[1] - '0' >= 8) || x[2])   ? GPIOA_CRH                  \
+     : x[0] == 'A' && (x[1] - '0' < 8)            ? GPIOA_CRL                  \
+     : x[0] == 'B' && ((x[1] - '0' >= 8) || x[2]) ? GPIOB_CRH                  \
+     : x[0] == 'B' && (x[1] - '0' < 8)            ? GPIOB_CRL                  \
+     : x[0] == 'C' && ((x[1] - '0' >= 8) || x[2]) ? GPIOC_CRH                  \
+     : x[0] == 'C' && (x[1] - '0' < 8)            ? GPIOC_CRL                  \
+                                                  : NULL)
 
-#define PFout(n)               BIT_ADDR(GPIOF_ODR_Addr, n)
-#define PFin(n)                BIT_ADDR(GPIOF_IDR_Addr, n)
+#define GPIO_IDR(x)                                                            \
+    (x[0] == 'A' && x[1] == '0'   ? BITBAND(GPIOA_IDR, 0)                      \
+     : x[0] == 'A' && x[2] == '5' ? BITBAND(GPIOA_IDR, 15)                     \
+     : x[0] == 'A' && x[2] == '4' ? BITBAND(GPIOA_IDR, 14)                     \
+     : x[0] == 'A' && x[2] == '3' ? BITBAND(GPIOA_IDR, 13)                     \
+     : x[0] == 'A' && x[2] == '2' ? BITBAND(GPIOA_IDR, 12)                     \
+     : x[0] == 'A' && x[2] == '1' ? BITBAND(GPIOA_IDR, 11)                     \
+     : x[0] == 'A' && x[2] == '0' ? BITBAND(GPIOA_IDR, 10)                     \
+     : x[0] == 'A' && x[1] == '9' ? BITBAND(GPIOA_IDR, 9)                      \
+     : x[0] == 'A' && x[1] == '8' ? BITBAND(GPIOA_IDR, 8)                      \
+     : x[0] == 'A' && x[1] == '7' ? BITBAND(GPIOA_IDR, 7)                      \
+     : x[0] == 'A' && x[1] == '6' ? BITBAND(GPIOA_IDR, 6)                      \
+     : x[0] == 'A' && x[1] == '5' ? BITBAND(GPIOA_IDR, 5)                      \
+     : x[0] == 'A' && x[1] == '4' ? BITBAND(GPIOA_IDR, 4)                      \
+     : x[0] == 'A' && x[1] == '3' ? BITBAND(GPIOA_IDR, 3)                      \
+     : x[0] == 'A' && x[1] == '2' ? BITBAND(GPIOA_IDR, 2)                      \
+     : x[0] == 'A' && x[1] == '1' ? BITBAND(GPIOA_IDR, 1)                      \
+     : x[0] == 'B' && x[1] == '0' ? BITBAND(GPIOB_IDR, 0)                      \
+     : x[0] == 'B' && x[2] == '5' ? BITBAND(GPIOB_IDR, 15)                     \
+     : x[0] == 'B' && x[2] == '4' ? BITBAND(GPIOB_IDR, 14)                     \
+     : x[0] == 'B' && x[2] == '3' ? BITBAND(GPIOB_IDR, 13)                     \
+     : x[0] == 'B' && x[2] == '2' ? BITBAND(GPIOB_IDR, 12)                     \
+     : x[0] == 'B' && x[2] == '1' ? BITBAND(GPIOB_IDR, 11)                     \
+     : x[0] == 'B' && x[2] == '0' ? BITBAND(GPIOB_IDR, 10)                     \
+     : x[0] == 'B' && x[1] == '9' ? BITBAND(GPIOB_IDR, 9)                      \
+     : x[0] == 'B' && x[1] == '8' ? BITBAND(GPIOB_IDR, 8)                      \
+     : x[0] == 'B' && x[1] == '7' ? BITBAND(GPIOB_IDR, 7)                      \
+     : x[0] == 'B' && x[1] == '6' ? BITBAND(GPIOB_IDR, 6)                      \
+     : x[0] == 'B' && x[1] == '5' ? BITBAND(GPIOB_IDR, 5)                      \
+     : x[0] == 'B' && x[1] == '4' ? BITBAND(GPIOB_IDR, 4)                      \
+     : x[0] == 'B' && x[1] == '3' ? BITBAND(GPIOB_IDR, 3)                      \
+     : x[0] == 'B' && x[1] == '2' ? BITBAND(GPIOB_IDR, 2)                      \
+     : x[0] == 'B' && x[1] == '1' ? BITBAND(GPIOB_IDR, 1)                      \
+     : x[0] == 'C' && x[1] == '0' ? BITBAND(GPIOC_IDR, 0)                      \
+     : x[0] == 'C' && x[2] == '5' ? BITBAND(GPIOC_IDR, 15)                     \
+     : x[0] == 'C' && x[2] == '4' ? BITBAND(GPIOC_IDR, 14)                     \
+     : x[0] == 'C' && x[2] == '3' ? BITBAND(GPIOC_IDR, 13)                     \
+     : x[0] == 'C' && x[2] == '2' ? BITBAND(GPIOC_IDR, 12)                     \
+     : x[0] == 'C' && x[2] == '1' ? BITBAND(GPIOC_IDR, 11)                     \
+     : x[0] == 'C' && x[2] == '0' ? BITBAND(GPIOC_IDR, 10)                     \
+     : x[0] == 'C' && x[1] == '9' ? BITBAND(GPIOC_IDR, 9)                      \
+     : x[0] == 'C' && x[1] == '8' ? BITBAND(GPIOC_IDR, 8)                      \
+     : x[0] == 'C' && x[1] == '7' ? BITBAND(GPIOC_IDR, 7)                      \
+     : x[0] == 'C' && x[1] == '6' ? BITBAND(GPIOC_IDR, 6)                      \
+     : x[0] == 'C' && x[1] == '5' ? BITBAND(GPIOC_IDR, 5)                      \
+     : x[0] == 'C' && x[1] == '4' ? BITBAND(GPIOC_IDR, 4)                      \
+     : x[0] == 'C' && x[1] == '3' ? BITBAND(GPIOC_IDR, 3)                      \
+     : x[0] == 'C' && x[1] == '2' ? BITBAND(GPIOC_IDR, 2)                      \
+     : x[0] == 'C' && x[1] == '1' ? BITBAND(GPIOC_IDR, 1)                      \
+                                  : NULL)
 
-#define PGout(n)               BIT_ADDR(GPIOG_ODR_Addr, n)
-#define PGin(n)                BIT_ADDR(GPIOG_IDR_Addr, n)
+#define GPIO_ODR(x)                                                            \
+    (x[0] == 'A' && x[1] == '0'   ? BITBAND(GPIOA_ODR, 0)                      \
+     : x[0] == 'A' && x[2] == '5' ? BITBAND(GPIOA_ODR, 15)                     \
+     : x[0] == 'A' && x[2] == '4' ? BITBAND(GPIOA_ODR, 14)                     \
+     : x[0] == 'A' && x[2] == '3' ? BITBAND(GPIOA_ODR, 13)                     \
+     : x[0] == 'A' && x[2] == '2' ? BITBAND(GPIOA_ODR, 12)                     \
+     : x[0] == 'A' && x[2] == '1' ? BITBAND(GPIOA_ODR, 11)                     \
+     : x[0] == 'A' && x[2] == '0' ? BITBAND(GPIOA_ODR, 10)                     \
+     : x[0] == 'A' && x[1] == '9' ? BITBAND(GPIOA_ODR, 9)                      \
+     : x[0] == 'A' && x[1] == '8' ? BITBAND(GPIOA_ODR, 8)                      \
+     : x[0] == 'A' && x[1] == '7' ? BITBAND(GPIOA_ODR, 7)                      \
+     : x[0] == 'A' && x[1] == '6' ? BITBAND(GPIOA_ODR, 6)                      \
+     : x[0] == 'A' && x[1] == '5' ? BITBAND(GPIOA_ODR, 5)                      \
+     : x[0] == 'A' && x[1] == '4' ? BITBAND(GPIOA_ODR, 4)                      \
+     : x[0] == 'A' && x[1] == '3' ? BITBAND(GPIOA_ODR, 3)                      \
+     : x[0] == 'A' && x[1] == '2' ? BITBAND(GPIOA_ODR, 2)                      \
+     : x[0] == 'A' && x[1] == '1' ? BITBAND(GPIOA_ODR, 1)                      \
+     : x[0] == 'B' && x[1] == '0' ? BITBAND(GPIOB_ODR, 0)                      \
+     : x[0] == 'B' && x[2] == '5' ? BITBAND(GPIOB_ODR, 15)                     \
+     : x[0] == 'B' && x[2] == '4' ? BITBAND(GPIOB_ODR, 14)                     \
+     : x[0] == 'B' && x[2] == '3' ? BITBAND(GPIOB_ODR, 13)                     \
+     : x[0] == 'B' && x[2] == '2' ? BITBAND(GPIOB_ODR, 12)                     \
+     : x[0] == 'B' && x[2] == '1' ? BITBAND(GPIOB_ODR, 11)                     \
+     : x[0] == 'B' && x[2] == '0' ? BITBAND(GPIOB_ODR, 10)                     \
+     : x[0] == 'B' && x[1] == '9' ? BITBAND(GPIOB_ODR, 9)                      \
+     : x[0] == 'B' && x[1] == '8' ? BITBAND(GPIOB_ODR, 8)                      \
+     : x[0] == 'B' && x[1] == '7' ? BITBAND(GPIOB_ODR, 7)                      \
+     : x[0] == 'B' && x[1] == '6' ? BITBAND(GPIOB_ODR, 6)                      \
+     : x[0] == 'B' && x[1] == '5' ? BITBAND(GPIOB_ODR, 5)                      \
+     : x[0] == 'B' && x[1] == '4' ? BITBAND(GPIOB_ODR, 4)                      \
+     : x[0] == 'B' && x[1] == '3' ? BITBAND(GPIOB_ODR, 3)                      \
+     : x[0] == 'B' && x[1] == '2' ? BITBAND(GPIOB_ODR, 2)                      \
+     : x[0] == 'B' && x[1] == '1' ? BITBAND(GPIOB_ODR, 1)                      \
+     : x[0] == 'C' && x[1] == '0' ? BITBAND(GPIOC_ODR, 0)                      \
+     : x[0] == 'C' && x[2] == '5' ? BITBAND(GPIOC_ODR, 15)                     \
+     : x[0] == 'C' && x[2] == '4' ? BITBAND(GPIOC_ODR, 14)                     \
+     : x[0] == 'C' && x[2] == '3' ? BITBAND(GPIOC_ODR, 13)                     \
+     : x[0] == 'C' && x[2] == '2' ? BITBAND(GPIOC_ODR, 12)                     \
+     : x[0] == 'C' && x[2] == '1' ? BITBAND(GPIOC_ODR, 11)                     \
+     : x[0] == 'C' && x[2] == '0' ? BITBAND(GPIOC_ODR, 10)                     \
+     : x[0] == 'C' && x[1] == '9' ? BITBAND(GPIOC_ODR, 9)                      \
+     : x[0] == 'C' && x[1] == '8' ? BITBAND(GPIOC_ODR, 8)                      \
+     : x[0] == 'C' && x[1] == '7' ? BITBAND(GPIOC_ODR, 7)                      \
+     : x[0] == 'C' && x[1] == '6' ? BITBAND(GPIOC_ODR, 6)                      \
+     : x[0] == 'C' && x[1] == '5' ? BITBAND(GPIOC_ODR, 5)                      \
+     : x[0] == 'C' && x[1] == '4' ? BITBAND(GPIOC_ODR, 4)                      \
+     : x[0] == 'C' && x[1] == '3' ? BITBAND(GPIOC_ODR, 3)                      \
+     : x[0] == 'C' && x[1] == '2' ? BITBAND(GPIOC_ODR, 2)                      \
+     : x[0] == 'C' && x[1] == '1' ? BITBAND(GPIOC_ODR, 1)                      \
+                                  : NULL)
+
+#define GPIO_Pin(x)                                                            \
+    (x[1] == '0'   ? 0                                                         \
+     : x[2] == '5' ? 15                                                        \
+     : x[2] == '4' ? 14                                                        \
+     : x[2] == '3' ? 13                                                        \
+     : x[2] == '2' ? 12                                                        \
+     : x[2] == '1' ? 11                                                        \
+     : x[2] == '0' ? 10                                                        \
+     : x[1] == '9' ? 9                                                         \
+     : x[1] == '8' ? 8                                                         \
+     : x[1] == '7' ? 7                                                         \
+     : x[1] == '6' ? 6                                                         \
+     : x[1] == '5' ? 5                                                         \
+     : x[1] == '4' ? 4                                                         \
+     : x[1] == '3' ? 3                                                         \
+     : x[1] == '2' ? 2                                                         \
+     : x[1] == '1' ? 1                                                         \
+                   : NULL)
+
+#define GPIO_Input(CR, x)                                                      \
+    do {                                                                       \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
+        MEM_ADDR((CR)) |= ((uint32_t)0b1000 << ((x) % 8 * 4));                 \
+    } while (0)
+
+#define GPIO_Output(CR, x)                                                     \
+    do {                                                                       \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
+        MEM_ADDR((CR)) |= ((uint32_t)0b0011 << ((x) % 8 * 4));                 \
+    } while (0)
+
+#define GPIO_Write(x, val) MEM_ADDR((x)) = ((val) ? 1 : 0)
+#define GPIO_ReadInput(x)  MEM_ADDR((x))
+#define GPIO_ReadOutput(x) MEM_ADDR((x))
 
 #define RCC_APB2Periph_GPIOx(x)                                                \
-    ((x[0]) == 'A'   ? RCC_APB2Periph_GPIOA                                    \
-     : (x[0]) == 'B' ? RCC_APB2Periph_GPIOB                                    \
-     : (x[0]) == 'C' ? RCC_APB2Periph_GPIOC                                    \
-                     : NULL)
+    (x[0] == 'A'   ? RCC_APB2Periph_GPIOA                                      \
+     : x[0] == 'B' ? RCC_APB2Periph_GPIOB                                      \
+     : x[0] == 'C' ? RCC_APB2Periph_GPIOC                                      \
+                   : NULL)
 
 #define GPIOx(x)                                                               \
-    ((x[0]) == 'A'   ? GPIOA                                                   \
-     : (x[0]) == 'B' ? GPIOB                                                   \
-     : (x[0]) == 'C' ? GPIOC                                                   \
-                     : NULL)
+    (x[0] == 'A' ? GPIOA : x[0] == 'B' ? GPIOB : x[0] == 'C' ? GPIOC : NULL)
 
 #define GPIO_Pinx(x)                                                           \
-    ((x[1]) == '0'   ? GPIO_Pin_0                                              \
-     : (x[2]) == '5' ? GPIO_Pin_15                                             \
-     : (x[2]) == '4' ? GPIO_Pin_14                                             \
-     : (x[2]) == '3' ? GPIO_Pin_13                                             \
-     : (x[2]) == '2' ? GPIO_Pin_12                                             \
-     : (x[2]) == '1' ? GPIO_Pin_11                                             \
-     : (x[2]) == '0' ? GPIO_Pin_10                                             \
-     : (x[1]) == '9' ? GPIO_Pin_9                                              \
-     : (x[1]) == '8' ? GPIO_Pin_8                                              \
-     : (x[1]) == '7' ? GPIO_Pin_7                                              \
-     : (x[1]) == '6' ? GPIO_Pin_6                                              \
-     : (x[1]) == '5' ? GPIO_Pin_5                                              \
-     : (x[1]) == '4' ? GPIO_Pin_4                                              \
-     : (x[1]) == '3' ? GPIO_Pin_3                                              \
-     : (x[1]) == '2' ? GPIO_Pin_2                                              \
-     : (x[1]) == '1' ? GPIO_Pin_1                                              \
-                     : NULL)
+    (x[1] == '0'   ? GPIO_Pin_0                                                \
+     : x[2] == '5' ? GPIO_Pin_15                                               \
+     : x[2] == '4' ? GPIO_Pin_14                                               \
+     : x[2] == '3' ? GPIO_Pin_13                                               \
+     : x[2] == '2' ? GPIO_Pin_12                                               \
+     : x[2] == '1' ? GPIO_Pin_11                                               \
+     : x[2] == '0' ? GPIO_Pin_10                                               \
+     : x[1] == '9' ? GPIO_Pin_9                                                \
+     : x[1] == '8' ? GPIO_Pin_8                                                \
+     : x[1] == '7' ? GPIO_Pin_7                                                \
+     : x[1] == '6' ? GPIO_Pin_6                                                \
+     : x[1] == '5' ? GPIO_Pin_5                                                \
+     : x[1] == '4' ? GPIO_Pin_4                                                \
+     : x[1] == '3' ? GPIO_Pin_3                                                \
+     : x[1] == '2' ? GPIO_Pin_2                                                \
+     : x[1] == '1' ? GPIO_Pin_1                                                \
+                   : NULL)
 
 #define A0  "A0"
 #define A1  "A1"

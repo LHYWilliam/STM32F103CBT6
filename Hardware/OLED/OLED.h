@@ -16,11 +16,6 @@ typedef struct {
     char SCL[4];
     char SDA[4];
 
-    GPIO_TypeDef *SCL_GPIOx;
-    uint16_t SCL_GPIO_Pin;
-    GPIO_TypeDef *SDA_GPIOx;
-    uint16_t SDA_GPIO_Pin;
-
 #if U8G2
 
     uint8_t U8g2;
@@ -33,6 +28,13 @@ typedef struct {
     u8g2_t u8g2;
 
     uint8_t Buffer[128];
+
+#else
+
+    GPIO_TypeDef *SCL_GPIOx;
+    uint16_t SCL_GPIO_Pin;
+    GPIO_TypeDef *SDA_GPIOx;
+    uint16_t SDA_GPIO_Pin;
 
 #endif
 

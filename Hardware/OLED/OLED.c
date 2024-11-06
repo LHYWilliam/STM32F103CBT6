@@ -1,38 +1,146 @@
+#include "OLED.h"
+
+#if U8G2
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "Delay.h"
+#include "GPIO.h"
+
+uint32_t SCL_ODR;
+uint32_t SDA_ODR;
+
+void OLED_I2C_Init(OLED_t *self);
+
+uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
+                                   U8X8_UNUSED uint8_t msg,
+                                   U8X8_UNUSED uint8_t arg_int,
+                                   U8X8_UNUSED void *arg_ptr);
+
+#else
+
 #include <string.h>
 
 #include "GPIO.h"
-#include "OLED.h"
 #include "OLED_Font.h"
 
-/*引脚配置*/
-void OLED_W_SCL(OLED_t *self, uint8_t x) {
-    GPIO_WriteBit(self->SCL_GPIOx, self->SCL_GPIO_Pin, x ? Bit_SET : Bit_RESET);
-}
-void OLED_W_SDA(OLED_t *oled, uint8_t x) {
-    GPIO_WriteBit(oled->SDA_GPIOx, oled->SDA_GPIO_Pin, x ? Bit_SET : Bit_RESET);
+#define OLED_W_SCL(self, x)                                                    \
+    do {                                                                       \
+        GPIO_WriteBit(self->SCL_GPIOx, self->SCL_GPIO_Pin,                     \
+                      x ? Bit_SET : Bit_RESET);                                \
+    } while (0)
+
+#define OLED_W_SDA(self, x)                                                    \
+    do {                                                                       \
+        GPIO_WriteBit(self->SDA_GPIOx, self->SDA_GPIO_Pin,                     \
+                      x ? Bit_SET : Bit_RESET);                                \
+    } while (0)
+
+void OLED_I2C_Init(OLED_t *self);
+void OLED_WriteCommand(OLED_t *self, uint8_t Command);
+
+#endif
+
+void OLED_Init(OLED_t *self) {
+    uint32_t i, j;
+
+    for (i = 0; i < 1000; i++) // 上电延时
+    {
+        for (j = 0; j < 1000; j++)
+            ;
+    }
+
+    OLED_I2C_Init(self); // 端口初始化
+
+#if U8G2
+
+    SCL_ODR = GPIO_ODR(self->SCL);
+    SDA_ODR = GPIO_ODR(self->SDA);
+
+    if (self->I2C) {
+        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
+    }
+
+    u8g2_InitDisplay(&self->u8g2); // send init sequence to the display, display
+                                   // is in sleep mode after this,
+    u8g2_SetPowerSave(&self->u8g2, 0); // wake up display
+
+#else
+
+    OLED_WriteCommand(self, 0xAE); // 关闭显示
+
+    OLED_WriteCommand(self, 0xD5); // 设置显示时钟分频比/振荡器频率
+    OLED_WriteCommand(self, 0x80);
+
+    OLED_WriteCommand(self, 0xA8); // 设置多路复用率
+    OLED_WriteCommand(self, 0x3F);
+
+    OLED_WriteCommand(self, 0xD3); // 设置显示偏移
+    OLED_WriteCommand(self, 0x00);
+
+    OLED_WriteCommand(self, 0x40); // 设置显示开始行
+
+    OLED_WriteCommand(self, 0xA1); // 设置左右方向，0xA1正常 0xA0左右反置
+
+    OLED_WriteCommand(self, 0xC8); // 设置上下方向，0xC8正常 0xC0上下反置
+
+    OLED_WriteCommand(self, 0xDA); // 设置COM引脚硬件配置
+    OLED_WriteCommand(self, 0x12);
+
+    OLED_WriteCommand(self, 0x81); // 设置对比度控制
+    OLED_WriteCommand(self, 0xCF);
+
+    OLED_WriteCommand(self, 0xD9); // 设置预充电周期
+    OLED_WriteCommand(self, 0xF1);
+
+    OLED_WriteCommand(self, 0xDB); // 设置VCOMH取消选择级别
+    OLED_WriteCommand(self, 0x30);
+
+    OLED_WriteCommand(self, 0xA4); // 设置整个显示打开/关闭
+
+    OLED_WriteCommand(self, 0xA6); // 设置正常/倒转显示
+
+    OLED_WriteCommand(self, 0x8D); // 设置充电泵
+    OLED_WriteCommand(self, 0x14);
+
+    OLED_WriteCommand(self, 0xAF); // 开启显示
+
+    OLED_Clear(self); // OLED清屏
+
+#endif
 }
 
-/*引脚初始化*/
 void OLED_I2C_Init(OLED_t *self) {
     GPIO_t SCL = {
         .Mode = GPIO_Mode_Out_OD,
     };
     strcpy(SCL.GPIOxPiny, self->SCL);
     GPIO_Init_(&SCL);
-    self->SCL_GPIOx = SCL.GPIOx;
-    self->SCL_GPIO_Pin = SCL.GPIO_Pin;
 
     GPIO_t SDA = {
         .Mode = GPIO_Mode_Out_OD,
     };
     strcpy(SDA.GPIOxPiny, self->SDA);
     GPIO_Init_(&SDA);
+
+#if !U8G2
+
+    self->SCL_GPIOx = SCL.GPIOx;
+    self->SCL_GPIO_Pin = SCL.GPIO_Pin;
+
     self->SDA_GPIOx = SDA.GPIOx;
     self->SDA_GPIO_Pin = SDA.GPIO_Pin;
 
     OLED_W_SCL(self, 1);
     OLED_W_SDA(self, 1);
+
+#endif
 }
+
+#if !U8G2
 
 /**
  * @brief  I2C开始
@@ -253,104 +361,39 @@ void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
     }
 }
 
-#if U8G2
-
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "Delay.h"
-
-GPIO_TypeDef *SCL_GPIOx;
-uint32_t SCL_GPIO_Pin;
-GPIO_TypeDef *SDA_GPIOx;
-uint32_t SDA_GPIO_Pin;
+#else
 
 uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
                                    U8X8_UNUSED uint8_t msg,
                                    U8X8_UNUSED uint8_t arg_int,
-                                   U8X8_UNUSED void *arg_ptr);
+                                   U8X8_UNUSED void *arg_ptr) {
+    switch (msg) {
+    case U8X8_MSG_DELAY_MILLI:
+        Delay_ms(arg_int);
+        break;
 
-#endif
+    case U8X8_MSG_DELAY_10MICRO:
+        Delay_us(10);
+        break;
 
-/**
- * @brief  OLED初始化
- * @param  无
- * @retval 无
- */
-void OLED_Init(OLED_t *self) {
-    uint32_t i, j;
+    case U8X8_MSG_DELAY_100NANO:
+        __NOP();
+        break;
 
-    for (i = 0; i < 1000; i++) // 上电延时
-    {
-        for (j = 0; j < 1000; j++)
-            ;
+    case U8X8_MSG_GPIO_I2C_CLOCK:
+        GPIO_Write(SCL_ODR, arg_int);
+        break;
+
+    case U8X8_MSG_GPIO_I2C_DATA:
+        GPIO_Write(SDA_ODR, arg_int);
+        break;
+
+    default:
+        return 0;
     }
 
-    OLED_I2C_Init(self); // 端口初始化
-
-#if U8G2
-
-    SCL_GPIOx = self->SCL_GPIOx;
-    SCL_GPIO_Pin = self->SCL_GPIO_Pin;
-    SDA_GPIOx = self->SDA_GPIOx;
-    SDA_GPIO_Pin = self->SDA_GPIO_Pin;
-
-    if (self->I2C) {
-        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
-    }
-
-    u8g2_InitDisplay(&self->u8g2); // send init sequence to the display, display
-                                   // is in sleep mode after this,
-    u8g2_SetPowerSave(&self->u8g2, 0); // wake up display
-
-#else
-
-    OLED_WriteCommand(self, 0xAE); // 关闭显示
-
-    OLED_WriteCommand(self, 0xD5); // 设置显示时钟分频比/振荡器频率
-    OLED_WriteCommand(self, 0x80);
-
-    OLED_WriteCommand(self, 0xA8); // 设置多路复用率
-    OLED_WriteCommand(self, 0x3F);
-
-    OLED_WriteCommand(self, 0xD3); // 设置显示偏移
-    OLED_WriteCommand(self, 0x00);
-
-    OLED_WriteCommand(self, 0x40); // 设置显示开始行
-
-    OLED_WriteCommand(self, 0xA1); // 设置左右方向，0xA1正常 0xA0左右反置
-
-    OLED_WriteCommand(self, 0xC8); // 设置上下方向，0xC8正常 0xC0上下反置
-
-    OLED_WriteCommand(self, 0xDA); // 设置COM引脚硬件配置
-    OLED_WriteCommand(self, 0x12);
-
-    OLED_WriteCommand(self, 0x81); // 设置对比度控制
-    OLED_WriteCommand(self, 0xCF);
-
-    OLED_WriteCommand(self, 0xD9); // 设置预充电周期
-    OLED_WriteCommand(self, 0xF1);
-
-    OLED_WriteCommand(self, 0xDB); // 设置VCOMH取消选择级别
-    OLED_WriteCommand(self, 0x30);
-
-    OLED_WriteCommand(self, 0xA4); // 设置整个显示打开/关闭
-
-    OLED_WriteCommand(self, 0xA6); // 设置正常/倒转显示
-
-    OLED_WriteCommand(self, 0x8D); // 设置充电泵
-    OLED_WriteCommand(self, 0x14);
-
-    OLED_WriteCommand(self, 0xAF); // 开启显示
-
-    OLED_Clear(self); // OLED清屏
-
-#endif
+    return 1;
 }
-
-#if U8G2
 
 void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
                  ...) {
@@ -360,57 +403,6 @@ void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
     va_end(arg);
 
     u8g2_DrawUTF8(&self->u8g2, x, y, (char *)self->Buffer);
-}
-
-uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
-                                   U8X8_UNUSED uint8_t msg,
-                                   U8X8_UNUSED uint8_t arg_int,
-                                   U8X8_UNUSED void *arg_ptr) {
-    switch (msg) {
-    // Initialize SPI peripheral
-    case U8X8_MSG_GPIO_AND_DELAY_INIT:
-        /* HAL initialization contains all what we need so we can skip this
-         * part. */
-
-        break;
-
-    // Function which implements a delay, arg_int contains the amount of ms
-    case U8X8_MSG_DELAY_MILLI:
-        Delay_ms(arg_int);
-
-        break;
-    // Function which delays 10us
-    case U8X8_MSG_DELAY_10MICRO:
-        Delay_us(10);
-
-        break;
-    // Function which delays 100ns
-    case U8X8_MSG_DELAY_100NANO:
-        __NOP();
-
-        break;
-    // Function to define the logic level of the clockline
-    case U8X8_MSG_GPIO_I2C_CLOCK:
-        if (arg_int)
-            GPIO_WriteBit(SCL_GPIOx, SCL_GPIO_Pin, Bit_SET);
-        else
-            GPIO_WriteBit(SCL_GPIOx, SCL_GPIO_Pin, Bit_RESET);
-
-        break;
-    // Function to define the logic level of the data line to the display
-    case U8X8_MSG_GPIO_I2C_DATA:
-        if (arg_int)
-            GPIO_WriteBit(SDA_GPIOx, SDA_GPIO_Pin, Bit_SET);
-        else
-            GPIO_WriteBit(SDA_GPIOx, SDA_GPIO_Pin, Bit_RESET);
-
-        break;
-    default:
-        return 0; // A message was received which is not implemented, return 0
-                  // to indicate an error
-    }
-
-    return 1; // command processed successfully.
 }
 
 #endif
