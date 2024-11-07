@@ -1,7 +1,5 @@
 #include "OLED.h"
 
-#if U8G2
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,10 +7,10 @@
 #include "Delay.h"
 #include "GPIO.h"
 
+#if U8G2
+
 uint32_t SCL_ODR;
 uint32_t SDA_ODR;
-
-void OLED_I2C_Init(OLED_t *self);
 
 uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
                                    U8X8_UNUSED uint8_t msg,
@@ -21,83 +19,14 @@ uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
 
 #else
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "Delay.h"
-#include "GPIO.h"
 #include "OLED_Font.h"
-
-#define OLED_WriteSCL(self, x) GPIO_Write(self->SCL_ODR, x)
-#define OLED_WriteSDA(self, x) GPIO_Write(self->SDA_ODR, x)
-
-void OLED_I2C_Init(OLED_t *self);
-void OLED_WriteCommand(OLED_t *self, uint8_t Command);
+#include "OLED_I2C.h"
 
 #endif
 
 void OLED_Init(OLED_t *self) {
     Delay_ms(100);
 
-    OLED_I2C_Init(self);
-
-#if U8G2
-
-    if (self->I2C) {
-        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
-    }
-
-    u8g2_InitDisplay(&self->u8g2);
-    u8g2_SetPowerSave(&self->u8g2, 0);
-
-#else
-
-    OLED_WriteCommand(self, 0xAE);
-
-    OLED_WriteCommand(self, 0xD5);
-    OLED_WriteCommand(self, 0x80);
-
-    OLED_WriteCommand(self, 0xA8);
-    OLED_WriteCommand(self, 0x3F);
-
-    OLED_WriteCommand(self, 0xD3);
-    OLED_WriteCommand(self, 0x00);
-
-    OLED_WriteCommand(self, 0x40);
-
-    OLED_WriteCommand(self, 0xA1);
-
-    OLED_WriteCommand(self, 0xC8);
-
-    OLED_WriteCommand(self, 0xDA);
-    OLED_WriteCommand(self, 0x12);
-
-    OLED_WriteCommand(self, 0x81);
-    OLED_WriteCommand(self, 0xCF);
-
-    OLED_WriteCommand(self, 0xD9);
-    OLED_WriteCommand(self, 0xF1);
-
-    OLED_WriteCommand(self, 0xDB);
-    OLED_WriteCommand(self, 0x30);
-
-    OLED_WriteCommand(self, 0xA4);
-
-    OLED_WriteCommand(self, 0xA6);
-
-    OLED_WriteCommand(self, 0x8D);
-    OLED_WriteCommand(self, 0x14);
-
-    OLED_WriteCommand(self, 0xAF);
-
-    OLED_Clear(self);
-
-#endif
-}
-
-void OLED_I2C_Init(OLED_t *self) {
     GPIO_t SCL = {
         .Mode = GPIO_Mode_Out_OD,
     };
@@ -120,58 +49,69 @@ void OLED_I2C_Init(OLED_t *self) {
     self->SCL_ODR = GPIO_ODR(self->SCL);
     self->SDA_ODR = GPIO_ODR(self->SDA);
 
-    OLED_WriteSCL(self, 1);
-    OLED_WriteSDA(self, 1);
+#endif
+
+#if U8G2
+
+    if (self->I2C) {
+        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
+            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
+    }
+
+    u8g2_InitDisplay(&self->u8g2);
+    u8g2_SetPowerSave(&self->u8g2, 0);
+
+#else
+
+    OLED_WriteCommand(self, 0xAE); // 关闭显示
+
+    OLED_WriteCommand(self, 0xD5); // 设置时钟
+    OLED_WriteCommand(self, 0x80);
+
+    OLED_WriteCommand(self, 0xA8); // 设置多路复
+    OLED_WriteCommand(self, 0x3F);
+
+    OLED_WriteCommand(self, 0xD3); // 设置显示偏移
+    OLED_WriteCommand(self, 0x00);
+
+    OLED_WriteCommand(self, 0x40); // 设置起始行
+
+    OLED_WriteCommand(self, 0xA1); // 设置左右方向
+
+    OLED_WriteCommand(self, 0xC8); // 设置上下方向
+
+    OLED_WriteCommand(self, 0xDA); // 设置COM硬件引脚配置
+    OLED_WriteCommand(self, 0x12);
+
+    OLED_WriteCommand(self, 0x81); // 调节亮度
+    OLED_WriteCommand(self, 0xCF);
+
+    OLED_WriteCommand(self, 0xD9); // 设置预充电周期
+    OLED_WriteCommand(self, 0xF1);
+
+    OLED_WriteCommand(self, 0xDB); // 设置VCOMH
+    OLED_WriteCommand(self, 0x30);
+
+    OLED_WriteCommand(self, 0xA4); // 全局显示开启
+
+    OLED_WriteCommand(self, 0xA6); // 设置显示方式
+
+    OLED_WriteCommand(self, 0x8D); // 设置电荷泵
+    OLED_WriteCommand(self, 0x14);
+
+    OLED_WriteCommand(self, 0xAF); // 打开显示
+
+    OLED_Clear(self);
 
 #endif
 }
 
 #if !U8G2
 
-void OLED_I2C_Start(OLED_t *self) {
-    OLED_WriteSDA(self, 1);
-    OLED_WriteSCL(self, 1);
-    OLED_WriteSDA(self, 0);
-    OLED_WriteSCL(self, 0);
-}
-
-void OLED_I2C_Stop(OLED_t *self) {
-    OLED_WriteSDA(self, 0);
-    OLED_WriteSCL(self, 1);
-    OLED_WriteSDA(self, 1);
-}
-
-void OLED_I2C_SendByte(OLED_t *self, uint8_t Byte) {
-    uint8_t i;
-    for (i = 0; i < 8; i++) {
-        OLED_WriteSDA(self, Byte & (0x80 >> i));
-        OLED_WriteSCL(self, 1);
-        OLED_WriteSCL(self, 0);
-    }
-    OLED_WriteSCL(self, 1);
-    OLED_WriteSCL(self, 0);
-}
-
-void OLED_WriteCommand(OLED_t *self, uint8_t Command) {
-    OLED_I2C_Start(self);
-    OLED_I2C_SendByte(self, 0x78);
-    OLED_I2C_SendByte(self, 0x00);
-    OLED_I2C_SendByte(self, Command);
-    OLED_I2C_Stop(self);
-}
-
-void OLED_WriteData(OLED_t *self, uint8_t Data) {
-    OLED_I2C_Start(self);
-    OLED_I2C_SendByte(self, 0x78);
-    OLED_I2C_SendByte(self, 0x40);
-    OLED_I2C_SendByte(self, Data);
-    OLED_I2C_Stop(self);
-}
-
-void OLED_SetCursor(OLED_t *self, uint8_t y, uint8_t x) {
-    OLED_WriteCommand(self, 0xB0 | y);
-    OLED_WriteCommand(self, 0x10 | ((x & 0xF0) >> 4));
-    OLED_WriteCommand(self, 0x00 | (x & 0x0F));
+void OLED_SetCursor(OLED_t *self, uint8_t width, uint8_t height) {
+    OLED_WriteCommand(self, 0xB0 | width);
+    OLED_WriteCommand(self, 0x10 | ((height & 0xF0) >> 4));
+    OLED_WriteCommand(self, 0x00 | (height & 0x0F));
 }
 
 void OLED_Clear(OLED_t *self) {

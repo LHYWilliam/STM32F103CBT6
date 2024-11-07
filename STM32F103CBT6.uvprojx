@@ -639,6 +639,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
             </File>
+            <File>
+              <FileName>OLED_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_I2C.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_I2C.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
