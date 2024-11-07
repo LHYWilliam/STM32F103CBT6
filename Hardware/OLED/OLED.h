@@ -16,6 +16,8 @@ typedef struct {
     char SCL[4];
     char SDA[4];
 
+    uint8_t Buffer[128];
+
 #if U8G2
 
     uint8_t U8g2;
@@ -27,20 +29,24 @@ typedef struct {
 
     u8g2_t u8g2;
 
-    uint8_t Buffer[128];
-
 #else
 
-    GPIO_TypeDef *SCL_GPIOx;
-    uint16_t SCL_GPIO_Pin;
-    GPIO_TypeDef *SDA_GPIOx;
-    uint16_t SDA_GPIO_Pin;
+    uint32_t SCL_ODR;
+    uint32_t SDA_ODR;
 
 #endif
 
 } OLED_t;
 
 void OLED_Init(OLED_t *self);
+
+#if U8G2
+
+void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
+                 ...);
+
+#else
+
 void OLED_Clear(OLED_t *self);
 void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char);
 void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column, char *String);
@@ -52,11 +58,7 @@ void OLED_ShowHexNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
 void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
-
-#if U8G2
-
-void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
-                 ...);
+void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format, ...);
 
 #endif
 

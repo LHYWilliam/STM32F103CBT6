@@ -26,22 +26,22 @@
 #define GPIOB_ODR              (GPIOB_BASE + 12)
 #define GPIOC_ODR              (GPIOC_BASE + 12)
 
-#define PAin(n)                BIT_ADDR(GPIOA_IDR, (n))
-#define PBin(n)                BIT_ADDR(GPIOB_IDR, (n))
-#define PCin(n)                BIT_ADDR(GPIOC_IDR, (n))
+#define Input_GPIOA_Pin(n)     BIT_ADDR(GPIOA_IDR, (n))
+#define Input_GPIOB_Pin(n)     BIT_ADDR(GPIOB_IDR, (n))
+#define Input_GPIOC_Pin(n)     BIT_ADDR(GPIOC_IDR, (n))
 
-#define PAout(n)               BIT_ADDR(GPIOA_ODR, (n))
-#define PBout(n)               BIT_ADDR(GPIOB_ODR, (n))
-#define PCout(n)               BIT_ADDR(GPIOC_ODR, (n))
+#define Output_GPIOA_Pin(n)    BIT_ADDR(GPIOA_ODR, (n))
+#define Output_GPIOB_Pin(n)    BIT_ADDR(GPIOB_ODR, (n))
+#define Output_GPIOC_Pin(n)    BIT_ADDR(GPIOC_ODR, (n))
 
 #define GPIO_CR(x)                                                             \
-    (x[0] == 'A' && ((x[1] - '0' >= 8) || x[2])   ? GPIOA_CRH                  \
-     : x[0] == 'A' && (x[1] - '0' < 8)            ? GPIOA_CRL                  \
-     : x[0] == 'B' && ((x[1] - '0' >= 8) || x[2]) ? GPIOB_CRH                  \
-     : x[0] == 'B' && (x[1] - '0' < 8)            ? GPIOB_CRL                  \
-     : x[0] == 'C' && ((x[1] - '0' >= 8) || x[2]) ? GPIOC_CRH                  \
-     : x[0] == 'C' && (x[1] - '0' < 8)            ? GPIOC_CRL                  \
-                                                  : NULL)
+    (x[0] == 'A' && ((x) >= 8)   ? GPIOA_CRH                                   \
+     : x[0] == 'A' && ((x) < 8)  ? GPIOA_CRL                                   \
+     : x[0] == 'B' && ((x) >= 8) ? GPIOB_CRH                                   \
+     : x[0] == 'B' && ((x) < 8)  ? GPIOB_CRL                                   \
+     : x[0] == 'C' && ((x) >= 8) ? GPIOC_CRH                                   \
+     : x[0] == 'C' && ((x) < 8)  ? GPIOC_CRL                                   \
+                                 : NULL)
 
 #define GPIO_IDR(x)                                                            \
     (x[0] == 'A' && x[1] == '0'   ? BITBAND(GPIOA_IDR, 0)                      \
