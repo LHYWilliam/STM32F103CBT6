@@ -7,19 +7,17 @@
 
 void Serial_Init(Serial_t *self) {
     if (self->TX[0]) {
-        GPIO_t TX = {
+        GPIO_t GPIO = {
             .Mode = GPIO_Mode_AF_PP,
         };
-        strcpy(TX.GPIOxPiny, self->TX);
-        GPIO_Init_(&TX);
+        GPIO_InitPin(GPIO, self->TX);
     }
 
     if (self->RX[0]) {
-        GPIO_t RX = {
+        GPIO_t GPIO = {
             .Mode = GPIO_Mode_IPU,
         };
-        strcpy(RX.GPIOxPiny, self->RX);
-        GPIO_Init_(&RX);
+        GPIO_InitPin(GPIO, self->RX);
     }
 
     USART_t usart = {

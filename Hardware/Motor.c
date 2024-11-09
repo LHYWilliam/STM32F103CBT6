@@ -3,23 +3,20 @@
 #include "PWM.h"
 
 void Motor_Init(Motor_t *self) {
-    GPIO_t PWM_GPIO = {
+    GPIO_t GPIO = {
         .Mode = GPIO_Mode_AF_PP,
     };
-    strcpy(PWM_GPIO.GPIOxPiny, self->PWM);
-    GPIO_Init_(&PWM_GPIO);
+    GPIO_InitPin(GPIO, self->PWM);
 
-    GPIO_t IN1 = {
-        .Mode = GPIO_Mode_Out_PP,
-    };
-    strcpy(IN1.GPIOxPiny, self->IN1);
-    GPIO_Init_(&IN1);
+    GPIO.Mode = GPIO_Mode_Out_PP;
 
-    GPIO_t IN2 = {
-        .Mode = GPIO_Mode_Out_PP,
-    };
-    strcpy(IN2.GPIOxPiny, self->IN2);
-    GPIO_Init_(&IN2);
+    GPIO_InitPin(GPIO, self->IN1);
+    self->IN1_GPIOx = GPIO.GPIOx;
+    self->IN1_GPIO_Pin = GPIO.GPIO_Pin;
+
+    GPIO_InitPin(GPIO, self->IN2);
+    self->IN2_GPIOx = GPIO.GPIOx;
+    self->IN2_GPIO_Pin = GPIO.GPIO_Pin;
 
     PWM_t PWM = {
         .TIMx = self->TIMx,
@@ -31,11 +28,6 @@ void Motor_Init(Motor_t *self) {
     sprintf(Channel, "%d", self->Channel);
     strcpy(PWM.Channel, Channel);
     PWM_Init(&PWM);
-
-    self->IN1_GPIOx = IN1.GPIOx;
-    self->IN1_GPIO_Pin = IN1.GPIO_Pin;
-    self->IN2_GPIOx = IN2.GPIOx;
-    self->IN2_GPIO_Pin = IN2.GPIO_Pin;
 
     self->TIM_SetCompare = PWM.TIM_SetCompare[0];
 }

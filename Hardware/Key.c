@@ -6,8 +6,7 @@ void Key_Init(Key_t *self) {
     GPIO_t GPIO = {
         .Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU,
     };
-    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&GPIO);
+    GPIO_InitPin(GPIO, self->GPIOxPiny);
 
     self->GPIOx = GPIO.GPIOx;
     self->GPIO_Pin = GPIO.GPIO_Pin;

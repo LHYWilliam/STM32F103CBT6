@@ -4,11 +4,10 @@
 #include "TIM.h"
 
 void Encoder_Init(Encoder_t *self) {
-    GPIO_t gpio = {
+    GPIO_t GPIO = {
         .Mode = GPIO_Mode_IPU,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&gpio);
+    GPIO_InitPin(GPIO, self->GPIOxPiny);
 
     TIM_t tim = {
         .TIMx = self->TIMx,

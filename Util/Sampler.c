@@ -8,8 +8,7 @@ void Sampler_Init(Sampler_t *self) {
     GPIO_t GPIO = {
         .Mode = GPIO_Mode_AIN,
     };
-    strcpy(GPIO.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init_(&GPIO);
+    GPIO_InitPin(GPIO, self->GPIOxPiny);
 
     ADC_t ADC = {
         .ADCx = self->ADCx,
