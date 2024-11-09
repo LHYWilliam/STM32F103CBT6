@@ -7,7 +7,8 @@
             "path": "STM32F103CBT6.csolution.yml",
             "target": "STM32F103CBT6",
             "config": {
-                "run": "Flash Device"
+                "run": "Flash Device",
+                "debug": "Arm Debugger"
             }
         }
     ]

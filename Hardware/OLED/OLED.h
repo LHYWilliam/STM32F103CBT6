@@ -4,7 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#define U8G2 1
+#define U8G2 0
 
 #if U8G2
 
@@ -13,6 +13,7 @@
 #endif
 
 typedef struct {
+    uint8_t I2C;
     char SCL[4];
     char SDA[4];
 
@@ -22,14 +23,18 @@ typedef struct {
     uint8_t Buffer[128];
 
 #if U8G2
-
-    uint8_t U8g2;
-    uint8_t I2C;
-    uint8_t SPI;
-
     uint8_t Width;
     uint8_t Height;
 
+    uint8_t SPI;
+    SPI_TypeDef *SPIx;
+    char D0[4];
+    char D1[4];
+    char RES[4];
+    char DC[4];
+    char CS[4];
+
+    uint8_t U8g2;
     u8g2_t u8g2;
 
 #endif
