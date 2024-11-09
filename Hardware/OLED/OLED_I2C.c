@@ -27,7 +27,7 @@ void OLED_I2C_SendByte(OLED_t *self, uint8_t Byte) {
     OLED_WriteSCL(self, 0);
 }
 
-void OLED_WriteCommand(OLED_t *self, uint8_t Command) {
+void OLED_I2C_WriteCommand(OLED_t *self, uint8_t Command) {
     OLED_I2C_Start(self);
     OLED_I2C_SendByte(self, 0x78);
     OLED_I2C_SendByte(self, 0x00);
@@ -35,7 +35,7 @@ void OLED_WriteCommand(OLED_t *self, uint8_t Command) {
     OLED_I2C_Stop(self);
 }
 
-void OLED_WriteData(OLED_t *self, uint8_t Data) {
+void OLED_I2C_WriteData(OLED_t *self, uint8_t Data) {
     OLED_I2C_Start(self);
     OLED_I2C_SendByte(self, 0x78);
     OLED_I2C_SendByte(self, 0x40);

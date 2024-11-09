@@ -27,6 +27,7 @@ uint8_t u8g2_gpio_and_delay_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 
 #include "OLED_Font.h"
 #include "OLED_I2C.h"
+#include "OLED_SPI.h"
 
 #endif
 
@@ -84,8 +85,8 @@ void OLED_Init(OLED_t *self) {
         DC_ODR = GPIO_ODR(self->DC);
         CS_ODR = GPIO_ODR(self->CS);
 
-        GPIO_Write(self->CS, 1);
-        GPIO_Write(self->RES, 1);
+        GPIO_Write(self->CS_ODR, 1);
+        GPIO_Write(self->RES_ODR, 1);
 
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); // 使能SPI1时钟
 
@@ -114,20 +115,59 @@ void OLED_Init(OLED_t *self) {
 
 #else
 
-    GPIO_t SCL = {
-        .Mode = GPIO_Mode_Out_OD,
-    };
-    strcpy(SCL.GPIOxPiny, self->SCL);
-    GPIO_Init_(&SCL);
+    if (self->I2C) {
+        GPIO_t SCL = {
+            .Mode = GPIO_Mode_Out_OD,
+        };
+        strcpy(SCL.GPIOxPiny, self->SCL);
+        GPIO_Init_(&SCL);
 
-    GPIO_t SDA = {
-        .Mode = GPIO_Mode_Out_OD,
-    };
-    strcpy(SDA.GPIOxPiny, self->SDA);
-    GPIO_Init_(&SDA);
+        GPIO_t SDA = {
+            .Mode = GPIO_Mode_Out_OD,
+        };
+        strcpy(SDA.GPIOxPiny, self->SDA);
+        GPIO_Init_(&SDA);
 
-    self->SCL_ODR = GPIO_ODR(self->SCL);
-    self->SDA_ODR = GPIO_ODR(self->SDA);
+        self->SCL_ODR = GPIO_ODR(self->SCL);
+        self->SDA_ODR = GPIO_ODR(self->SDA);
+
+        self->OLED_WriteCommand = OLED_I2C_WriteCommand;
+        self->OLED_WriteData = OLED_I2C_WriteData;
+    }
+
+    if (self->SPI) {
+        GPIO_t GPIO = {
+            .Mode = GPIO_Mode_Out_PP,
+        };
+
+        strcpy(GPIO.GPIOxPiny, self->D0);
+        GPIO_Init_(&GPIO);
+
+        strcpy(GPIO.GPIOxPiny, self->D1);
+        GPIO_Init_(&GPIO);
+
+        strcpy(GPIO.GPIOxPiny, self->RES);
+        GPIO_Init_(&GPIO);
+
+        strcpy(GPIO.GPIOxPiny, self->DC);
+        GPIO_Init_(&GPIO);
+
+        strcpy(GPIO.GPIOxPiny, self->CS);
+        GPIO_Init_(&GPIO);
+
+        self->D0_ODR = GPIO_ODR(self->D0);
+        self->D1_ODR = GPIO_ODR(self->D1);
+        self->RES_ODR = GPIO_ODR(self->RES);
+        self->DC_ODR = GPIO_ODR(self->DC);
+        self->CS_ODR = GPIO_ODR(self->CS);
+
+        GPIO_Write(self->CS_ODR, 1);
+        GPIO_Write(self->DC_ODR, 1);
+        GPIO_Write(self->RES_ODR, 1);
+
+        self->OLED_WriteCommand = OLED_SPI_WriteCommand;
+        self->OLED_WriteData = OLED_SPI_WriteData;
+    }
 
 #endif
 
@@ -150,46 +190,51 @@ void OLED_Init(OLED_t *self) {
     u8g2_SetPowerSave(&self->u8g2, 0);
 
 #else
-
+    if (self->SPI) {
+        GPIO_Write(self->RES_ODR, 0);
+    }
     Delay_ms(100);
+    if (self->SPI) {
+        GPIO_Write(self->RES_ODR, 1);
+    }
 
-    OLED_WriteCommand(self, 0xAE); // 关闭显示
+    self->OLED_WriteCommand(self, 0xAE); // 关闭显示
 
-    OLED_WriteCommand(self, 0xD5); // 设置时钟
-    OLED_WriteCommand(self, 0x80);
+    self->OLED_WriteCommand(self, 0xD5); // 设置时钟
+    self->OLED_WriteCommand(self, 0x80);
 
-    OLED_WriteCommand(self, 0xA8); // 设置多路复
-    OLED_WriteCommand(self, 0x3F);
+    self->OLED_WriteCommand(self, 0xA8); // 设置多路复
+    self->OLED_WriteCommand(self, 0x3F);
 
-    OLED_WriteCommand(self, 0xD3); // 设置显示偏移
-    OLED_WriteCommand(self, 0x00);
+    self->OLED_WriteCommand(self, 0xD3); // 设置显示偏移
+    self->OLED_WriteCommand(self, 0x00);
 
-    OLED_WriteCommand(self, 0x40); // 设置起始行
+    self->OLED_WriteCommand(self, 0x40); // 设置起始行
 
-    OLED_WriteCommand(self, 0xA1); // 设置左右方向
+    self->OLED_WriteCommand(self, 0xA1); // 设置左右方向
 
-    OLED_WriteCommand(self, 0xC8); // 设置上下方向
+    self->OLED_WriteCommand(self, 0xC8); // 设置上下方向
 
-    OLED_WriteCommand(self, 0xDA); // 设置COM硬件引脚配置
-    OLED_WriteCommand(self, 0x12);
+    self->OLED_WriteCommand(self, 0xDA); // 设置COM硬件引脚配置
+    self->OLED_WriteCommand(self, 0x12);
 
-    OLED_WriteCommand(self, 0x81); // 调节亮度
-    OLED_WriteCommand(self, 0xCF);
+    self->OLED_WriteCommand(self, 0x81); // 调节亮度
+    self->OLED_WriteCommand(self, 0xCF);
 
-    OLED_WriteCommand(self, 0xD9); // 设置预充电周期
-    OLED_WriteCommand(self, 0xF1);
+    self->OLED_WriteCommand(self, 0xD9); // 设置预充电周期
+    self->OLED_WriteCommand(self, 0xF1);
 
-    OLED_WriteCommand(self, 0xDB); // 设置VCOMH
-    OLED_WriteCommand(self, 0x30);
+    self->OLED_WriteCommand(self, 0xDB); // 设置VCOMH
+    self->OLED_WriteCommand(self, 0x30);
 
-    OLED_WriteCommand(self, 0xA4); // 全局显示开启
+    self->OLED_WriteCommand(self, 0xA4); // 全局显示开启
 
-    OLED_WriteCommand(self, 0xA6); // 设置显示方式
+    self->OLED_WriteCommand(self, 0xA6); // 设置显示方式
 
-    OLED_WriteCommand(self, 0x8D); // 设置电荷泵
-    OLED_WriteCommand(self, 0x14);
+    self->OLED_WriteCommand(self, 0x8D); // 设置电荷泵
+    self->OLED_WriteCommand(self, 0x14);
 
-    OLED_WriteCommand(self, 0xAF); // 打开显示
+    self->OLED_WriteCommand(self, 0xAF); // 打开显示
 
     OLED_Clear(self);
 
@@ -199,16 +244,16 @@ void OLED_Init(OLED_t *self) {
 #if !U8G2
 
 void OLED_SetCursor(OLED_t *self, uint8_t width, uint8_t height) {
-    OLED_WriteCommand(self, 0xB0 | width);
-    OLED_WriteCommand(self, 0x10 | ((height & 0xF0) >> 4));
-    OLED_WriteCommand(self, 0x00 | (height & 0x0F));
+    self->OLED_WriteCommand(self, 0xB0 | width);
+    self->OLED_WriteCommand(self, 0x10 | ((height & 0xF0) >> 4));
+    self->OLED_WriteCommand(self, 0x00 | (height & 0x0F));
 }
 
 void OLED_Clear(OLED_t *self) {
     for (uint8_t j = 0; j < 8; j++) {
         OLED_SetCursor(self, j, 0);
         for (uint8_t i = 0; i < 128; i++) {
-            OLED_WriteData(self, 0x00);
+            self->OLED_WriteData(self, 0x00);
         }
     }
 }
@@ -216,12 +261,12 @@ void OLED_Clear(OLED_t *self) {
 void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char) {
     OLED_SetCursor(self, (Line - 1) * 2, (Column - 1) * 8);
     for (uint8_t i = 0; i < 8; i++) {
-        OLED_WriteData(self, OLED_F8x16[Char - ' '][i]);
+        self->OLED_WriteData(self, OLED_F8x16[Char - ' '][i]);
     }
 
     OLED_SetCursor(self, (Line - 1) * 2 + 1, (Column - 1) * 8);
     for (uint8_t i = 0; i < 8; i++) {
-        OLED_WriteData(self, OLED_F8x16[Char - ' '][i + 8]);
+        self->OLED_WriteData(self, OLED_F8x16[Char - ' '][i + 8]);
     }
 }
 

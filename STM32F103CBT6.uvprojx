@@ -649,6 +649,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED\OLED_I2C.h</FilePath>
             </File>
+            <File>
+              <FileName>OLED_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_SPI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_SPI.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

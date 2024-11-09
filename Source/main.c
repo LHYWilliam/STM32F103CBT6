@@ -1,4 +1,5 @@
 #include "FreeRTOS.h"
+#include "stm32f10x.h"
 #include "timers.h"
 
 #include "GPIO.h"
@@ -17,12 +18,28 @@ Key_t Key = {
     .Mode = HIGH,
 };
 
+// OLED_t OLED = {
+//     .SCL = B8,
+//     .SDA = B9,
+//     .I2C = ENABLE,
+// };
+
+// OLED_t OLED = {
+//     .D0 = "B12",
+//     .D1 = "B13",
+//     .RES = "B14",
+//     .DC = "B15",
+//     .CS = "A8",
+//     .SPI = ENABLE,
+// };
+
 OLED_t OLED = {
-    .SCL = B8, .SDA = B9,
-    // .Width = 128,
-    // .Height = 64,
-    // .I2C = ENABLE,
-    // .U8g2 = ENABLE,
+    .SCL = B8,
+    .SDA = B9,
+    .Width = 128,
+    .Height = 64,
+    .I2C = ENABLE,
+    .U8g2 = ENABLE,
 };
 
 // OLED_t OLED = {
@@ -66,24 +83,22 @@ void vU8G2TimerCallback(TimerHandle_t pxTimer);
 int main() {
     SysTick_Config(SystemCoreClock / 1000);
 
-    OLED_Init(&OLED);
-
     LED_Init(&LED);
     Key_Init(&Key);
 
+    OLED_Init(&OLED);
+
     Sampler_Init(&Sampler);
 
-    // u8g2_SetFont(&OLED.u8g2, u8g2_font_t0_16_me);
+    u8g2_SetFont(&OLED.u8g2, u8g2_font_t0_16_me);
 
     vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
-    // vU8G2Timer = xTimerCreate("vU8G2Timer", pdMS_TO_TICKS(100), pdTRUE,
-    //                           (void *)1, vU8G2TimerCallback);
+    vU8G2Timer = xTimerCreate("vU8G2Timer", pdMS_TO_TICKS(100), pdTRUE,
+                              (void *)1, vU8G2TimerCallback);
 
     xTimerStart(vLEDTimer, 0);
-    // xTimerStart(vU8G2Timer, 0);
-
-    OLED_Printf(&OLED, 1, 1, "Hello, World!");
+    xTimerStart(vU8G2Timer, 0);
 
     vTaskStartScheduler();
 }

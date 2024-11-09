@@ -4,7 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#define U8G2 0
+#define U8G2 1
 
 #if U8G2
 
@@ -12,13 +12,27 @@
 
 #endif
 
-typedef struct {
+typedef struct OLED_t {
     uint8_t I2C;
     char SCL[4];
     char SDA[4];
-
     uint32_t SCL_ODR;
     uint32_t SDA_ODR;
+
+    uint8_t SPI;
+    char D0[4];
+    char D1[4];
+    char RES[4];
+    char DC[4];
+    char CS[4];
+    uint32_t D0_ODR;
+    uint32_t D1_ODR;
+    uint32_t RES_ODR;
+    uint32_t DC_ODR;
+    uint32_t CS_ODR;
+
+    void (*OLED_WriteCommand)(struct OLED_t *self, uint8_t Command);
+    void (*OLED_WriteData)(struct OLED_t *self, uint8_t Data);
 
     uint8_t Buffer[128];
 
@@ -26,16 +40,10 @@ typedef struct {
     uint8_t Width;
     uint8_t Height;
 
-    uint8_t SPI;
-    SPI_TypeDef *SPIx;
-    char D0[4];
-    char D1[4];
-    char RES[4];
-    char DC[4];
-    char CS[4];
-
     uint8_t U8g2;
     u8g2_t u8g2;
+
+    SPI_TypeDef *SPIx;
 
 #endif
 

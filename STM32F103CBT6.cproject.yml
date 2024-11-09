@@ -112,6 +112,8 @@ project:
         - file: Hardware/OLED/OLED_Font.h
         - file: Hardware/OLED/OLED_I2C.c
         - file: Hardware/OLED/OLED_I2C.h
+        - file: Hardware/OLED/OLED_SPI.c
+        - file: Hardware/OLED/OLED_SPI.h
     - group: U8g2
       files:
         - file: U8g2/mui.c
