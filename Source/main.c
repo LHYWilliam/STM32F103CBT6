@@ -99,5 +99,7 @@ int main() {
     xTimerStart(vLEDTimer, 0);
     xTimerStart(vU8G2Timer, 0);
 
+    //    OLED_Printf(&OLED, 1, 1, "Hello World!");
+
     vTaskStartScheduler();
 }

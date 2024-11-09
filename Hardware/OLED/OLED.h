@@ -56,7 +56,7 @@ void OLED_Init(OLED_t *self);
 void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
                  ...);
 
-#else
+#endif
 
 void OLED_Clear(OLED_t *self);
 
@@ -73,7 +73,5 @@ void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
 
 void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format, ...);
-
-#endif
 
 #endif

@@ -21,193 +21,193 @@ uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 uint8_t u8g2_gpio_and_delay_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                                    void *arg_ptr);
 
-#else
+#endif
 
 #include "OLED_Font.h"
 #include "OLED_I2C.h"
 #include "OLED_SPI.h"
 
-#endif
-
 void OLED_Init(OLED_t *self) {
 #if U8G2
+    if (self->U8g2) {
+        if (self->I2C) {
+            GPIO_t GPIO = {
+                .Mode = GPIO_Mode_Out_OD,
+            };
 
-    if (self->I2C) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_Out_OD,
-        };
+            GPIO_InitPin(GPIO, self->SCL);
+            GPIO_InitPin(GPIO, self->SDA);
 
-        GPIO_InitPin(GPIO, self->SCL);
-        GPIO_InitPin(GPIO, self->SDA);
+            SCL_ODR = GPIO_ODR(self->SCL);
+            SDA_ODR = GPIO_ODR(self->SDA);
+        } else if (self->SPI) {
+            GPIO_t GPIO = {
+                .Mode = GPIO_Mode_AF_PP,
+            };
 
-        SCL_ODR = GPIO_ODR(self->SCL);
-        SDA_ODR = GPIO_ODR(self->SDA);
+            GPIO_InitPin(GPIO, self->D0);
+            GPIO_InitPin(GPIO, self->D1);
+            GPIO.Mode = GPIO_Mode_Out_PP;
+            GPIO_InitPin(GPIO, self->RES);
+            GPIO_InitPin(GPIO, self->DC);
+            GPIO_InitPin(GPIO, self->CS);
+
+            RES_ODR = GPIO_ODR(self->RES);
+            DC_ODR = GPIO_ODR(self->DC);
+            CS_ODR = GPIO_ODR(self->CS);
+
+            GPIO_Write(RES_ODR, 1);
+            GPIO_Write(DC_ODR, 1);
+            GPIO_Write(CS_ODR, 1);
+
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); // 使能SPI1时钟
+
+            SPI_InitTypeDef SPI_InitStructure; // 定义结构体变量
+            SPI_InitStructure.SPI_Mode =
+                SPI_Mode_Master; // 模式，选择为SPI主模式
+            SPI_InitStructure.SPI_Direction =
+                SPI_Direction_1Line_Tx; // 方向，选择2线全双工
+            SPI_InitStructure.SPI_DataSize =
+                SPI_DataSize_8b; // 数据宽度，选择为8位
+            SPI_InitStructure.SPI_FirstBit =
+                SPI_FirstBit_MSB; // 先行位，选择高位先行
+            SPI_InitStructure.SPI_BaudRatePrescaler =
+                SPI_BaudRatePrescaler_32; // 波特率分频，选择128分频
+            SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low; // SPI极性，选择低极性
+            SPI_InitStructure.SPI_CPHA =
+                SPI_CPHA_1Edge; // SPI相位，选择第一个时钟边沿采样，极性和相位决定选择SPI模式0
+            SPI_InitStructure.SPI_NSS = SPI_NSS_Soft; // NSS，选择由软件控制
+            SPI_InitStructure.SPI_CRCPolynomial =
+                7; // CRC多项式，暂时用不到，给默认值7
+            SPI_Init(self->SPIx,
+                     &SPI_InitStructure); // 将结构体变量交给SPI_Init，配置SPI1
+            SPIx = self->SPIx;
+
+            /*SPI使能*/
+            SPI_Cmd(self->SPIx, ENABLE); // 使能SPI1，开始运行
+        }
+    } else {
+
+#endif
+
+        if (self->I2C) {
+            GPIO_t GPIO = {
+                .Mode = GPIO_Mode_Out_OD,
+            };
+
+            GPIO_InitPin(GPIO, self->SCL);
+            GPIO_InitPin(GPIO, self->SDA);
+
+            self->SCL_ODR = GPIO_ODR(self->SCL);
+            self->SDA_ODR = GPIO_ODR(self->SDA);
+
+            self->OLED_WriteData = OLED_I2C_WriteData;
+            self->OLED_WriteCommand = OLED_I2C_WriteCommand;
+        } else if (self->SPI) {
+            GPIO_t GPIO = {
+                .Mode = GPIO_Mode_Out_PP,
+            };
+
+            GPIO_InitPin(GPIO, self->D0);
+            GPIO_InitPin(GPIO, self->D1);
+            GPIO_InitPin(GPIO, self->RES);
+            GPIO_InitPin(GPIO, self->DC);
+            GPIO_InitPin(GPIO, self->CS);
+
+            self->D0_ODR = GPIO_ODR(self->D0);
+            self->D1_ODR = GPIO_ODR(self->D1);
+            self->RES_ODR = GPIO_ODR(self->RES);
+            self->DC_ODR = GPIO_ODR(self->DC);
+            self->CS_ODR = GPIO_ODR(self->CS);
+
+            GPIO_Write(self->CS_ODR, 1);
+            GPIO_Write(self->DC_ODR, 1);
+            GPIO_Write(self->RES_ODR, 1);
+
+            self->OLED_WriteData = OLED_SPI_WriteData;
+            self->OLED_WriteCommand = OLED_SPI_WriteCommand;
+        }
+
+#if U8G2
     }
-
-    if (self->SPI) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_AF_PP,
-        };
-
-        GPIO_InitPin(GPIO, self->D0);
-        GPIO_InitPin(GPIO, self->D1);
-        GPIO.Mode = GPIO_Mode_Out_PP;
-        GPIO_InitPin(GPIO, self->RES);
-        GPIO_InitPin(GPIO, self->DC);
-        GPIO_InitPin(GPIO, self->CS);
-
-        RES_ODR = GPIO_ODR(self->RES);
-        DC_ODR = GPIO_ODR(self->DC);
-        CS_ODR = GPIO_ODR(self->CS);
-
-        GPIO_Write(RES_ODR, 1);
-        GPIO_Write(DC_ODR, 1);
-        GPIO_Write(CS_ODR, 1);
-
-        RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); // 使能SPI1时钟
-
-        SPI_InitTypeDef SPI_InitStructure;            // 定义结构体变量
-        SPI_InitStructure.SPI_Mode = SPI_Mode_Master; // 模式，选择为SPI主模式
-        SPI_InitStructure.SPI_Direction =
-            SPI_Direction_1Line_Tx; // 方向，选择2线全双工
-        SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; // 数据宽度，选择为8位
-        SPI_InitStructure.SPI_FirstBit =
-            SPI_FirstBit_MSB; // 先行位，选择高位先行
-        SPI_InitStructure.SPI_BaudRatePrescaler =
-            SPI_BaudRatePrescaler_32; // 波特率分频，选择128分频
-        SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low; // SPI极性，选择低极性
-        SPI_InitStructure.SPI_CPHA =
-            SPI_CPHA_1Edge; // SPI相位，选择第一个时钟边沿采样，极性和相位决定选择SPI模式0
-        SPI_InitStructure.SPI_NSS = SPI_NSS_Soft; // NSS，选择由软件控制
-        SPI_InitStructure.SPI_CRCPolynomial =
-            7; // CRC多项式，暂时用不到，给默认值7
-        SPI_Init(self->SPIx,
-                 &SPI_InitStructure); // 将结构体变量交给SPI_Init，配置SPI1
-        SPIx = self->SPIx;
-
-        /*SPI使能*/
-        SPI_Cmd(self->SPIx, ENABLE); // 使能SPI1，开始运行
-    }
-
-#else
-
-    if (self->I2C) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_Out_OD,
-        };
-
-        GPIO_InitPin(GPIO, self->SCL);
-        GPIO_InitPin(GPIO, self->SDA);
-
-        self->SCL_ODR = GPIO_ODR(self->SCL);
-        self->SDA_ODR = GPIO_ODR(self->SDA);
-
-        self->OLED_WriteData = OLED_I2C_WriteData;
-        self->OLED_WriteCommand = OLED_I2C_WriteCommand;
-    }
-
-    if (self->SPI) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_Out_PP,
-        };
-
-        GPIO_InitPin(GPIO, self->D0);
-        GPIO_InitPin(GPIO, self->D1);
-        GPIO_InitPin(GPIO, self->RES);
-        GPIO_InitPin(GPIO, self->DC);
-        GPIO_InitPin(GPIO, self->CS);
-
-        self->D0_ODR = GPIO_ODR(self->D0);
-        self->D1_ODR = GPIO_ODR(self->D1);
-        self->RES_ODR = GPIO_ODR(self->RES);
-        self->DC_ODR = GPIO_ODR(self->DC);
-        self->CS_ODR = GPIO_ODR(self->CS);
-
-        GPIO_Write(self->CS_ODR, 1);
-        GPIO_Write(self->DC_ODR, 1);
-        GPIO_Write(self->RES_ODR, 1);
-
-        self->OLED_WriteData = OLED_SPI_WriteData;
-        self->OLED_WriteCommand = OLED_SPI_WriteCommand;
-    }
-
 #endif
 
 #if U8G2
+    if (self->U8g2) {
+        if (self->I2C) {
+            Delay_ms(100);
 
-    if (self->I2C) {
-        Delay_ms(100);
+            u8g2_Setup_ssd1306_i2c_128x64_noname_f(&self->u8g2, U8G2_R0,
+                                                   u8x8_byte_sw_i2c,
+                                                   u8g2_gpio_and_delay_sw_i2c);
+        } else if (self->SPI) {
+            GPIO_Write(RES_ODR, 0);
+            Delay_ms(100);
+            GPIO_Write(RES_ODR, 1);
 
-        u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-            &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
-    }
+            u8g2_Setup_ssd1306_128x64_noname_f(&self->u8g2, U8G2_R0,
+                                               u8x8_byte_4wire_hw_spi,
+                                               u8g2_gpio_and_delay_hw_spi);
+        }
 
-    if (self->SPI) {
-        GPIO_Write(RES_ODR, 0);
-        Delay_ms(100);
-        GPIO_Write(RES_ODR, 1);
-
-        u8g2_Setup_ssd1306_128x64_noname_f(&self->u8g2, U8G2_R0,
-                                           u8x8_byte_4wire_hw_spi,
-                                           u8g2_gpio_and_delay_hw_spi);
-    }
-
-    u8g2_InitDisplay(&self->u8g2);
-    u8g2_SetPowerSave(&self->u8g2, 0);
-
-#else
-    if (self->SPI) {
-        GPIO_Write(self->RES_ODR, 0);
-    }
-    Delay_ms(100);
-    if (self->SPI) {
-        GPIO_Write(self->RES_ODR, 1);
-    }
-
-    self->OLED_WriteCommand(self, 0xAE); // 关闭显示
-
-    self->OLED_WriteCommand(self, 0xD5); // 设置时钟
-    self->OLED_WriteCommand(self, 0x80);
-
-    self->OLED_WriteCommand(self, 0xA8); // 设置多路复
-    self->OLED_WriteCommand(self, 0x3F);
-
-    self->OLED_WriteCommand(self, 0xD3); // 设置显示偏移
-    self->OLED_WriteCommand(self, 0x00);
-
-    self->OLED_WriteCommand(self, 0x40); // 设置起始行
-
-    self->OLED_WriteCommand(self, 0xA1); // 设置左右方向
-
-    self->OLED_WriteCommand(self, 0xC8); // 设置上下方向
-
-    self->OLED_WriteCommand(self, 0xDA); // 设置COM硬件引脚配置
-    self->OLED_WriteCommand(self, 0x12);
-
-    self->OLED_WriteCommand(self, 0x81); // 调节亮度
-    self->OLED_WriteCommand(self, 0xCF);
-
-    self->OLED_WriteCommand(self, 0xD9); // 设置预充电周期
-    self->OLED_WriteCommand(self, 0xF1);
-
-    self->OLED_WriteCommand(self, 0xDB); // 设置VCOMH
-    self->OLED_WriteCommand(self, 0x30);
-
-    self->OLED_WriteCommand(self, 0xA4); // 全局显示开启
-
-    self->OLED_WriteCommand(self, 0xA6); // 设置显示方式
-
-    self->OLED_WriteCommand(self, 0x8D); // 设置电荷泵
-    self->OLED_WriteCommand(self, 0x14);
-
-    self->OLED_WriteCommand(self, 0xAF); // 打开显示
-
-    OLED_Clear(self);
+        u8g2_InitDisplay(&self->u8g2);
+        u8g2_SetPowerSave(&self->u8g2, 0);
+    } else {
 
 #endif
-}
 
-#if !U8G2
+        if (self->SPI) {
+            GPIO_Write(self->RES_ODR, 0);
+        }
+        Delay_ms(100);
+        if (self->SPI) {
+            GPIO_Write(self->RES_ODR, 1);
+        }
+
+        self->OLED_WriteCommand(self, 0xAE); // 关闭显示
+
+        self->OLED_WriteCommand(self, 0xD5); // 设置时钟
+        self->OLED_WriteCommand(self, 0x80);
+
+        self->OLED_WriteCommand(self, 0xA8); // 设置多路复
+        self->OLED_WriteCommand(self, 0x3F);
+
+        self->OLED_WriteCommand(self, 0xD3); // 设置显示偏移
+        self->OLED_WriteCommand(self, 0x00);
+
+        self->OLED_WriteCommand(self, 0x40); // 设置起始行
+
+        self->OLED_WriteCommand(self, 0xA1); // 设置左右方向
+
+        self->OLED_WriteCommand(self, 0xC8); // 设置上下方向
+
+        self->OLED_WriteCommand(self, 0xDA); // 设置COM硬件引脚配置
+        self->OLED_WriteCommand(self, 0x12);
+
+        self->OLED_WriteCommand(self, 0x81); // 调节亮度
+        self->OLED_WriteCommand(self, 0xCF);
+
+        self->OLED_WriteCommand(self, 0xD9); // 设置预充电周期
+        self->OLED_WriteCommand(self, 0xF1);
+
+        self->OLED_WriteCommand(self, 0xDB); // 设置VCOMH
+        self->OLED_WriteCommand(self, 0x30);
+
+        self->OLED_WriteCommand(self, 0xA4); // 全局显示开启
+
+        self->OLED_WriteCommand(self, 0xA6); // 设置显示方式
+
+        self->OLED_WriteCommand(self, 0x8D); // 设置电荷泵
+        self->OLED_WriteCommand(self, 0x14);
+
+        self->OLED_WriteCommand(self, 0xAF); // 打开显示
+
+        OLED_Clear(self);
+
+#if U8G2
+    }
+#endif
+}
 
 void OLED_SetCursor(OLED_t *self, uint8_t width, uint8_t height) {
     self->OLED_WriteCommand(self, 0xB0 | width);
@@ -304,7 +304,7 @@ void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format,
     OLED_ShowString(self, x, y, (char *)self->Buffer);
 }
 
-#else
+#if U8G2
 
 uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                                void *arg_ptr) {

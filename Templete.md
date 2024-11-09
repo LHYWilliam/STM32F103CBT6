@@ -21,7 +21,7 @@ Key_Init(&Key);
 
 
 # OLED
-### Soft I2C
+### Software I2C
 ```
 OLED_t OLED = {
     .SCL = B8,
@@ -30,7 +30,7 @@ OLED_t OLED = {
 };
 ```
 
-### Soft SPI
+### Software SPI
 ```
 OLED_t OLED = {
     .D0 = "B12",
@@ -42,7 +42,7 @@ OLED_t OLED = {
 };
 ```
 
-### Soft I2C U8g2
+### Software I2C U8g2
 ```
 OLED_t OLED = {
    .SCL = B8,
@@ -51,6 +51,22 @@ OLED_t OLED = {
    .Height = 64,
    .I2C = ENABLE,
    .U8g2 = ENABLE,
+};
+```
+
+### Hardware SPI U8g2
+```
+OLED_t OLED = {
+    .D0 = "B13",
+    .D1 = "B15",
+    .RES = "A8",
+    .DC = "A9",
+    .CS = "A10",
+    .Width = 128,
+    .Height = 64,
+    .SPIx = SPI2,
+    .SPI = ENABLE,
+    .U8g2 = ENABLE,
 };
 ```
 
