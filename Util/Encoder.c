@@ -1,7 +1,5 @@
-#include <string.h>
-
-#include "Capture.h"
 #include "Encoder.h"
+#include "Capture.h"
 #include "GPIO.h"
 #include "TIM.h"
 

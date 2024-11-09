@@ -1,7 +1,4 @@
 #include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "GPIO.h"
 #include "Interrupt.h"

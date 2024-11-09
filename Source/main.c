@@ -1,5 +1,4 @@
 #include "FreeRTOS.h"
-#include "stm32f10x.h"
 #include "timers.h"
 
 #include "GPIO.h"
@@ -33,27 +32,27 @@ Key_t Key = {
 //     .SPI = ENABLE,
 // };
 
-OLED_t OLED = {
-    .SCL = B8,
-    .SDA = B9,
-    .Width = 128,
-    .Height = 64,
-    .I2C = ENABLE,
-    .U8g2 = ENABLE,
-};
-
 // OLED_t OLED = {
+//     .SCL = B8,
+//     .SDA = B9,
 //     .Width = 128,
 //     .Height = 64,
-//     .SPI = ENABLE,
-//     .SPIx = SPI2,
-//     .D0 = "B13",
-//     .D1 = "B15",
-//     .RES = "A8",
-//     .DC = "A9",
-//     .CS = "B12",
+//     .I2C = ENABLE,
 //     .U8g2 = ENABLE,
 // };
+
+OLED_t OLED = {
+    .D0 = "B13",
+    .D1 = "B15",
+    .RES = "A8",
+    .DC = "A9",
+    .CS = "A10",
+    .Width = 128,
+    .Height = 64,
+    .SPIx = SPI2,
+    .SPI = ENABLE,
+    .U8g2 = ENABLE,
+};
 
 #define LENGTH 64
 uint16_t Data[LENGTH];

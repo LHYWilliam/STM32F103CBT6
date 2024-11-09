@@ -1,8 +1,6 @@
 #include "OLED.h"
 
 #include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "Delay.h"
 #include "GPIO.h"
@@ -33,75 +31,53 @@ uint8_t u8g2_gpio_and_delay_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 
 void OLED_Init(OLED_t *self) {
 #if U8G2
-    if (self->I2C) {
-        GPIO_t SCL = {
-            .Mode = GPIO_Mode_Out_OD,
-        };
-        strcpy(SCL.GPIOxPiny, self->SCL);
-        GPIO_Init_(&SCL);
 
-        GPIO_t SDA = {
+    if (self->I2C) {
+        GPIO_t GPIO = {
             .Mode = GPIO_Mode_Out_OD,
         };
-        strcpy(SDA.GPIOxPiny, self->SDA);
-        GPIO_Init_(&SDA);
+
+        GPIO_InitPin(GPIO, self->SCL);
+        GPIO_InitPin(GPIO, self->SDA);
 
         SCL_ODR = GPIO_ODR(self->SCL);
         SDA_ODR = GPIO_ODR(self->SDA);
     }
 
     if (self->SPI) {
-        GPIO_t D0 = {
+        GPIO_t GPIO = {
             .Mode = GPIO_Mode_AF_PP,
         };
-        strcpy(D0.GPIOxPiny, self->D0);
-        GPIO_Init_(&D0);
 
-        GPIO_t D1 = {
-            .Mode = GPIO_Mode_AF_PP,
-        };
-        strcpy(D1.GPIOxPiny, self->D1);
-        GPIO_Init_(&D1);
-
-        GPIO_t RES = {
-            .Mode = GPIO_Mode_Out_PP,
-        };
-        strcpy(RES.GPIOxPiny, self->RES);
-        GPIO_Init_(&RES);
-
-        GPIO_t DC = {
-            .Mode = GPIO_Mode_Out_PP,
-        };
-        strcpy(DC.GPIOxPiny, self->DC);
-        GPIO_Init_(&DC);
-
-        GPIO_t CS = {
-            .Mode = GPIO_Mode_Out_PP,
-        };
-        strcpy(CS.GPIOxPiny, self->CS);
-        GPIO_Init_(&CS);
+        GPIO_InitPin(GPIO, self->D0);
+        GPIO_InitPin(GPIO, self->D1);
+        GPIO.Mode = GPIO_Mode_Out_PP;
+        GPIO_InitPin(GPIO, self->RES);
+        GPIO_InitPin(GPIO, self->DC);
+        GPIO_InitPin(GPIO, self->CS);
 
         RES_ODR = GPIO_ODR(self->RES);
         DC_ODR = GPIO_ODR(self->DC);
         CS_ODR = GPIO_ODR(self->CS);
 
-        GPIO_Write(self->CS_ODR, 1);
-        GPIO_Write(self->RES_ODR, 1);
+        GPIO_Write(RES_ODR, 1);
+        GPIO_Write(DC_ODR, 1);
+        GPIO_Write(CS_ODR, 1);
 
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE); // 使能SPI1时钟
 
         SPI_InitTypeDef SPI_InitStructure;            // 定义结构体变量
         SPI_InitStructure.SPI_Mode = SPI_Mode_Master; // 模式，选择为SPI主模式
         SPI_InitStructure.SPI_Direction =
-            SPI_Direction_2Lines_FullDuplex; // 方向，选择2线全双工
+            SPI_Direction_1Line_Tx; // 方向，选择2线全双工
         SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; // 数据宽度，选择为8位
         SPI_InitStructure.SPI_FirstBit =
             SPI_FirstBit_MSB; // 先行位，选择高位先行
         SPI_InitStructure.SPI_BaudRatePrescaler =
-            SPI_BaudRatePrescaler_128; // 波特率分频，选择128分频
-        SPI_InitStructure.SPI_CPOL = SPI_CPOL_High; // SPI极性，选择低极性
+            SPI_BaudRatePrescaler_32; // 波特率分频，选择128分频
+        SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low; // SPI极性，选择低极性
         SPI_InitStructure.SPI_CPHA =
-            SPI_CPHA_2Edge; // SPI相位，选择第一个时钟边沿采样，极性和相位决定选择SPI模式0
+            SPI_CPHA_1Edge; // SPI相位，选择第一个时钟边沿采样，极性和相位决定选择SPI模式0
         SPI_InitStructure.SPI_NSS = SPI_NSS_Soft; // NSS，选择由软件控制
         SPI_InitStructure.SPI_CRCPolynomial =
             7; // CRC多项式，暂时用不到，给默认值7
@@ -116,23 +92,18 @@ void OLED_Init(OLED_t *self) {
 #else
 
     if (self->I2C) {
-        GPIO_t SCL = {
+        GPIO_t GPIO = {
             .Mode = GPIO_Mode_Out_OD,
         };
-        strcpy(SCL.GPIOxPiny, self->SCL);
-        GPIO_Init_(&SCL);
 
-        GPIO_t SDA = {
-            .Mode = GPIO_Mode_Out_OD,
-        };
-        strcpy(SDA.GPIOxPiny, self->SDA);
-        GPIO_Init_(&SDA);
+        GPIO_InitPin(GPIO, self->SCL);
+        GPIO_InitPin(GPIO, self->SDA);
 
         self->SCL_ODR = GPIO_ODR(self->SCL);
         self->SDA_ODR = GPIO_ODR(self->SDA);
 
-        self->OLED_WriteCommand = OLED_I2C_WriteCommand;
         self->OLED_WriteData = OLED_I2C_WriteData;
+        self->OLED_WriteCommand = OLED_I2C_WriteCommand;
     }
 
     if (self->SPI) {
@@ -140,20 +111,11 @@ void OLED_Init(OLED_t *self) {
             .Mode = GPIO_Mode_Out_PP,
         };
 
-        strcpy(GPIO.GPIOxPiny, self->D0);
-        GPIO_Init_(&GPIO);
-
-        strcpy(GPIO.GPIOxPiny, self->D1);
-        GPIO_Init_(&GPIO);
-
-        strcpy(GPIO.GPIOxPiny, self->RES);
-        GPIO_Init_(&GPIO);
-
-        strcpy(GPIO.GPIOxPiny, self->DC);
-        GPIO_Init_(&GPIO);
-
-        strcpy(GPIO.GPIOxPiny, self->CS);
-        GPIO_Init_(&GPIO);
+        GPIO_InitPin(GPIO, self->D0);
+        GPIO_InitPin(GPIO, self->D1);
+        GPIO_InitPin(GPIO, self->RES);
+        GPIO_InitPin(GPIO, self->DC);
+        GPIO_InitPin(GPIO, self->CS);
 
         self->D0_ODR = GPIO_ODR(self->D0);
         self->D1_ODR = GPIO_ODR(self->D1);
@@ -165,22 +127,26 @@ void OLED_Init(OLED_t *self) {
         GPIO_Write(self->DC_ODR, 1);
         GPIO_Write(self->RES_ODR, 1);
 
-        self->OLED_WriteCommand = OLED_SPI_WriteCommand;
         self->OLED_WriteData = OLED_SPI_WriteData;
+        self->OLED_WriteCommand = OLED_SPI_WriteCommand;
     }
 
 #endif
 
 #if U8G2
 
-    Delay_ms(100);
-
     if (self->I2C) {
+        Delay_ms(100);
+
         u8g2_Setup_ssd1306_i2c_128x64_noname_f(
             &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_sw_i2c);
     }
 
     if (self->SPI) {
+        GPIO_Write(RES_ODR, 0);
+        Delay_ms(100);
+        GPIO_Write(RES_ODR, 1);
+
         u8g2_Setup_ssd1306_128x64_noname_f(&self->u8g2, U8G2_R0,
                                            u8x8_byte_4wire_hw_spi,
                                            u8g2_gpio_and_delay_hw_spi);
@@ -350,6 +316,14 @@ uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
         GPIO_Write(DC_ODR, arg_int);
         break;
 
+    case U8X8_MSG_BYTE_START_TRANSFER:
+        GPIO_Write(CS_ODR, 0);
+        break;
+
+    case U8X8_MSG_BYTE_END_TRANSFER:
+        GPIO_Write(CS_ODR, 1);
+        break;
+
     case U8X8_MSG_BYTE_SEND:
         for (uint8_t i = 0; i < arg_int; i++) {
             while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) != SET)
@@ -358,12 +332,7 @@ uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
         }
         break;
 
-    case U8X8_MSG_BYTE_START_TRANSFER:
-        GPIO_Write(CS_ODR, 0);
-        break;
-
-    case U8X8_MSG_BYTE_END_TRANSFER:
-        GPIO_Write(CS_ODR, 1);
+    default:
         break;
     }
 
@@ -394,6 +363,9 @@ uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
     case U8X8_MSG_GPIO_I2C_DATA:
         GPIO_Write(SDA_ODR, arg_int);
         break;
+
+    default:
+        break;
     }
 
     return 1;
@@ -403,14 +375,6 @@ uint8_t u8g2_gpio_and_delay_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                                    void *arg_ptr) {
     switch (msg) {
     case U8X8_MSG_GPIO_AND_DELAY_INIT:
-        break;
-
-    case U8X8_MSG_DELAY_MILLI:
-        Delay_ms(arg_int);
-        break;
-
-    case U8X8_MSG_DELAY_10MICRO:
-        Delay_us(10);
         break;
 
     case U8X8_MSG_DELAY_100NANO:
@@ -430,6 +394,17 @@ uint8_t u8g2_gpio_and_delay_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 
     case U8X8_MSG_GPIO_RESET:
         GPIO_Write(RES_ODR, arg_int);
+        break;
+
+    case U8X8_MSG_DELAY_MILLI:
+        Delay_ms(arg_int);
+        break;
+
+    case U8X8_MSG_DELAY_10MICRO:
+        Delay_us(10);
+        break;
+
+    default:
         break;
     }
 

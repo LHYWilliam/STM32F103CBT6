@@ -21,13 +21,37 @@ Key_Init(&Key);
 
 
 # OLED
+### Soft I2C
 ```
 OLED_t OLED = {
     .SCL = B8,
     .SDA = B9,
+    .I2C = ENABLE,
 };
+```
 
-OLED_Init(&OLED);
+### Soft SPI
+```
+OLED_t OLED = {
+    .D0 = "B12",
+    .D1 = "B13",
+    .RES = "B14",
+    .DC = "B15",
+    .CS = "A8",
+    .SPI = ENABLE,
+};
+```
+
+### Soft I2C U8g2
+```
+OLED_t OLED = {
+   .SCL = B8,
+   .SDA = B9,
+   .Width = 128,
+   .Height = 64,
+   .I2C = ENABLE,
+   .U8g2 = ENABLE,
+};
 ```
 
 

@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-
-#include "GPIO.h"
 #include "Motor.h"
+#include "GPIO.h"
 #include "PWM.h"
 
 void Motor_Init(Motor_t *self) {

@@ -17,10 +17,10 @@ void OLED_SPI_WriteByte(OLED_t *self, uint8_t Byte, uint8_t DC) {
     GPIO_Write(self->DC_ODR, 1);
 }
 
-void OLED_SPI_WriteCommand(OLED_t *self, uint8_t Command) {
-    OLED_SPI_WriteByte(self, Command, SPI_Command);
-}
-
 void OLED_SPI_WriteData(OLED_t *self, uint8_t Data) {
     OLED_SPI_WriteByte(self, Data, SPI_Data);
+}
+
+void OLED_SPI_WriteCommand(OLED_t *self, uint8_t Command) {
+    OLED_SPI_WriteByte(self, Command, SPI_Command);
 }

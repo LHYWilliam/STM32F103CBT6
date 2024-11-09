@@ -1,8 +1,6 @@
-#include <string.h>
-
+#include "Servo.h"
 #include "GPIO.h"
 #include "PWM.h"
-#include "Servo.h"
 
 void Servo_Init(Servo_t *self) {
     GPIO_t PWM_GPIO = {

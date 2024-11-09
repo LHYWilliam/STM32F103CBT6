@@ -6,9 +6,9 @@
 typedef enum {
     SPI_Command,
     SPI_Data,
-} OLED_SPI_Pin_t;
+} OLED_SPI_Type_t;
 
-void OLED_SPI_WriteCommand(OLED_t *self, uint8_t Command);
 void OLED_SPI_WriteData(OLED_t *self, uint8_t Data);
+void OLED_SPI_WriteCommand(OLED_t *self, uint8_t Command);
 
 #endif

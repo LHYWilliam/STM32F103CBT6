@@ -4,6 +4,9 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include <stdio.h>
+#include <string.h>
+
 #define BITBAND(addr, bitnum)                                                  \
     (((addr) & 0xF0000000) + 0x2000000 + (((addr) & 0xFFFFF) << 5) +           \
      ((bitnum) << 2))
@@ -268,5 +271,11 @@ typedef struct {
 } GPIO_t;
 
 void GPIO_Init_(GPIO_t *self);
+
+#define GPIO_InitPin(GPIO, Pin)                                                \
+    do {                                                                       \
+        strcpy(GPIO.GPIOxPiny, Pin);                                           \
+        GPIO_Init_(&GPIO);                                                     \
+    } while (0)
 
 #endif

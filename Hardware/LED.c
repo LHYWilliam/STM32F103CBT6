@@ -1,7 +1,6 @@
-#include <string.h>
-
-#include "GPIO.h"
 #include "LED.h"
+#include "GPIO.h"
+
 
 void LED_Init(LED_t *self) {
     GPIO_t GPIO = {

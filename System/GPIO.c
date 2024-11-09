@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "GPIO.h"
 
 void GPIO_Init_(GPIO_t *self) {

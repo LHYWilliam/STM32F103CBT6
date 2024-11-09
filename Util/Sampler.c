@@ -1,9 +1,7 @@
-#include <string.h>
-
+#include "Sampler.h"
 #include "ADC.h"
 #include "DMA.h"
 #include "GPIO.h"
-#include "Sampler.h"
 #include "Timer.h"
 
 void Sampler_Init(Sampler_t *self) {
