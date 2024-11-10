@@ -17,39 +17,14 @@ Key_t Key = {
     .Mode = HIGH,
 };
 
-// OLED_t OLED = {
-//     .SCL = B8,
-//     .SDA = B9,
-//     .I2C = ENABLE,
-// };
-
-// OLED_t OLED = {
-//     .D0 = "B12",
-//     .D1 = "B13",
-//     .RES = "B14",
-//     .DC = "B15",
-//     .CS = "A8",
-//     .SPI = ENABLE,
-// };
-
-// OLED_t OLED = {
-//     .SCL = B8,
-//     .SDA = B9,
-//     .Width = 128,
-//     .Height = 64,
-//     .I2C = ENABLE,
-//     .U8g2 = ENABLE,
-// };
-
 OLED_t OLED = {
-    .D0 = "B13",
-    .D1 = "B15",
-    .RES = "A8",
-    .DC = "A9",
-    .CS = "A10",
+    .D0 = B12,
+    .D1 = B13,
+    .RES = B14,
+    .DC = B15,
+    .CS = A8,
     .Width = 128,
     .Height = 64,
-    .SPIx = SPI2,
     .SPI = ENABLE,
     .U8g2 = ENABLE,
 };
@@ -98,8 +73,6 @@ int main() {
 
     xTimerStart(vLEDTimer, 0);
     xTimerStart(vU8G2Timer, 0);
-
-    //    OLED_Printf(&OLED, 1, 1, "Hello World!");
 
     vTaskStartScheduler();
 }
