@@ -3,10 +3,9 @@
 #include "PWM.h"
 
 void Servo_Init(Servo_t *self) {
-    GPIO_t GPIO = {
-        .Mode = GPIO_Mode_AF_PP,
-    };
-    GPIO_InitPin(GPIO, self->PWM);
+    GPIO_t GPIO;
+    GPIO.Mode = GPIO_Mode_AF_PP;
+    GPIO_InitPin(&GPIO, self->PWM);
 
     PWM_t PWM = {
         .TIMx = self->TIMx,

@@ -1,9 +1,7 @@
-#include <stdlib.h>
-
 #include "PWMI.h"
 
 void PWMI_Init(PWMI_t *self) {
-    GPIO_Init_(self->gpio);
+    // GPIO_Init_(self->gpio); // To update to GPIO_InitPin
     TIM_Init(self->tim, NULL);
     Capture_Init(self->frequency);
     Capture_Init(self->duty);

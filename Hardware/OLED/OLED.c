@@ -1,9 +1,8 @@
-#include "OLED.h"
-
 #include <stdarg.h>
 
 #include "Delay.h"
 #include "GPIO.h"
+#include "OLED.h"
 
 #if U8G2
 
@@ -35,8 +34,8 @@ void OLED_Init(OLED_t *self) {
         if (self->I2C) {
             GPIO_t GPIO;
             GPIO.Mode = GPIO_Mode_Out_OD;
-            GPIO_InitPin(GPIO, self->SCL);
-            GPIO_InitPin(GPIO, self->SDA);
+            GPIO_InitPin(&GPIO, self->SCL);
+            GPIO_InitPin(&GPIO, self->SDA);
 
             SCL_ODR = GPIO_ODR(self->SCL);
             SDA_ODR = GPIO_ODR(self->SDA);
@@ -47,12 +46,12 @@ void OLED_Init(OLED_t *self) {
         } else if (self->SPI) {
             GPIO_t GPIO;
             GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
-            GPIO_InitPin(GPIO, self->D0);
-            GPIO_InitPin(GPIO, self->D1);
+            GPIO_InitPin(&GPIO, self->D0);
+            GPIO_InitPin(&GPIO, self->D1);
             GPIO.Mode = GPIO_Mode_Out_PP;
-            GPIO_InitPin(GPIO, self->RES);
-            GPIO_InitPin(GPIO, self->DC);
-            GPIO_InitPin(GPIO, self->CS);
+            GPIO_InitPin(&GPIO, self->RES);
+            GPIO_InitPin(&GPIO, self->DC);
+            GPIO_InitPin(&GPIO, self->CS);
 
             D0_ODR = GPIO_ODR(self->D0);
             D1_ODR = GPIO_ODR(self->D1);
@@ -102,8 +101,8 @@ void OLED_Init(OLED_t *self) {
         if (self->I2C) {
             GPIO_t GPIO;
             GPIO.Mode = GPIO_Mode_Out_OD;
-            GPIO_InitPin(GPIO, self->SCL);
-            GPIO_InitPin(GPIO, self->SDA);
+            GPIO_InitPin(&GPIO, self->SCL);
+            GPIO_InitPin(&GPIO, self->SDA);
 
             self->SCL_ODR = GPIO_ODR(self->SCL);
             self->SDA_ODR = GPIO_ODR(self->SDA);
@@ -117,11 +116,11 @@ void OLED_Init(OLED_t *self) {
         } else if (self->SPI) {
             GPIO_t GPIO;
             GPIO.Mode = GPIO_Mode_Out_PP;
-            GPIO_InitPin(GPIO, self->D0);
-            GPIO_InitPin(GPIO, self->D1);
-            GPIO_InitPin(GPIO, self->RES);
-            GPIO_InitPin(GPIO, self->DC);
-            GPIO_InitPin(GPIO, self->CS);
+            GPIO_InitPin(&GPIO, self->D0);
+            GPIO_InitPin(&GPIO, self->D1);
+            GPIO_InitPin(&GPIO, self->RES);
+            GPIO_InitPin(&GPIO, self->DC);
+            GPIO_InitPin(&GPIO, self->CS);
 
             self->D0_ODR = GPIO_ODR(self->D0);
             self->D1_ODR = GPIO_ODR(self->D1);

@@ -6,18 +6,15 @@
 #include "Usart.h"
 
 void Serial_Init(Serial_t *self) {
+    GPIO_t GPIO;
     if (self->TX[0]) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_AF_PP,
-        };
-        GPIO_InitPin(GPIO, self->TX);
+        GPIO.Mode = GPIO_Mode_AF_PP;
+        GPIO_InitPin(&GPIO, self->TX);
     }
 
     if (self->RX[0]) {
-        GPIO_t GPIO = {
-            .Mode = GPIO_Mode_IPU,
-        };
-        GPIO_InitPin(GPIO, self->RX);
+        GPIO.Mode = GPIO_Mode_IPU;
+        GPIO_InitPin(&GPIO, self->RX);
     }
 
     USART_t usart = {

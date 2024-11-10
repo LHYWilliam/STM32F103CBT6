@@ -3,10 +3,9 @@
 #include "GPIO.h"
 
 void Key_Init(Key_t *self) {
-    GPIO_t GPIO = {
-        .Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU,
-    };
-    GPIO_InitPin(GPIO, self->GPIOxPiny);
+    GPIO_t GPIO;
+    GPIO.Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU;
+    GPIO_InitPin(&GPIO, self->GPIOxPiny);
 
     self->GPIOx = GPIO.GPIOx;
     self->GPIO_Pin = GPIO.GPIO_Pin;

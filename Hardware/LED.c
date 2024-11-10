@@ -2,10 +2,9 @@
 #include "GPIO.h"
 
 void LED_Init(LED_t *self) {
-    GPIO_t GPIO = {
-        .Mode = GPIO_Mode_Out_PP,
-    };
-    GPIO_InitPin(GPIO, self->GPIOxPiny);
+    GPIO_t GPIO;
+    GPIO.Mode = GPIO_Mode_Out_PP;
+    GPIO_InitPin(&GPIO, self->GPIOxPiny);
 
     self->GPIOx = GPIO.GPIOx;
     self->GPIO_Pin = GPIO.GPIO_Pin;

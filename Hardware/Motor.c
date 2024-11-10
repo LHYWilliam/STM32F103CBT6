@@ -3,18 +3,16 @@
 #include "PWM.h"
 
 void Motor_Init(Motor_t *self) {
-    GPIO_t GPIO = {
-        .Mode = GPIO_Mode_AF_PP,
-    };
-    GPIO_InitPin(GPIO, self->PWM);
+    GPIO_t GPIO;
+
+    GPIO.Mode = GPIO_Mode_AF_PP;
+    GPIO_InitPin(&GPIO, self->PWM);
 
     GPIO.Mode = GPIO_Mode_Out_PP;
-
-    GPIO_InitPin(GPIO, self->IN1);
+    GPIO_InitPin(&GPIO, self->IN1);
     self->IN1_GPIOx = GPIO.GPIOx;
     self->IN1_GPIO_Pin = GPIO.GPIO_Pin;
-
-    GPIO_InitPin(GPIO, self->IN2);
+    GPIO_InitPin(&GPIO, self->IN2);
     self->IN2_GPIOx = GPIO.GPIOx;
     self->IN2_GPIO_Pin = GPIO.GPIO_Pin;
 

@@ -5,10 +5,9 @@
 #include "Timer.h"
 
 void Sampler_Init(Sampler_t *self) {
-    GPIO_t GPIO = {
-        .Mode = GPIO_Mode_AIN,
-    };
-    GPIO_InitPin(GPIO, self->GPIOxPiny);
+    GPIO_t GPIO;
+    GPIO.Mode = GPIO_Mode_AIN;
+    GPIO_InitPin(&GPIO, self->GPIOxPiny);
 
     ADC_t ADC = {
         .ADCx = self->ADCx,
