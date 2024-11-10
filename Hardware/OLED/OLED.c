@@ -29,30 +29,42 @@ uint8_t u8g2_gpio_and_delay_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 #include "OLED_SPI.h"
 
 void OLED_Init(OLED_t *self) {
+    if (self->I2C) {
+        GPIO_t GPIO;
+        GPIO.Mode = GPIO_Mode_Out_OD;
+        GPIO_InitPin(&GPIO, self->SCL);
+        GPIO_InitPin(&GPIO, self->SDA);
 #if U8G2
-    if (self->U8g2) {
-        if (self->I2C) {
-            GPIO_t GPIO;
-            GPIO.Mode = GPIO_Mode_Out_OD;
-            GPIO_InitPin(&GPIO, self->SCL);
-            GPIO_InitPin(&GPIO, self->SDA);
-
+        if (self->U8g2) {
             SCL_ODR = GPIO_ODR(self->SCL);
             SDA_ODR = GPIO_ODR(self->SDA);
 
             GPIO_Write(SCL_ODR, 1);
             GPIO_Write(SDA_ODR, 1);
+        } else {
+#endif
+            self->SCL_ODR = GPIO_ODR(self->SCL);
+            self->SDA_ODR = GPIO_ODR(self->SDA);
 
-        } else if (self->SPI) {
-            GPIO_t GPIO;
-            GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
-            GPIO_InitPin(&GPIO, self->D0);
-            GPIO_InitPin(&GPIO, self->D1);
-            GPIO.Mode = GPIO_Mode_Out_PP;
-            GPIO_InitPin(&GPIO, self->RES);
-            GPIO_InitPin(&GPIO, self->DC);
-            GPIO_InitPin(&GPIO, self->CS);
+            GPIO_Write(self->SCL_ODR, 1);
+            GPIO_Write(self->SDA_ODR, 1);
 
+            self->OLED_WriteData = OLED_I2C_WriteData;
+            self->OLED_WriteCommand = OLED_I2C_WriteCommand;
+#if U8G2
+        }
+#endif
+    } else if (self->SPI) {
+        GPIO_t GPIO;
+        GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
+        GPIO_InitPin(&GPIO, self->D0);
+        GPIO_InitPin(&GPIO, self->D1);
+        GPIO.Mode = GPIO_Mode_Out_PP;
+        GPIO_InitPin(&GPIO, self->RES);
+        GPIO_InitPin(&GPIO, self->DC);
+        GPIO_InitPin(&GPIO, self->CS);
+#if U8G2
+        if (self->U8g2) {
             D0_ODR = GPIO_ODR(self->D0);
             D1_ODR = GPIO_ODR(self->D1);
             RES_ODR = GPIO_ODR(self->RES);
@@ -62,66 +74,8 @@ void OLED_Init(OLED_t *self) {
             GPIO_Write(RES_ODR, 1);
             GPIO_Write(DC_ODR, 1);
             GPIO_Write(CS_ODR, 1);
-
-            if (self->SPIx) {
-                RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,
-                                       ENABLE); // 使能SPI1时钟
-
-                SPI_InitTypeDef SPI_InitStructure; // 定义结构体变量
-                SPI_InitStructure.SPI_Mode =
-                    SPI_Mode_Master; // 模式，选择为SPI主模式
-                SPI_InitStructure.SPI_Direction =
-                    SPI_Direction_1Line_Tx; // 方向，选择2线全双工
-                SPI_InitStructure.SPI_DataSize =
-                    SPI_DataSize_8b; // 数据宽度，选择为8位
-                SPI_InitStructure.SPI_FirstBit =
-                    SPI_FirstBit_MSB; // 先行位，选择高位先行
-                SPI_InitStructure.SPI_BaudRatePrescaler =
-                    SPI_BaudRatePrescaler_32; // 波特率分频，选择128分频
-                SPI_InitStructure.SPI_CPOL =
-                    SPI_CPOL_Low; // SPI极性，选择低极性
-                SPI_InitStructure.SPI_CPHA =
-                    SPI_CPHA_1Edge; // SPI相位，选择第一个时钟边沿采样，极性和相位决定选择SPI模式0
-                SPI_InitStructure.SPI_NSS = SPI_NSS_Soft; // NSS，选择由软件控制
-                SPI_InitStructure.SPI_CRCPolynomial =
-                    7; // CRC多项式，暂时用不到，给默认值7
-                SPI_Init(
-                    self->SPIx,
-                    &SPI_InitStructure); // 将结构体变量交给SPI_Init，配置SPI1
-                SPIx = self->SPIx;
-
-                /*SPI使能*/
-                SPI_Cmd(self->SPIx, ENABLE); // 使能SPI1，开始运行
-            }
-        }
-    } else {
-
+        } else {
 #endif
-
-        if (self->I2C) {
-            GPIO_t GPIO;
-            GPIO.Mode = GPIO_Mode_Out_OD;
-            GPIO_InitPin(&GPIO, self->SCL);
-            GPIO_InitPin(&GPIO, self->SDA);
-
-            self->SCL_ODR = GPIO_ODR(self->SCL);
-            self->SDA_ODR = GPIO_ODR(self->SDA);
-
-            GPIO_Write(self->SCL_ODR, 1);
-            GPIO_Write(self->SDA_ODR, 1);
-
-            self->OLED_WriteData = OLED_I2C_WriteData;
-            self->OLED_WriteCommand = OLED_I2C_WriteCommand;
-
-        } else if (self->SPI) {
-            GPIO_t GPIO;
-            GPIO.Mode = GPIO_Mode_Out_PP;
-            GPIO_InitPin(&GPIO, self->D0);
-            GPIO_InitPin(&GPIO, self->D1);
-            GPIO_InitPin(&GPIO, self->RES);
-            GPIO_InitPin(&GPIO, self->DC);
-            GPIO_InitPin(&GPIO, self->CS);
-
             self->D0_ODR = GPIO_ODR(self->D0);
             self->D1_ODR = GPIO_ODR(self->D1);
             self->RES_ODR = GPIO_ODR(self->RES);
@@ -136,11 +90,31 @@ void OLED_Init(OLED_t *self) {
 
             self->OLED_WriteData = OLED_SPI_WriteData;
             self->OLED_WriteCommand = OLED_SPI_WriteCommand;
-        }
-
 #if U8G2
-    }
+        }
 #endif
+        if (self->SPIx) {
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+            SPI_InitTypeDef SPI_InitStructure;
+            SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+            SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
+            SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+            SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+            SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+            SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+            SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+            SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+            SPI_InitStructure.SPI_CRCPolynomial = 7;
+            SPI_Init(self->SPIx, &SPI_InitStructure);
+
+            SPI_Cmd(self->SPIx, ENABLE);
+#if U8G2
+            if (self->U8g2) {
+                SPIx = self->SPIx;
+            }
+#endif
+        }
+    }
 
 #if U8G2
     if (self->U8g2) {

@@ -20,6 +20,7 @@ typedef struct OLED_t {
     uint32_t SDA_ODR;
 
     uint8_t SPI;
+    SPI_TypeDef *SPIx;
     char D0[4];
     char D1[4];
     char RES[4];
@@ -37,13 +38,12 @@ typedef struct OLED_t {
     uint8_t Buffer[128];
 
 #if U8G2
+
     uint8_t Width;
     uint8_t Height;
 
     uint8_t U8g2;
     u8g2_t u8g2;
-
-    SPI_TypeDef *SPIx;
 
 #endif
 
