@@ -186,10 +186,9 @@ void OLED_Init(OLED_t *self) {
 
         u8g2_InitDisplay(&self->u8g2);
         u8g2_SetPowerSave(&self->u8g2, 0);
+
     } else {
-
 #endif
-
         if (self->SPI) {
             GPIO_Write(self->RES_ODR, 0);
         }
@@ -344,31 +343,22 @@ void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format,
 uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                          void *arg_ptr) {
     switch (msg) {
-    case U8X8_MSG_BYTE_INIT:
-        break;
-
     case U8X8_MSG_BYTE_START_TRANSFER:
         I2C_GenerateSTART(I2Cx, ENABLE);
-        uint32_t Timeout = 1000;
-        while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT) != SUCCESS &&
-               Timeout--)
+        while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT) != SUCCESS)
             ;
+
         I2C_Send7bitAddress(I2Cx, 0x78, I2C_Direction_Transmitter);
-        Timeout = 1000;
-        while (
-            I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) !=
-                SUCCESS &&
-            Timeout--)
+        while (I2C_CheckEvent(
+                   I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) != SUCCESS)
             ;
         break;
 
     case U8X8_MSG_BYTE_SEND:
         for (uint8_t i = 0; i < arg_int; i++) {
             I2C_SendData(I2Cx, ((uint8_t *)arg_ptr)[i]);
-            uint32_t Timeout = 1000;
             while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_TRANSMITTING) !=
-                       SUCCESS &&
-                   Timeout--)
+                   SUCCESS)
                 ;
         }
         break;
@@ -387,9 +377,6 @@ uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                                void *arg_ptr) {
     switch (msg) {
-    case U8X8_MSG_BYTE_INIT:
-        break;
-
     case U8X8_MSG_BYTE_SET_DC:
         GPIO_Write(DC_ODR, arg_int);
         break;
@@ -398,16 +385,16 @@ uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
         GPIO_Write(CS_ODR, 0);
         break;
 
-    case U8X8_MSG_BYTE_END_TRANSFER:
-        GPIO_Write(CS_ODR, 1);
-        break;
-
     case U8X8_MSG_BYTE_SEND:
         for (uint8_t i = 0; i < arg_int; i++) {
             while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) != SET)
                 ;
             SPI_I2S_SendData(SPIx, ((uint8_t *)arg_ptr)[i]);
         }
+        break;
+
+    case U8X8_MSG_BYTE_END_TRANSFER:
+        GPIO_Write(CS_ODR, 1);
         break;
 
     default:
@@ -422,18 +409,12 @@ uint8_t u8g2_gpio_and_delay_i2c(U8X8_UNUSED u8x8_t *u8x8,
                                 U8X8_UNUSED uint8_t arg_int,
                                 U8X8_UNUSED void *arg_ptr) {
     switch (msg) {
-    case U8X8_MSG_GPIO_AND_DELAY_INIT:
-        break;
-
     case U8X8_MSG_GPIO_I2C_CLOCK:
         GPIO_Write(SCL_ODR, arg_int);
         break;
 
     case U8X8_MSG_GPIO_I2C_DATA:
         GPIO_Write(SDA_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_RESET:
         break;
 
     case U8X8_MSG_DELAY_MILLI:
