@@ -69,6 +69,18 @@ OLED_t OLED = {
 };
 ```
 
+### Hardware I2C U8g2
+```
+OLED_t OLED = {
+    .SCL = B6,
+    .SDA = B7,
+    .Width = 128,
+    .Height = 64,
+    .I2Cx = I2C1,
+    .U8g2 = ENABLE,
+};
+```
+
 ### Hardware SPI U8g2
 ```
 OLED_t OLED = {

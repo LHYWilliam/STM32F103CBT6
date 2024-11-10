@@ -8,8 +8,11 @@
 
 uint32_t SCL_ODR;
 uint32_t SDA_ODR;
-uint8_t u8g2_gpio_and_delay_sw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                                   void *arg_ptr);
+I2C_TypeDef *I2Cx;
+uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
+                         void *arg_ptr);
+uint8_t u8g2_gpio_and_delay_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
+                                void *arg_ptr);
 
 uint32_t D0_ODR;
 uint32_t D1_ODR;
@@ -29,31 +32,64 @@ uint8_t u8g2_gpio_and_delay_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 #include "OLED_SPI.h"
 
 void OLED_Init(OLED_t *self) {
-    if (self->I2C) {
+    if (self->I2C || self->I2Cx) {
         GPIO_t GPIO;
-        GPIO.Mode = GPIO_Mode_Out_OD;
+        GPIO.Mode = self->I2Cx ? GPIO_Mode_AF_OD : GPIO_Mode_Out_OD;
         GPIO_InitPin(&GPIO, self->SCL);
         GPIO_InitPin(&GPIO, self->SDA);
-#if U8G2
-        if (self->U8g2) {
-            SCL_ODR = GPIO_ODR(self->SCL);
-            SDA_ODR = GPIO_ODR(self->SDA);
 
-            GPIO_Write(SCL_ODR, 1);
-            GPIO_Write(SDA_ODR, 1);
-        } else {
+        if (self->I2C) {
+#if U8G2
+            if (self->U8g2) {
+                SCL_ODR = GPIO_ODR(self->SCL);
+                SDA_ODR = GPIO_ODR(self->SDA);
+
+                GPIO_Write(SCL_ODR, 1);
+                GPIO_Write(SDA_ODR, 1);
+
+            } else {
 #endif
-            self->SCL_ODR = GPIO_ODR(self->SCL);
-            self->SDA_ODR = GPIO_ODR(self->SDA);
+                self->SCL_ODR = GPIO_ODR(self->SCL);
+                self->SDA_ODR = GPIO_ODR(self->SDA);
 
-            GPIO_Write(self->SCL_ODR, 1);
-            GPIO_Write(self->SDA_ODR, 1);
+                GPIO_Write(self->SCL_ODR, 1);
+                GPIO_Write(self->SDA_ODR, 1);
 
-            self->OLED_WriteData = OLED_I2C_WriteData;
-            self->OLED_WriteCommand = OLED_I2C_WriteCommand;
+                self->OLED_WriteData = OLED_SWI2C_WriteData;
+                self->OLED_WriteCommand = OLED_SWI2C_WriteCommand;
 #if U8G2
+            }
+#endif
+        } else if (self->I2Cx) {
+#if U8G2
+            if (!self->U8g2) {
+#endif
+                self->OLED_WriteData = OLED_HWI2C_WriteData;
+                self->OLED_WriteCommand = OLED_HWI2C_WriteCommand;
+#if U8G2
+            }
+#endif
         }
+
+        if (self->I2Cx) {
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+            I2C_InitTypeDef I2C_InitStructure;
+            I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+            I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+            I2C_InitStructure.I2C_OwnAddress1 = 0x00;
+            I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+            I2C_InitStructure.I2C_AcknowledgedAddress =
+                I2C_AcknowledgedAddress_7bit;
+            I2C_InitStructure.I2C_ClockSpeed = 400000;
+            I2C_Init(self->I2Cx, &I2C_InitStructure);
+
+            I2C_Cmd(self->I2Cx, ENABLE);
+#if U8G2
+            if (self->U8g2) {
+                I2Cx = self->I2Cx;
+            }
 #endif
+        }
     } else if (self->SPI) {
         GPIO_t GPIO;
         GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
@@ -118,12 +154,18 @@ void OLED_Init(OLED_t *self) {
 
 #if U8G2
     if (self->U8g2) {
-        if (self->I2C) {
+        if (self->I2Cx) {
+            Delay_ms(100);
+
+            u8g2_Setup_ssd1306_i2c_128x64_noname_f(&self->u8g2, U8G2_R0,
+                                                   u8x8_byte_hw_i2c,
+                                                   u8g2_gpio_and_delay_i2c);
+        } else if (self->I2C) {
             Delay_ms(100);
 
             u8g2_Setup_ssd1306_i2c_128x64_noname_f(&self->u8g2, U8G2_R0,
                                                    u8x8_byte_sw_i2c,
-                                                   u8g2_gpio_and_delay_sw_i2c);
+                                                   u8g2_gpio_and_delay_i2c);
         } else if (self->SPIx) {
             GPIO_Write(RES_ODR, 0);
             Delay_ms(100);
@@ -299,6 +341,49 @@ void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format,
 
 #if U8G2
 
+uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
+                         void *arg_ptr) {
+    switch (msg) {
+    case U8X8_MSG_BYTE_INIT:
+        break;
+
+    case U8X8_MSG_BYTE_START_TRANSFER:
+        I2C_GenerateSTART(I2Cx, ENABLE);
+        uint32_t Timeout = 1000;
+        while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT) != SUCCESS &&
+               Timeout--)
+            ;
+        I2C_Send7bitAddress(I2Cx, 0x78, I2C_Direction_Transmitter);
+        Timeout = 1000;
+        while (
+            I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) !=
+                SUCCESS &&
+            Timeout--)
+            ;
+        break;
+
+    case U8X8_MSG_BYTE_SEND:
+        for (uint8_t i = 0; i < arg_int; i++) {
+            I2C_SendData(I2Cx, ((uint8_t *)arg_ptr)[i]);
+            uint32_t Timeout = 1000;
+            while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_TRANSMITTING) !=
+                       SUCCESS &&
+                   Timeout--)
+                ;
+        }
+        break;
+
+    case U8X8_MSG_BYTE_END_TRANSFER:
+        I2C_GenerateSTOP(I2Cx, ENABLE);
+        break;
+
+    default:
+        break;
+    }
+
+    return 1;
+}
+
 uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
                                void *arg_ptr) {
     switch (msg) {
@@ -332,11 +417,25 @@ uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
     return 1;
 }
 
-uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
-                                   U8X8_UNUSED uint8_t msg,
-                                   U8X8_UNUSED uint8_t arg_int,
-                                   U8X8_UNUSED void *arg_ptr) {
+uint8_t u8g2_gpio_and_delay_i2c(U8X8_UNUSED u8x8_t *u8x8,
+                                U8X8_UNUSED uint8_t msg,
+                                U8X8_UNUSED uint8_t arg_int,
+                                U8X8_UNUSED void *arg_ptr) {
     switch (msg) {
+    case U8X8_MSG_GPIO_AND_DELAY_INIT:
+        break;
+
+    case U8X8_MSG_GPIO_I2C_CLOCK:
+        GPIO_Write(SCL_ODR, arg_int);
+        break;
+
+    case U8X8_MSG_GPIO_I2C_DATA:
+        GPIO_Write(SDA_ODR, arg_int);
+        break;
+
+    case U8X8_MSG_GPIO_RESET:
+        break;
+
     case U8X8_MSG_DELAY_MILLI:
         Delay_ms(arg_int);
         break;
@@ -347,14 +446,6 @@ uint8_t u8g2_gpio_and_delay_sw_i2c(U8X8_UNUSED u8x8_t *u8x8,
 
     case U8X8_MSG_DELAY_100NANO:
         __NOP();
-        break;
-
-    case U8X8_MSG_GPIO_I2C_CLOCK:
-        GPIO_Write(SCL_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_I2C_DATA:
-        GPIO_Write(SDA_ODR, arg_int);
         break;
 
     default:

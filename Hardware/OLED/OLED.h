@@ -14,6 +14,7 @@
 
 typedef struct OLED_t {
     uint8_t I2C;
+    I2C_TypeDef *I2Cx;
     char SCL[4];
     char SDA[4];
     uint32_t SCL_ODR;
