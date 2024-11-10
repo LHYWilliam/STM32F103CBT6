@@ -228,7 +228,8 @@ void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char) {
     }
 }
 
-void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column, char *String) {
+void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column,
+                     const char *String) {
     for (uint8_t i = 0; String[i] != '\0'; i++) {
         OLED_ShowChar(self, Line, Column + i, String[i]);
     }

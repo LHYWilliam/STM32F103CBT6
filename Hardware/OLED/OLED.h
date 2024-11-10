@@ -61,7 +61,8 @@ void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
 void OLED_Clear(OLED_t *self);
 
 void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char);
-void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column, char *String);
+void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column,
+                     const char *String);
 
 void OLED_ShowNum(OLED_t *self, uint8_t Line, uint8_t Column, uint32_t Number,
                   uint8_t Length);

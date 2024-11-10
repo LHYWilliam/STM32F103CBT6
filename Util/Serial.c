@@ -55,7 +55,7 @@ void Serial_SendHex(Serial_t *self, uint8_t byte) {
     Serial_SendByte(self, byte);
 }
 
-void Serial_SendString(Serial_t *self, char *format, ...) {
+void Serial_SendString(Serial_t *self, const char *format, ...) {
     char string[100];
     va_list arg;
     va_start(arg, format);
@@ -74,7 +74,7 @@ void Serial_SendHexPack(Serial_t *self, uint8_t *array, uint16_t length) {
     Serial_SendByte(self, 0xFE);
 }
 
-void Serial_SendStringPack(Serial_t *self, char *string) {
+void Serial_SendStringPack(Serial_t *self, const char *string) {
     Serial_SendString(self, ">%s\r\n", string);
 }
 
