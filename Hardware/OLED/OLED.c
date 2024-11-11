@@ -56,7 +56,9 @@ void OLED_Init(OLED_t *self) {
                 GPIO_Write(self->SDA_ODR, 1);
 
                 self->OLED_WriteData = OLED_SWI2C_WriteData;
+                self->OLED_WriteDatas = OLED_SWI2C_WriteDatas;
                 self->OLED_WriteCommand = OLED_SWI2C_WriteCommand;
+                self->OLED_WriteCommands = OLED_SWI2C_WriteCommands;
 #if U8G2
             }
 #endif
@@ -65,7 +67,9 @@ void OLED_Init(OLED_t *self) {
             if (!self->U8g2) {
 #endif
                 self->OLED_WriteData = OLED_HWI2C_WriteData;
+                self->OLED_WriteDatas = OLED_HWI2C_WriteDatas;
                 self->OLED_WriteCommand = OLED_HWI2C_WriteCommand;
+                self->OLED_WriteCommands = OLED_HWI2C_WriteCommands;
 #if U8G2
             }
 #endif
@@ -75,9 +79,9 @@ void OLED_Init(OLED_t *self) {
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
             I2C_InitTypeDef I2C_InitStructure;
             I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-            I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+            I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_16_9;
             I2C_InitStructure.I2C_OwnAddress1 = 0x00;
-            I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+            I2C_InitStructure.I2C_Ack = I2C_Ack_Disable;
             I2C_InitStructure.I2C_AcknowledgedAddress =
                 I2C_AcknowledgedAddress_7bit;
             I2C_InitStructure.I2C_ClockSpeed = 400000;
@@ -124,8 +128,10 @@ void OLED_Init(OLED_t *self) {
             GPIO_Write(self->DC_ODR, 1);
             GPIO_Write(self->RES_ODR, 1);
 
-            self->OLED_WriteData = OLED_SPI_WriteData;
-            self->OLED_WriteCommand = OLED_SPI_WriteCommand;
+            self->OLED_WriteData = OLED_SWSPI_WriteData;
+            self->OLED_WriteDatas = OLED_SWSPI_WriteDatas;
+            self->OLED_WriteCommand = OLED_SWSPI_WriteCommand;
+            self->OLED_WriteCommands = OLED_SWSPI_WriteCommands;
 #if U8G2
         }
 #endif
@@ -243,30 +249,26 @@ void OLED_Init(OLED_t *self) {
 }
 
 void OLED_SetCursor(OLED_t *self, uint8_t width, uint8_t height) {
-    self->OLED_WriteCommand(self, 0xB0 | width);
-    self->OLED_WriteCommand(self, 0x10 | ((height & 0xF0) >> 4));
-    self->OLED_WriteCommand(self, 0x00 | (height & 0x0F));
+    static uint8_t OLED_SetCursorCommands[3];
+    OLED_SetCursorCommands[0] = 0xB0 | width;
+    OLED_SetCursorCommands[1] = 0x10 | ((height & 0xF0) >> 4);
+    OLED_SetCursorCommands[2] = 0x00 | (height & 0x0F);
+    self->OLED_WriteCommands(self, OLED_SetCursorCommands, 3);
 }
 
 void OLED_Clear(OLED_t *self) {
     for (uint8_t j = 0; j < 8; j++) {
         OLED_SetCursor(self, j, 0);
-        for (uint8_t i = 0; i < 128; i++) {
-            self->OLED_WriteData(self, 0x00);
-        }
+        self->OLED_WriteData(self, 0x00, 128);
     }
 }
 
 void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char) {
     OLED_SetCursor(self, (Line - 1) * 2, (Column - 1) * 8);
-    for (uint8_t i = 0; i < 8; i++) {
-        self->OLED_WriteData(self, OLED_F8x16[Char - ' '][i]);
-    }
+    self->OLED_WriteDatas(self, (uint8_t *)&OLED_F8x16[Char - ' '][0], 8);
 
     OLED_SetCursor(self, (Line - 1) * 2 + 1, (Column - 1) * 8);
-    for (uint8_t i = 0; i < 8; i++) {
-        self->OLED_WriteData(self, OLED_F8x16[Char - ' '][i + 8]);
-    }
+    self->OLED_WriteDatas(self, (uint8_t *)&OLED_F8x16[Char - ' '][8], 8);
 }
 
 void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column,

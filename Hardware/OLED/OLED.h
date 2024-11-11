@@ -33,8 +33,12 @@ typedef struct OLED_t {
     uint32_t DC_ODR;
     uint32_t CS_ODR;
 
-    void (*OLED_WriteData)(struct OLED_t *self, uint8_t Data);
+    void (*OLED_WriteData)(struct OLED_t *self, uint8_t Data, uint16_t Length);
+    void (*OLED_WriteDatas)(struct OLED_t *self, uint8_t *Datas,
+                            uint16_t Length);
     void (*OLED_WriteCommand)(struct OLED_t *self, uint8_t Command);
+    void (*OLED_WriteCommands)(struct OLED_t *self, uint8_t *Commands,
+                               uint16_t Length);
 
     uint8_t Buffer[128];
 

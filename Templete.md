@@ -33,12 +33,21 @@ OLED_t OLED = {
 ### Software SPI
 ```
 OLED_t OLED = {
-    .D0 = "B12",
-    .D1 = "B13",
-    .RES = "B14",
-    .DC = "B15",
-    .CS = "A8",
+    .D0 = B12,
+    .D1 = B13,
+    .RES = B14,
+    .DC = B15,
+    .CS = A8,
     .SPI = ENABLE,
+};
+```
+
+### Hardware I2C
+```
+OLED_t OLED = {
+    .SCL = B6,
+    .SDA = B7,
+    .I2Cx = I2C1,
 };
 ```
 
@@ -57,11 +66,11 @@ OLED_t OLED = {
 ### Software SPI U8g2
 ```
 OLED_t OLED = {
-    .D0 = "B12",
-    .D1 = "B13",
-    .RES = "B14",
-    .DC = "B15",
-    .CS = "A8",
+    .D0 = B12,
+    .D1 = B13,
+    .RES = B14,
+    .DC = B15,
+    .CS = A8,
     .Width = 128,
     .Height = 64,
     .SPI = ENABLE,
