@@ -2,7 +2,6 @@
 #define ADC_H
 
 #include "RTE_Components.h"
-#include <stdint.h>
 #include CMSIS_device_header
 
 #define RCC_APB2Periph_ADCx(x)                                                 \

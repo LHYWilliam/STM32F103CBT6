@@ -2,7 +2,6 @@
 #define SAMPLER_H
 
 #include "RTE_Components.h"
-#include <stdint.h>
 #include CMSIS_device_header
 
 typedef struct {
@@ -15,6 +14,7 @@ typedef struct {
     ADC_TypeDef *ADCx;
     uint8_t Continuous;
     char ADC_Channel[32];
+    uint16_t NbrOfChannel;
 
     DMA_TypeDef *DMAx;
     uint8_t DMA_Channel;
@@ -23,8 +23,6 @@ typedef struct {
     uint16_t ms;
     uint16_t Hz;
     uint8_t Priority;
-
-    uint16_t NbrOfChannel;
 } Sampler_t;
 
 void Sampler_Init(Sampler_t *self);

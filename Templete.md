@@ -24,8 +24,8 @@ Key_Init(&Key);
 ### Software I2C
 ```
 OLED_t OLED = {
-    .SCL = B8,
-    .SDA = B9,
+    .SCL = B6,
+    .SDA = B7,
     .I2C = ENABLE,
 };
 ```
@@ -33,11 +33,11 @@ OLED_t OLED = {
 ### Software SPI
 ```
 OLED_t OLED = {
-    .D0 = B12,
-    .D1 = B13,
-    .RES = B14,
-    .DC = B15,
-    .CS = A8,
+    .D0 = B13,
+    .D1 = B15,
+    .RES = A8,
+    .DC = A9,
+    .CS = A10,
     .SPI = ENABLE,
 };
 ```
@@ -51,26 +51,38 @@ OLED_t OLED = {
 };
 ```
 
+### Hardware SPI
+```
+OLED_t OLED = {
+    .D0 = B13,
+    .D1 = B15,
+    .RES = A8,
+    .DC = A9,
+    .CS = A10,
+    .SPIx = SPI1,
+};
+```
+
 ### Software I2C U8g2
 ```
 OLED_t OLED = {
-   .SCL = B8,
-   .SDA = B9,
-   .Width = 128,
-   .Height = 64,
-   .I2C = ENABLE,
-   .U8g2 = ENABLE,
+    .SCL = B6,
+    .SDA = B7,
+    .Width = 128,
+    .Height = 64,
+    .I2C = ENABLE,
+    .U8g2 = ENABLE,
 };
 ```
 
 ### Software SPI U8g2
 ```
 OLED_t OLED = {
-    .D0 = B12,
-    .D1 = B13,
-    .RES = B14,
-    .DC = B15,
-    .CS = A8,
+    .D0 = B13,
+    .D1 = B15,
+    .RES = A8,
+    .DC = A9,
+    .CS = A10,
     .Width = 128,
     .Height = 64,
     .SPI = ENABLE,
@@ -93,11 +105,11 @@ OLED_t OLED = {
 ### Hardware SPI U8g2
 ```
 OLED_t OLED = {
-    .D0 = "B13",
-    .D1 = "B15",
-    .RES = "A8",
-    .DC = "A9",
-    .CS = "A10",
+    .D0 = B13,
+    .D1 = B15,
+    .RES = A8,
+    .DC = A9,
+    .CS = A10,
     .Width = 128,
     .Height = 64,
     .SPIx = SPI2,

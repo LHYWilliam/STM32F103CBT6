@@ -94,7 +94,8 @@ void OLED_Init(OLED_t *self) {
             }
 #endif
         }
-    } else if (self->SPI) {
+
+    } else if (self->SPI || self->SPIx) {
         GPIO_t GPIO;
         GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
         GPIO_InitPin(&GPIO, self->D0);
@@ -103,38 +104,65 @@ void OLED_Init(OLED_t *self) {
         GPIO_InitPin(&GPIO, self->RES);
         GPIO_InitPin(&GPIO, self->DC);
         GPIO_InitPin(&GPIO, self->CS);
-#if U8G2
-        if (self->U8g2) {
-            D0_ODR = GPIO_ODR(self->D0);
-            D1_ODR = GPIO_ODR(self->D1);
-            RES_ODR = GPIO_ODR(self->RES);
-            DC_ODR = GPIO_ODR(self->DC);
-            CS_ODR = GPIO_ODR(self->CS);
 
-            GPIO_Write(RES_ODR, 1);
-            GPIO_Write(DC_ODR, 1);
-            GPIO_Write(CS_ODR, 1);
-        } else {
+        if (self->SPI) {
+#if U8G2
+            if (self->U8g2) {
+                D0_ODR = GPIO_ODR(self->D0);
+                D1_ODR = GPIO_ODR(self->D1);
+                RES_ODR = GPIO_ODR(self->RES);
+                DC_ODR = GPIO_ODR(self->DC);
+                CS_ODR = GPIO_ODR(self->CS);
+
+                GPIO_Write(RES_ODR, 1);
+                GPIO_Write(DC_ODR, 1);
+                GPIO_Write(CS_ODR, 1);
+
+            } else {
 #endif
-            self->D0_ODR = GPIO_ODR(self->D0);
-            self->D1_ODR = GPIO_ODR(self->D1);
-            self->RES_ODR = GPIO_ODR(self->RES);
-            self->DC_ODR = GPIO_ODR(self->DC);
-            self->CS_ODR = GPIO_ODR(self->CS);
+                self->D0_ODR = GPIO_ODR(self->D0);
+                self->D1_ODR = GPIO_ODR(self->D1);
+                self->RES_ODR = GPIO_ODR(self->RES);
+                self->DC_ODR = GPIO_ODR(self->DC);
+                self->CS_ODR = GPIO_ODR(self->CS);
 
-            GPIO_Write(self->D0, 1);
-            GPIO_Write(self->D1, 1);
-            GPIO_Write(self->CS_ODR, 1);
-            GPIO_Write(self->DC_ODR, 1);
-            GPIO_Write(self->RES_ODR, 1);
+                GPIO_Write(self->D0, 1);
+                GPIO_Write(self->D1, 1);
+                GPIO_Write(self->RES_ODR, 1);
+                GPIO_Write(self->DC_ODR, 1);
+                GPIO_Write(self->CS_ODR, 1);
 
-            self->OLED_WriteData = OLED_SWSPI_WriteData;
-            self->OLED_WriteDatas = OLED_SWSPI_WriteDatas;
-            self->OLED_WriteCommand = OLED_SWSPI_WriteCommand;
-            self->OLED_WriteCommands = OLED_SWSPI_WriteCommands;
+                self->OLED_WriteData = OLED_SWSPI_WriteData;
+                self->OLED_WriteDatas = OLED_SWSPI_WriteDatas;
+                self->OLED_WriteCommand = OLED_SWSPI_WriteCommand;
+                self->OLED_WriteCommands = OLED_SWSPI_WriteCommands;
 #if U8G2
+            }
+#endif
+        } else if (self->SPIx) {
+#if U8G2
+            if (self->U8g2) {
+                RES_ODR = GPIO_ODR(self->RES);
+                DC_ODR = GPIO_ODR(self->DC);
+                CS_ODR = GPIO_ODR(self->CS);
+
+                GPIO_Write(RES_ODR, 1);
+                GPIO_Write(DC_ODR, 1);
+                GPIO_Write(CS_ODR, 1);
+            } else {
+#endif
+                self->RES_ODR = GPIO_ODR(self->RES);
+                self->DC_ODR = GPIO_ODR(self->DC);
+                self->CS_ODR = GPIO_ODR(self->CS);
+
+                GPIO_Write(self->RES_ODR, 1);
+                GPIO_Write(self->DC_ODR, 1);
+                GPIO_Write(self->CS_ODR, 1);
+#if U8G2
+            }
+#endif
         }
-#endif
+
         if (self->SPIx) {
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
             SPI_InitTypeDef SPI_InitStructure;
@@ -142,7 +170,7 @@ void OLED_Init(OLED_t *self) {
             SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
             SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
             SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-            SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+            SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
             SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
             SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
             SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
