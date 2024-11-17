@@ -59,7 +59,7 @@ OLED_t OLED = {
     .RES = A8,
     .DC = A9,
     .CS = A10,
-    .SPIx = SPI1,
+    .SPIx = SPI2,
 };
 ```
 
