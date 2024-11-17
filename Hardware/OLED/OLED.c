@@ -158,6 +158,11 @@ void OLED_Init(OLED_t *self) {
                 GPIO_Write(self->RES_ODR, 1);
                 GPIO_Write(self->DC_ODR, 1);
                 GPIO_Write(self->CS_ODR, 1);
+
+                self->OLED_WriteData = OLED_HWSPI_WriteData;
+                self->OLED_WriteDatas = OLED_HWSPI_WriteDatas;
+                self->OLED_WriteCommand = OLED_HWSPI_WriteCommand;
+                self->OLED_WriteCommands = OLED_HWSPI_WriteCommands;
 #if U8G2
             }
 #endif
@@ -223,11 +228,11 @@ void OLED_Init(OLED_t *self) {
 
     } else {
 #endif
-        if (self->SPI) {
+        if (self->SPI || self->SPIx) {
             GPIO_Write(self->RES_ODR, 0);
         }
         Delay_ms(100);
-        if (self->SPI) {
+        if (self->SPI || self->SPIx) {
             GPIO_Write(self->RES_ODR, 1);
         }
 

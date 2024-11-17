@@ -1,6 +1,8 @@
 #include "OLED_SPI.h"
 #include "GPIO.h"
 
+#include "Delay.h"
+
 void OLED_SWSPI_Start(OLED_t *self, uint8_t DC) {
     GPIO_Write(self->DC_ODR, DC);
     GPIO_Write(self->CS_ODR, 0);
@@ -47,6 +49,46 @@ void OLED_SWSPI_WriteCommands(OLED_t *self, uint8_t *Commands,
     OLED_SWSPI_Start(self, SPI_Command);
     for (uint16_t i = 0; i < Length; i++) {
         OLED_SWSPI_WriteByte(self, Commands[i]);
+    }
+    OLED_SWSPI_Stop(self);
+}
+
+#define OLED_HWSPI_Delay() Delay_us(1)
+
+void OLED_HWSPI_WriteByte(OLED_t *self, uint8_t Byte) {
+    while (SPI_I2S_GetFlagStatus(self->SPIx, SPI_I2S_FLAG_TXE) != SET)
+        ;
+    SPI_I2S_SendData(self->SPIx, Byte);
+}
+
+void OLED_HWSPI_WriteData(OLED_t *self, uint8_t Data, uint16_t Length) {
+    OLED_SWSPI_Start(self, SPI_Data);
+    for (uint16_t i = 0; i < Length; i++) {
+        OLED_HWSPI_WriteByte(self, Data);
+    }
+    OLED_SWSPI_Stop(self);
+}
+
+void OLED_HWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length) {
+    OLED_SWSPI_Start(self, SPI_Data);
+    for (uint16_t i = 0; i < Length; i++) {
+        OLED_HWSPI_WriteByte(self, Datas[i]);
+    }
+    OLED_SWSPI_Stop(self);
+}
+
+void OLED_HWSPI_WriteCommand(OLED_t *self, uint8_t Command) {
+    OLED_SWSPI_Start(self, SPI_Command);
+    OLED_HWSPI_WriteByte(self, Command);
+    OLED_HWSPI_Delay();
+    OLED_SWSPI_Stop(self);
+}
+
+void OLED_HWSPI_WriteCommands(OLED_t *self, uint8_t *Commands,
+                              uint16_t Length) {
+    OLED_SWSPI_Start(self, SPI_Command);
+    for (uint16_t i = 0; i < Length; i++) {
+        OLED_HWSPI_WriteByte(self, Commands[i]);
     }
     OLED_SWSPI_Stop(self);
 }
