@@ -18,8 +18,8 @@ Key_t Key = {
 };
 
 OLED_t OLED = {
-    .SCL = B6,
-    .SDA = B7,
+    .SCL = B8,
+    .SDA = B9,
     .I2C = ENABLE,
     .Width = 128,
     .Height = 64,
