@@ -73,6 +73,7 @@ void OLED_HWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length) {
     OLED_SWSPI_Start(self, SPI_Data);
     for (uint16_t i = 0; i < Length; i++) {
         OLED_HWSPI_WriteByte(self, Datas[i]);
+        OLED_HWSPI_Delay();
     }
     OLED_SWSPI_Stop(self);
 }

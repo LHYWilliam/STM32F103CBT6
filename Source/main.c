@@ -18,16 +18,11 @@ Key_t Key = {
 };
 
 OLED_t OLED = {
-    .D0 = B13,
-    .D1 = B15,
-    .RES = A8,
-    .DC = A9,
-    .CS = A10,
+    .SCL = B6,
+    .SDA = B7,
+    .I2C = ENABLE,
     .Width = 128,
     .Height = 64,
-    .SPIx = SPI2,
-    .SPI = ENABLE,
-    .U8g2 = ENABLE,
 };
 
 #define LENGTH 64
@@ -52,8 +47,8 @@ Sampler_t Sampler = {
 TimerHandle_t vLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
-TimerHandle_t vU8G2Timer;
-void vU8G2TimerCallback(TimerHandle_t pxTimer);
+TimerHandle_t vOLEDTimer;
+void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
 int main() {
     SystemInit();
@@ -66,15 +61,13 @@ int main() {
 
     Sampler_Init(&Sampler);
 
-    u8g2_SetFont(&OLED.u8g2, u8g2_font_t0_16_me);
-
     vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
-    vU8G2Timer = xTimerCreate("vU8G2Timer", pdMS_TO_TICKS(100), pdTRUE,
-                              (void *)1, vU8G2TimerCallback);
+    vOLEDTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
+                              (void *)1, vOLEDTimerCallback);
 
     xTimerStart(vLEDTimer, 0);
-    xTimerStart(vU8G2Timer, 0);
+    xTimerStart(vOLEDTimer, 0);
 
     vTaskStartScheduler();
 }

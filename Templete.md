@@ -27,6 +27,8 @@ OLED_t OLED = {
     .SCL = B6,
     .SDA = B7,
     .I2C = ENABLE,
+    .Width = 128,
+    .Height = 64,
 };
 ```
 
@@ -39,6 +41,8 @@ OLED_t OLED = {
     .DC = A9,
     .CS = A10,
     .SPI = ENABLE,
+    .Width = 128,
+    .Height = 64,
 };
 ```
 
@@ -48,6 +52,8 @@ OLED_t OLED = {
     .SCL = B6,
     .SDA = B7,
     .I2Cx = I2C1,
+    .Width = 128,
+    .Height = 64,
 };
 ```
 
@@ -60,6 +66,8 @@ OLED_t OLED = {
     .DC = A9,
     .CS = A10,
     .SPIx = SPI2,
+    .Width = 128,
+    .Height = 64,
 };
 ```
 
