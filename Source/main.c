@@ -18,11 +18,15 @@ Key_t Key = {
 };
 
 OLED_t OLED = {
-    .SCL = B6,
-    .SDA = B7,
+    .D0 = B13,
+    .D1 = B15,
+    .RES = A8,
+    .DC = A9,
+    .CS = A10,
     .Width = 128,
     .Height = 64,
-    .I2Cx = I2C1,
+    .SPIx = SPI2,
+    .SPI = ENABLE,
     .U8g2 = ENABLE,
 };
 
@@ -52,6 +56,7 @@ TimerHandle_t vU8G2Timer;
 void vU8G2TimerCallback(TimerHandle_t pxTimer);
 
 int main() {
+    SystemInit();
     SysTick_Config(SystemCoreClock / 1000);
 
     LED_Init(&LED);

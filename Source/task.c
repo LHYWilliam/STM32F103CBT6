@@ -15,7 +15,7 @@ void vU8G2TimerCallback(TimerHandle_t pxTimer) {
     u8g2_ClearBuffer(&OLED.u8g2);
 
     static uint32_t time;
-    u8g2_Printf(&OLED, 64 - 1, 64 - 1, "%d %%", time);
+    u8g2_Printf(&OLED, 64 - 1, 64 - 1, "%3d %%", time);
     time = xTaskGetTickCount();
 
     uint16_t x = 0;
@@ -23,13 +23,13 @@ void vU8G2TimerCallback(TimerHandle_t pxTimer) {
 
     while (x < OLED.Width - 1) {
         u8g2_DrawLine(
-            &OLED.u8g2, (float)x * (OLED.Width - 1) / (Sampler.Length - 1),
+            &OLED.u8g2, x * (OLED.Width - 1) / (Sampler.Length - 1),
             OLED.Height - 1 -
-                ((float)Sampler.Data[Index] * (OLED.Height - 1) / 2. / 4095. +
+                (Sampler.Data[Index] * (OLED.Height - 1) / 2. / 4095. +
                  (OLED.Height - 1) / 4.),
-            (float)(x + 1) * (OLED.Width - 1) / (Sampler.Length - 1),
+            (x + 1) * (OLED.Width - 1) / (Sampler.Length - 1),
             OLED.Height - 1 -
-                ((float)Sampler.Data[(Index + 1) % Sampler.Length] *
+                (Sampler.Data[(Index + 1) % Sampler.Length] *
                      (OLED.Height - 1) / 2. / 4095. +
                  (OLED.Height - 1) / 4.));
 
