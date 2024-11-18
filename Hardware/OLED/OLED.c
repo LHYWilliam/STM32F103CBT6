@@ -281,12 +281,11 @@ void OLED_Init(OLED_t *self) {
 #endif
 }
 
-void OLED_SetCursor(OLED_t *self, uint8_t width, uint8_t height) {
-    static uint8_t OLED_SetCursorCommands[3];
-    OLED_SetCursorCommands[0] = 0xB0 | width;
-    OLED_SetCursorCommands[1] = 0x10 | ((height & 0xF0) >> 4);
-    OLED_SetCursorCommands[2] = 0x00 | (height & 0x0F);
-    self->OLED_WriteCommands(self, OLED_SetCursorCommands, 3);
+void OLED_SetCursor(OLED_t *self, uint8_t Page, uint8_t X) {
+    self->CursorCommandsBuffer[0] = 0xB0 | Page;
+    self->CursorCommandsBuffer[1] = 0x10 | ((X & 0xF0) >> 4);
+    self->CursorCommandsBuffer[2] = 0x00 | (X & 0x0F);
+    self->OLED_WriteCommands(self, self->CursorCommandsBuffer, 3);
 }
 
 void OLED_Clear(OLED_t *self) {
@@ -296,81 +295,129 @@ void OLED_Clear(OLED_t *self) {
     }
 }
 
-void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char) {
-    OLED_SetCursor(self, (Line - 1) * 2, (Column - 1) * 8);
-    self->OLED_WriteDatas(self, (uint8_t *)&OLED_F8x16[Char - ' '][0], 8);
-
-    OLED_SetCursor(self, (Line - 1) * 2 + 1, (Column - 1) * 8);
-    self->OLED_WriteDatas(self, (uint8_t *)&OLED_F8x16[Char - ' '][8], 8);
-}
-
-void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column,
-                     const char *String) {
-    for (uint8_t i = 0; String[i] != '\0'; i++) {
-        OLED_ShowChar(self, Line, Column + i, String[i]);
+void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y) {
+    if (X >= 0 && X < self->Width && Y >= 0 && Y < self->Height) {
+        self->DisplayBuffer[Y / 8][X] |= 0x01 << (Y % 8);
     }
 }
 
-uint32_t OLED_Pow(uint32_t X, uint32_t Y) {
-    uint32_t Result = 1;
-    while (Y--) {
-        Result *= X;
-    }
-    return Result;
-}
-
-void OLED_ShowNum(OLED_t *self, uint8_t Line, uint8_t Column, uint32_t Number,
-                  uint8_t Length) {
-    for (uint8_t i = 0; i < Length; i++) {
-        OLED_ShowChar(self, Line, Column + i,
-                      Number / OLED_Pow(10, Length - i - 1) % 10 + '0');
-    }
-}
-
-void OLED_ShowSignedNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                        int32_t Number, uint8_t Length) {
-    uint32_t Number1;
-    if (Number >= 0) {
-        OLED_ShowChar(self, Line, Column, '+');
-        Number1 = Number;
+void OLED_DrawLine(OLED_t *self, int16_t X1, int16_t Y1, int16_t X2,
+                   int16_t Y2) {
+    uint16_t dx, dy;
+    if (X1 > X2) {
+        dx = X1 - X2;
     } else {
-        OLED_ShowChar(self, Line, Column, '-');
-        Number1 = -Number;
+        dx = X2 - X1;
     }
-    for (uint8_t i = 0; i < Length; i++) {
-        OLED_ShowChar(self, Line, Column + i + 1,
-                      Number1 / OLED_Pow(10, Length - i - 1) % 10 + '0');
+    if (Y1 > Y2) {
+        dy = Y1 - Y2;
+    } else {
+        dy = Y2 - Y1;
     }
-}
 
-void OLED_ShowHexNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                     uint32_t Number, uint8_t Length) {
-    for (uint8_t i = 0; i < Length; i++) {
-        uint8_t SingleNumber = Number / OLED_Pow(16, Length - i - 1) % 16;
-        if (SingleNumber < 10) {
-            OLED_ShowChar(self, Line, Column + i, SingleNumber + '0');
+    uint16_t tmp;
+    uint8_t swapxy = 0;
+    if (dy > dx) {
+        swapxy = 1;
+        tmp = dx;
+        dx = dy;
+        dy = tmp;
+        tmp = X1;
+        X1 = Y1;
+        Y1 = tmp;
+        tmp = X2;
+        X2 = Y2;
+        Y2 = tmp;
+    }
+    if (X1 > X2) {
+        tmp = X1;
+        X1 = X2;
+        X2 = tmp;
+        tmp = Y1;
+        Y1 = Y2;
+        Y2 = tmp;
+    }
+    int16_t err = dx >> 1;
+    int16_t ystep = Y2 > Y1 ? 1 : -1;
+
+    uint16_t y = Y1;
+
+    if (X2 == 255) {
+        X2--;
+    }
+
+    for (uint16_t x = X1; x <= X2; x++) {
+        if (swapxy == 0) {
+            OLED_DrawPoint(self, x, y);
         } else {
-            OLED_ShowChar(self, Line, Column + i, SingleNumber - 10 + 'A');
+            OLED_DrawPoint(self, y, x);
+        }
+        err -= (uint16_t)dy;
+        if (err < 0) {
+            y += (uint16_t)ystep;
+            err += (uint16_t)dx;
         }
     }
 }
 
-void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                     uint32_t Number, uint8_t Length) {
-    for (uint8_t i = 0; i < Length; i++) {
-        OLED_ShowChar(self, Line, Column + i,
-                      Number / OLED_Pow(2, Length - i - 1) % 2 + '0');
+void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, const uint8_t *Image) {
+    for (uint8_t j = 0; j < (Height - 1) / 8 + 1; j++) {
+        for (uint8_t i = 0; i < Width; i++) {
+            if (X + i >= 0 && X + i <= 127) {
+                int16_t Page = Y / 8;
+                int16_t Shift = Y % 8;
+                if (Y < 0) {
+                    Page -= 1;
+                    Shift += 8;
+                }
+
+                if (Page + j >= 0 && Page + j <= 7) {
+                    self->DisplayBuffer[Page + j][X + i] |= Image[j * Width + i]
+                                                            << (Shift);
+                }
+
+                if (Page + j + 1 >= 0 && Page + j + 1 <= 7) {
+                    self->DisplayBuffer[Page + j + 1][X + i] |=
+                        Image[j * Width + i] >> (8 - Shift);
+                }
+            }
+        }
     }
 }
 
-void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format,
-                 ...) {
+void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
+    OLED_ShowImage(self, X, Y, 8, 16, OLED_F8x16[Char - ' ']);
+}
+
+void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
+    for (uint8_t i = 0; String[i]; i++) {
+        OLED_ShowChar(self, X + i * 8, Y, String[i]);
+    }
+}
+
+void OLED_Printf(OLED_t *self, int16_t x, int16_t y, const char *format, ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf((char *)self->Buffer, format, arg);
+    vsprintf((char *)self->PrintfBuffer, format, arg);
     va_end(arg);
 
-    OLED_ShowString(self, x, y, (char *)self->Buffer);
+    OLED_ShowString(self, x, y, (char *)self->PrintfBuffer);
+}
+
+void OLED_ClearBuffer(OLED_t *self) {
+    for (uint8_t j = 0; j < 8; j++) {
+        for (uint8_t i = 0; i < self->Width; i++) {
+            self->DisplayBuffer[j][i] = 0x00;
+        }
+    }
+}
+
+void OLED_SendBuffer(OLED_t *self) {
+    for (uint8_t j = 0; j < 8; j++) {
+        OLED_SetCursor(self, j, 0);
+        self->OLED_WriteDatas(self, self->DisplayBuffer[j], 128);
+    }
 }
 
 #if U8G2
@@ -516,14 +563,14 @@ uint8_t u8g2_gpio_and_delay_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
     return 1;
 }
 
-void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
+void u8g2_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format,
                  ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf((char *)self->Buffer, format, arg);
+    vsprintf((char *)self->PrintfBuffer, format, arg);
     va_end(arg);
 
-    u8g2_DrawUTF8(&self->u8g2, x, y, (char *)self->Buffer);
+    u8g2_DrawUTF8(&self->u8g2, x, y, (char *)self->PrintfBuffer);
 }
 
 #endif

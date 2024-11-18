@@ -4,7 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#define U8G2 1
+#define U8G2 0
 
 #if U8G2
 
@@ -33,6 +33,9 @@ typedef struct OLED_t {
     uint32_t DC_ODR;
     uint32_t CS_ODR;
 
+    uint8_t Width;
+    uint8_t Height;
+
     void (*OLED_WriteData)(struct OLED_t *self, uint8_t Data, uint16_t Length);
     void (*OLED_WriteDatas)(struct OLED_t *self, uint8_t *Datas,
                             uint16_t Length);
@@ -40,12 +43,11 @@ typedef struct OLED_t {
     void (*OLED_WriteCommands)(struct OLED_t *self, uint8_t *Commands,
                                uint16_t Length);
 
-    uint8_t Buffer[128];
+    uint8_t PrintfBuffer[128];
+    uint8_t CursorCommandsBuffer[3];
+    uint8_t DisplayBuffer[8][128];
 
 #if U8G2
-
-    uint8_t Width;
-    uint8_t Height;
 
     uint8_t U8g2;
     u8g2_t u8g2;
@@ -65,19 +67,18 @@ void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
 
 void OLED_Clear(OLED_t *self);
 
-void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char);
-void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column,
-                     const char *String);
+void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y);
 
-void OLED_ShowNum(OLED_t *self, uint8_t Line, uint8_t Column, uint32_t Number,
-                  uint8_t Length);
-void OLED_ShowSignedNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                        int32_t Number, uint8_t Length);
-void OLED_ShowHexNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                     uint32_t Number, uint8_t Length);
-void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
-                     uint32_t Number, uint8_t Length);
+void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, const uint8_t *Image);
+void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char);
+void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String);
+void OLED_Printf(OLED_t *self, int16_t x, int16_t y, const char *format, ...);
 
-void OLED_Printf(OLED_t *self, uint16_t x, uint16_t y, const char *format, ...);
+void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
+                   int16_t Y1);
+
+void OLED_ClearBuffer(OLED_t *self);
+void OLED_SendBuffer(OLED_t *self);
 
 #endif

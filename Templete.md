@@ -113,7 +113,6 @@ OLED_t OLED = {
     .Width = 128,
     .Height = 64,
     .SPIx = SPI2,
-    .SPI = ENABLE,
     .U8g2 = ENABLE,
 };
 ```
