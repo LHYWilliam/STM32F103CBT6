@@ -288,11 +288,30 @@ void OLED_SetCursor(OLED_t *self, uint8_t Page, uint8_t X) {
     self->OLED_WriteCommands(self, self->CursorCommandsBuffer, 3);
 }
 
-void OLED_Clear(OLED_t *self) {
+void OLED_Fill(OLED_t *self) {
     for (uint8_t j = 0; j < 8; j++) {
-        OLED_SetCursor(self, j, 0);
-        self->OLED_WriteData(self, 0x00, 128);
+        for (uint8_t i = 0; i < self->Width; i++) {
+            self->DisplayBuffer[j][i] = 0xFF;
+        }
     }
+}
+
+void OLED_FillArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                   uint8_t Height) {
+    for (int16_t j = Y; j < Y + Height; j++) {
+        for (int16_t i = X; i < X + Width; i++) {
+            if (i >= 0 && i < self->Width && j >= 0 && j < self->Height) {
+                self->DisplayBuffer[j / 8][i] |= 0x01 << (j % 8);
+            }
+        }
+    }
+}
+
+void OLED_Clear(OLED_t *self) { OLED_Fill(self, 0); }
+
+void OLED_ClearArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height) {
+    OLED_FillArea(self, X, Y, Width, Height, 0);
 }
 
 void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y) {
@@ -364,7 +383,7 @@ void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, const uint8_t *Image) {
     for (uint8_t j = 0; j < (Height - 1) / 8 + 1; j++) {
         for (uint8_t i = 0; i < Width; i++) {
-            if (X + i >= 0 && X + i <= 127) {
+            if (X + i >= 0 && X + i < self->Width) {
                 int16_t Page = Y / 8;
                 int16_t Shift = Y % 8;
                 if (Y < 0) {
@@ -405,10 +424,28 @@ void OLED_Printf(OLED_t *self, int16_t x, int16_t y, const char *format, ...) {
     OLED_ShowString(self, x, y, (char *)self->PrintfBuffer);
 }
 
-void OLED_ClearBuffer(OLED_t *self) {
+void OLED_ClearBuffer(OLED_t *self) { OLED_Fill(self, 0); }
+
+void OLED_ClearBufferArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                          uint8_t Height) {
+    OLED_FillArea(self, X, Y, Width, Height, 0);
+}
+
+void OLED_Reverse(OLED_t *self) {
     for (uint8_t j = 0; j < 8; j++) {
         for (uint8_t i = 0; i < self->Width; i++) {
-            self->DisplayBuffer[j][i] = 0x00;
+            self->DisplayBuffer[j][i] ^= 0xFF;
+        }
+    }
+}
+
+void OLED_ReverseArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                      uint8_t Height) {
+    for (int16_t j = Y; j < Y + Height; j++) {
+        for (int16_t i = X; i < X + Width; i++) {
+            if (i >= 0 && i < self->Width && j >= 0 && j < self->Height) {
+                self->DisplayBuffer[j / 8][i] ^= 0x01 << (j % 8);
+            }
         }
     }
 }
@@ -416,7 +453,25 @@ void OLED_ClearBuffer(OLED_t *self) {
 void OLED_SendBuffer(OLED_t *self) {
     for (uint8_t j = 0; j < 8; j++) {
         OLED_SetCursor(self, j, 0);
-        self->OLED_WriteDatas(self, self->DisplayBuffer[j], 128);
+        self->OLED_WriteDatas(self, self->DisplayBuffer[j], self->Width);
+    }
+}
+
+void OLED_SendBufferArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                         uint8_t Height) {
+    int16_t Page = Y / 8;
+    int16_t Page1 = (Y + Height - 1) / 8 + 1;
+    if (Y < 0) {
+        Page -= 1;
+        Page1 -= 1;
+    }
+
+    for (int16_t j = Page; j < Page1; j++) {
+        if (X >= 0 && X < self->Width && j >= 0 && j <= 7) {
+
+            OLED_SetCursor(self, j, X);
+            self->OLED_WriteDatas(self, &self->DisplayBuffer[j][X], Width);
+        }
     }
 }
 
