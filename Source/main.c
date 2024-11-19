@@ -18,6 +18,26 @@ Key_t Key = {
     .Mode = HIGH,
 };
 
+Key_t KeyUp = {
+    .GPIOxPiny = B15,
+    .Mode = LOW,
+};
+
+Key_t KeyDown = {
+    .GPIOxPiny = A9,
+    .Mode = LOW,
+};
+
+Key_t KeyConfirm = {
+    .GPIOxPiny = A11,
+    .Mode = LOW,
+};
+
+Key_t KeyCancel = {
+    .GPIOxPiny = B13,
+    .Mode = LOW,
+};
+
 OLED_t OLED = {
     .SCL = B8,
     .SDA = B9,
@@ -49,21 +69,28 @@ TextMenu_t Menu = {
     .Page =
         &(TextPage_t){
             .Title = "Home Page",
-            .NumOfLowerPages = 3,
+            .NumOfLowerPages = 4,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
-                        .Title = "Page 1",
+                        .Title = "ADC",
                     },
                     (TextPage_t){
-                        .Title = "Page 2",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "Page 3",
+                        .Title = "...",
+                    },
+                    (TextPage_t){
+                        .Title = "...",
                     },
                 },
         },
 };
+TextPage_t *ADC_Page;
+
+TaskHandle_t xMenuKeyTaskHandle;
+void vMenuKeyTaskCode(void *pvParameters);
 
 TimerHandle_t vLEDTimer;
 TimerHandle_t vSamplerTimer;
@@ -79,12 +106,21 @@ int main() {
     LED_Init(&LED);
     Key_Init(&Key);
 
+    Key_Init(&KeyUp);
+    Key_Init(&KeyDown);
+    Key_Init(&KeyConfirm);
+    Key_Init(&KeyCancel);
+
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLED_F8x16);
 
     TextMenu_Init(&Menu);
+    ADC_Page = &Menu.Page->LowerPages[0];
 
     Sampler_Init(&Sampler);
+
+    xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
+                &xMenuKeyTaskHandle);
 
     vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
