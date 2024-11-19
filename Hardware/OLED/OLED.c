@@ -436,8 +436,10 @@ void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
     }
 }
 
+void OLED_SetFont(OLED_t *self, const uint8_t *Font) { self->Font = Font; }
+
 void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
-    OLED_ShowImage(self, X, Y, 8, 16, OLED_F8x16[Char - ' ']);
+    OLED_ShowImage(self, X, Y, 8, 16, &self->Font[(Char - ' ') * 16]);
 }
 
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {

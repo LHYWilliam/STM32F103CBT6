@@ -47,6 +47,8 @@ typedef struct OLED_t {
     uint8_t CursorCommandsBuffer[3];
     uint8_t DisplayBuffer[8][128];
 
+    const uint8_t *Font;
+
 #if U8G2
 
     uint8_t U8g2;
@@ -81,6 +83,8 @@ void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
 
 void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, const uint8_t *Image);
+
+void OLED_SetFont(OLED_t *self, const uint8_t *Font);
 void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char);
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String);
 void OLED_Printf(OLED_t *self, int16_t x, int16_t y, const char *format, ...);
