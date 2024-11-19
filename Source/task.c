@@ -57,7 +57,8 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
-    OLED_Printf(&OLED, 128 - 8 * 4 - 1, 64 - 16 - 1, "%2d %%", time);
+    OLED_Printf(&OLED, 128 - OLED.FontWidth * 4 - 1, 64 - OLED.FontHeight - 1,
+                "%2d %%", time);
     time = xTaskGetTickCount();
 
     if (Menu.Page == ADC_Page) {
@@ -80,7 +81,7 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
             Index = (Index + 1) % Sampler.Length;
         }
 
-        OLED_Printf(&OLED, 1 - 1, 64 - 16 - 1, "%.3f V",
+        OLED_Printf(&OLED, 1 - 1, 64 - OLED.FontHeight - 1, "%.3f V",
                     Sampler.Data[Sampler.Index] * 3.3 / 4095.);
 
     } else {

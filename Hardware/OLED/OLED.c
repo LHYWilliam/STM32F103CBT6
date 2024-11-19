@@ -436,15 +436,37 @@ void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
     }
 }
 
-void OLED_SetFont(OLED_t *self, const uint8_t *Font) { self->Font = Font; }
+void OLED_SetFont(OLED_t *self, OLEDFont Font) {
+    self->Font = Font;
+
+    switch (self->Font) {
+    case OLEDFont_6X8:
+        self->FontWidth = 6;
+        self->FontHeight = 8;
+        break;
+    case OLEDFont_8X16:
+        self->FontWidth = 8;
+        self->FontHeight = 16;
+        break;
+    }
+}
 
 void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
-    OLED_ShowImage(self, X, Y, 8, 16, &self->Font[(Char - ' ') * 16]);
+    switch (self->Font) {
+    case OLEDFont_6X8:
+        OLED_ShowImage(self, X, Y, self->FontWidth, self->FontHeight,
+                       OLED_Font6x8[Char - ' ']);
+        break;
+    case OLEDFont_8X16:
+        OLED_ShowImage(self, X, Y, self->FontWidth, self->FontHeight,
+                       OLED_Font8x16[Char - ' ']);
+        break;
+    }
 }
 
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
     for (uint8_t i = 0; String[i]; i++) {
-        OLED_ShowChar(self, X + i * 8, Y, String[i]);
+        OLED_ShowChar(self, X + i * self->FontWidth, Y, String[i]);
     }
 }
 

@@ -112,7 +112,7 @@ int main() {
     Key_Init(&KeyCancel);
 
     OLED_Init(&OLED);
-    OLED_SetFont(&OLED, OLED_F8x16);
+    OLED_SetFont(&OLED, OLEDFont_6X8);
 
     TextMenu_Init(&Menu);
     ADC_Page = &Menu.Page->LowerPages[0];
