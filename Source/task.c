@@ -23,7 +23,8 @@ void vSamplerTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
-    OLED_Printf(&OLED, 64 - 1, 64 - 16 - 1, "%3d %%", time);
+    OLED_Printf(&OLED, OLED.Height - 1, OLED.Height - OLED.FontHeight - 1,
+                "%3d %%", time);
     time = xTaskGetTickCount();
 
     uint16_t x = 0;
@@ -45,7 +46,7 @@ void vSamplerTimerCallback(TimerHandle_t pxTimer) {
         Index = (Index + 1) % Sampler.Length;
     }
 
-    OLED_Printf(&OLED, 1 - 1, 64 - 16 - 1, "%.3f V",
+    OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
                 Sampler.Data[Sampler.Index] * 3.3 / 4095.);
 
     OLED_SendBuffer(&OLED);
@@ -57,8 +58,8 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
-    OLED_Printf(&OLED, 128 - OLED.FontWidth * 4 - 1, 64 - OLED.FontHeight - 1,
-                "%2d %%", time);
+    OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
+                OLED.Height - OLED.FontHeight - 1, "%2d %%", time);
     time = xTaskGetTickCount();
 
     if (Menu.Page == ADC_Page) {
@@ -81,7 +82,7 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
             Index = (Index + 1) % Sampler.Length;
         }
 
-        OLED_Printf(&OLED, 1 - 1, 64 - OLED.FontHeight - 1, "%.3f V",
+        OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
                     Sampler.Data[Sampler.Index] * 3.3 / 4095.);
 
     } else {
@@ -89,12 +90,12 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
 
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
             if (&Menu.Page->LowerPages[begin + i] == ADC_Page) {
-                OLED_Printf(&OLED, 0, i * 16, "%s %.3f %s",
+                OLED_Printf(&OLED, 0, i * OLED.FontHeight, "%s %.3f %s",
                             Menu.Page->LowerPages[begin + i].Title,
                             Sampler.Data[Sampler.Index] * 3.3 / 4095.,
                             begin + i == Menu.Cursor ? "<-" : "");
             } else {
-                OLED_Printf(&OLED, 0, i * 16, "%s %s",
+                OLED_Printf(&OLED, 0, i * OLED.FontHeight, "%s %s",
                             Menu.Page->LowerPages[begin + i].Title,
                             begin + i == Menu.Cursor ? "<-" : "");
             }

@@ -5,9 +5,8 @@
 #include CMSIS_device_header
 
 #include "OLED.h"
-#include "OLED_Font.h"
 
-#define TEXT_COUNT_OF_PAGE 4
+#define TEXT_COUNT_OF_PAGE 8
 
 typedef struct TextPage {
     char Title[32];
