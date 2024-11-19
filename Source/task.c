@@ -1,17 +1,20 @@
 #include "FreeRTOS.h"
+#include "GPIO.h"
 #include "timers.h"
 
 #include "LED.h"
+#include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
 
 extern LED_t LED;
+extern TextMenu_t Menu;
 extern Sampler_t Sampler;
 extern OLED_t OLED;
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Turn(&LED); }
 
-void vOLEDTimerCallback(TimerHandle_t pxTimer) {
+void vSamplerTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
@@ -43,4 +46,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_SendBuffer(&OLED);
 
     time = xTaskGetTickCount() - time;
+}
+
+void vMenuTimerCallback(TimerHandle_t pxTimer) {
+    OLED_ClearBuffer(&OLED);
+    OLED_ShowTextMenu(&OLED, &Menu);
+    OLED_SendBuffer(&OLED);
 }

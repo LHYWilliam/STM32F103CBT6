@@ -4,6 +4,7 @@
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
+#include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
 
@@ -44,11 +45,32 @@ Sampler_t Sampler = {
     .Priority = 14,
 };
 
-TimerHandle_t vLEDTimer;
-void vLEDTimerCallback(TimerHandle_t pxTimer);
+TextMenu_t Menu = {
+    .Page =
+        &(TextPage_t){
+            .Title = "Home Page",
+            .NumOfLowerPages = 3,
+            .LowerPages =
+                (TextPage_t[]){
+                    (TextPage_t){
+                        .Title = "Page 1",
+                    },
+                    (TextPage_t){
+                        .Title = "Page 2",
+                    },
+                    (TextPage_t){
+                        .Title = "Page 3",
+                    },
+                },
+        },
+};
 
-TimerHandle_t vOLEDTimer;
-void vOLEDTimerCallback(TimerHandle_t pxTimer);
+TimerHandle_t vLEDTimer;
+TimerHandle_t vSamplerTimer;
+TimerHandle_t vMenuTimer;
+void vLEDTimerCallback(TimerHandle_t pxTimer);
+void vSamplerTimerCallback(TimerHandle_t pxTimer);
+void vMenuTimerCallback(TimerHandle_t pxTimer);
 
 int main() {
     SystemInit();
@@ -58,16 +80,22 @@ int main() {
     Key_Init(&Key);
 
     OLED_Init(&OLED);
+    OLED_SetFont(&OLED, OLED_F8x16);
+
+    TextMenu_Init(&Menu);
 
     Sampler_Init(&Sampler);
 
     vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
-    vOLEDTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
-                              (void *)1, vOLEDTimerCallback);
+    vSamplerTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
+                                 (void *)1, vSamplerTimerCallback);
+    vMenuTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(100), pdTRUE,
+                              (void *)2, vMenuTimerCallback);
 
     xTimerStart(vLEDTimer, 0);
-    xTimerStart(vOLEDTimer, 0);
+    // xTimerStart(vSamplerTimer, 0);
+    xTimerStart(vMenuTimer, 0);
 
     vTaskStartScheduler();
 }
