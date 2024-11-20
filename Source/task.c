@@ -8,7 +8,7 @@
 #include "OLED.h"
 #include "Sampler.h"
 
-#define MQxDataLength 128
+#define MQx_DataLength 128
 
 extern LED_t LED;
 
@@ -34,6 +34,13 @@ extern uint16_t MQ3_Data[128];
 extern int16_t MQ135_Index;
 extern uint16_t MQ135_Data[128];
 
+static void OLED_ShowMQxPage(OLED_t *OLED, uint16_t *MQx_Data,
+                             int16_t MQx_Index, TextPage_t *MQxPage,
+                             LED_t *MQx_LED);
+static void OLED_ShowMQxMenu(OLED_t *OLED, uint16_t *MQx_Data,
+                             int16_t MQx_Index, TextPage_t *MQxPage,
+                             LED_t *MQx_LED, uint8_t begin, uint8_t i);
+
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
     if (MQ3_Data[MQ3_Index] > 2048 + 256) {
         LED_On(&MQ3_LED);
@@ -50,35 +57,6 @@ void vLEDTimerCallback(TimerHandle_t pxTimer) {
     LED_Turn(&LED);
 }
 
-void vSamplerTimerCallback(TimerHandle_t pxTimer) {
-    OLED_ClearBuffer(&OLED);
-
-    static uint32_t time;
-    OLED_Printf(&OLED, OLED.Height - 1, OLED.Height - OLED.FontHeight - 1,
-                "%3d %%", time);
-    time = xTaskGetTickCount();
-
-    for (uint16_t x = 0, Index = (MQ3_Index + 1) % MQxDataLength;
-         x < OLED.Width - 1; x++, Index = (Index + 1) % MQxDataLength) {
-        OLED_DrawLine(&OLED, x,
-                      OLED.Height - 1 -
-                          (MQ3_Data[Index] * (OLED.Height - 1) / 2. / 4095. +
-                           (OLED.Height - 1) / 4.),
-                      x + 1,
-                      OLED.Height - 1 -
-                          (MQ3_Data[(Index + 1) % MQxDataLength] *
-                               (OLED.Height - 1) / 2. / 4095. +
-                           (OLED.Height - 1) / 4.));
-    }
-
-    OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
-                MQ3_Data[MQ3_Index] * 3.3 / 4095.);
-
-    OLED_SendBuffer(&OLED);
-
-    time = xTaskGetTickCount() - time;
-}
-
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
@@ -88,58 +66,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     time = xTaskGetTickCount();
 
     if (Menu.Page == MQ3Page) {
-        uint16_t x = 0;
-        uint16_t Index = (MQ3_Index + 1) % MQxDataLength;
-
-        while (x < OLED.Width - 1) {
-            OLED_DrawLine(
-                &OLED, x * (OLED.Width - 1) / (MQxDataLength - 1),
-                OLED.Height - 1 -
-                    (MQ3_Data[Index] * (OLED.Height - 1) / 2. / 4095. +
-                     (OLED.Height - 1) / 4.),
-                (x + 1) * (OLED.Width - 1) / (MQxDataLength - 1),
-                OLED.Height - 1 -
-                    (MQ3_Data[(Index + 1) % MQxDataLength] * (OLED.Height - 1) /
-                         2. / 4095. +
-                     (OLED.Height - 1) / 4.));
-
-            x++;
-            Index = (Index + 1) % MQxDataLength;
-        }
-
-        OLED_Printf(&OLED, 1 - 1, 1 - 1, "%S %s", MQ3Page->Title,
-                    GPIO_ReadInput(MQ3_LED.ODR) == MQ3_LED.Mode ? "Danger"
-                                                                : "Safe");
-
-        OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
-                    MQ3_Data[MQ3_Index] * 3.3 / 4095.);
+        OLED_ShowMQxPage(&OLED, MQ3_Data, MQ3_Index, MQ3Page, &MQ3_LED);
 
     } else if (Menu.Page == MQ135Page) {
-        uint16_t x = 0;
-        uint16_t Index = (MQ135_Index + 1) % MQxDataLength;
-
-        while (x < OLED.Width - 1) {
-            OLED_DrawLine(
-                &OLED, x * (OLED.Width - 1) / (MQxDataLength - 1),
-                OLED.Height - 1 -
-                    (MQ135_Data[Index] * (OLED.Height - 1) / 2. / 4095. +
-                     (OLED.Height - 1) / 4.),
-                (x + 1) * (OLED.Width - 1) / (MQxDataLength - 1),
-                OLED.Height - 1 -
-                    (MQ135_Data[(Index + 1) % MQxDataLength] *
-                         (OLED.Height - 1) / 2. / 4095. +
-                     (OLED.Height - 1) / 4.));
-
-            x++;
-            Index = (Index + 1) % MQxDataLength;
-        }
-
-        OLED_Printf(&OLED, 1 - 1, 1 - 1, "%S %s", MQ135Page->Title,
-                    GPIO_ReadInput(MQ135_LED.ODR) == MQ135_LED.Mode ? "Danger"
-                                                                    : "Safe");
-
-        OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
-                    MQ135_Data[MQ135_Index] * 3.3 / 4095.);
+        OLED_ShowMQxPage(&OLED, MQ135_Data, MQ135_Index, MQ135Page, &MQ135_LED);
 
     } else {
         if (Menu.Page == HomePage) {
@@ -152,30 +82,12 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
             if (&Menu.Page->LowerPages[begin + i] == MQ3Page) {
-                OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
-                            "%s%-6s %.3f%s",
-                            begin + i == Menu.Cursor ? ">" : ".",
-                            Menu.Page->LowerPages[begin + i].Title,
-                            MQ3_Data[MQ3_Index] * 3.3 / 4095.,
-                            begin + i == Menu.Cursor ? "<" : "");
-                OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 6,
-                            20 + i * (OLED.FontHeight + 2), "%6s",
-                            GPIO_ReadInput(MQ3_LED.ODR) == MQ3_LED.Mode
-                                ? "Danger"
-                                : "Safe");
+                OLED_ShowMQxMenu(&OLED, MQ3_Data, MQ3_Index, MQ3Page, &MQ3_LED,
+                                 begin, i);
 
             } else if (&Menu.Page->LowerPages[begin + i] == MQ135Page) {
-                OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
-                            "%s%6s %.3f%s",
-                            begin + i == Menu.Cursor ? ">" : ".",
-                            Menu.Page->LowerPages[begin + i].Title,
-                            MQ135_Data[MQ135_Index] * 3.3 / 4095.,
-                            begin + i == Menu.Cursor ? "<" : "");
-                OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 6,
-                            20 + i * (OLED.FontHeight + 2), "%6s",
-                            GPIO_ReadInput(MQ135_LED.ODR) == MQ135_LED.Mode
-                                ? "Danger"
-                                : "Safe");
+                OLED_ShowMQxMenu(&OLED, MQ135_Data, MQ135_Index, MQ135Page,
+                                 &MQ135_LED, begin, i);
 
             } else {
                 OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
@@ -206,4 +118,42 @@ void vMenuKeyTaskCode(void *pvParameters) {
         }
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+}
+
+static void OLED_ShowMQxPage(OLED_t *OLED, uint16_t *MQx_Data,
+                             int16_t MQx_Index, TextPage_t *MQxPage,
+                             LED_t *MQx_LED) {
+    for (uint16_t x = 0, Index = (MQx_Index + 1) % MQx_DataLength;
+         x < OLED->Width - 1; x++, Index = (Index + 1) % MQx_DataLength) {
+        OLED_DrawLine(OLED, x * (OLED->Width - 1) / (MQx_DataLength - 1),
+                      OLED->Height - 1 -
+                          (MQx_Data[Index] * (OLED->Height - 1) / 2. / 4095. +
+                           (OLED->Height - 1) / 4.),
+                      (x + 1) * (OLED->Width - 1) / (MQx_DataLength - 1),
+                      OLED->Height - 1 -
+                          (MQx_Data[(Index + 1) % MQx_DataLength] *
+                               (OLED->Height - 1) / 2. / 4095. +
+                           (OLED->Height - 1) / 4.));
+    }
+
+    OLED_Printf(OLED, 1 - 1, 1 - 1, "%S %s", MQxPage->Title,
+                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
+                                                              : "Safe");
+
+    OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
+                MQx_Data[MQx_Index] * 3.3 / 4095.);
+}
+
+static void OLED_ShowMQxMenu(OLED_t *OLED, uint16_t *MQx_Data,
+                             int16_t MQx_Index, TextPage_t *MQxPage,
+                             LED_t *MQx_LED, uint8_t begin, uint8_t i) {
+    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
+                begin + i == Menu.Cursor ? ">" : ".",
+                Menu.Page->LowerPages[begin + i].Title,
+                MQx_Data[MQx_Index] * 3.3 / 4095.,
+                begin + i == Menu.Cursor ? "<" : "");
+    OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
+                20 + i * (OLED->FontHeight + 2), "%6s",
+                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
+                                                              : "Safe");
 }
