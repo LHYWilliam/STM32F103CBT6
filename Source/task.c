@@ -92,7 +92,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
             Index = (Index + 1) % Sampler.Length;
         }
 
-        OLED_Printf(&OLED, 1 - 1, 1 - 1, "ADC %s",
+        OLED_Printf(&OLED, 1 - 1, 1 - 1, "%S %s", ADCPage->Title,
                     GPIO_ReadInput(ADC_LED.ODR) == ADC_LED.Mode ? "Danger"
                                                                 : "Safe");
 
@@ -110,17 +110,25 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
             if (&Menu.Page->LowerPages[begin + i] == ADCPage) {
+                OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
+                            "%s %s %.3f %s",
+                            begin + i == Menu.Cursor ? ">" : "-",
+                            Menu.Page->LowerPages[begin + i].Title,
+                            Sampler.Data[Sampler.Index] * 3.3 / 4095.,
+                            begin + i == Menu.Cursor ? "<-" : "");
                 OLED_Printf(
-                    &OLED, 0, 20 + i * OLED.FontHeight, "%s %s %.3f %s %s",
-                    begin + i == Menu.Cursor ? ">" : "-",
-                    Menu.Page->LowerPages[begin + i].Title,
-                    Sampler.Data[Sampler.Index] * 3.3 / 4095.,
-                    begin + i == Menu.Cursor ? "<-" : "",
+                    &OLED,
+                    OLED.Width -
+                        OLED.FontWidth *
+                            (GPIO_ReadInput(ADC_LED.ODR) == ADC_LED.Mode ? 6
+                                                                         : 5),
+                    20 + i * (OLED.FontHeight + 2), "%s",
                     GPIO_ReadInput(ADC_LED.ODR) == ADC_LED.Mode ? "Danger"
                                                                 : "Safe");
+
             } else {
-                OLED_Printf(&OLED, 0, 20 + i * OLED.FontHeight, "%s %s %s",
-                            begin + i == Menu.Cursor ? ">" : "-",
+                OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
+                            "%s %s %s", begin + i == Menu.Cursor ? ">" : "-",
                             Menu.Page->LowerPages[begin + i].Title,
                             begin + i == Menu.Cursor ? "<-" : "");
             }
