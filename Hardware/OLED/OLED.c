@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <stdint.h>
 
 #include "Delay.h"
 #include "GPIO.h"
@@ -477,31 +476,41 @@ void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
 
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
     if (self->Font == OLEDFont_Chinese16X16) {
-        uint8_t i = 0;
-        uint8_t Length =
+        uint8_t ChineseFontLength =
             sizeof(OLED_FontChinese16x16) / sizeof(OLED_FontChinese16x16[0]);
 
-        while (String[i]) {
+        for (uint8_t i = 0; String[i];) {
 
             if ((String[i] & 0x80) == 0x00) {
                 OLED_SetFont(self, OLEDFont_8X16);
                 OLED_ShowChar(self, X, Y, String[i]);
                 X += self->FontWidth;
                 OLED_SetFont(self, OLEDFont_Chinese16X16);
+
                 i += 1;
 
             } else {
-                for (uint16_t Index = 0; Index < Length; Index += 1)
-                    if (strncmp((char *)&String[i],
-                                OLED_FontChinese16x16[Index].Index,
-                                OLED_ChineseBytesCount) == 0) {
-                        OLED_ShowImage(self, X, Y, self->FontWidth,
-                                       self->FontHeight,
-                                       OLED_FontChinese16x16[Index].Data);
-                        X += self->FontWidth;
-                        i += OLED_ChineseBytesCount;
-                        break;
-                    }
+                uint8_t Index = 0;
+                while (strncmp((char *)&String[i],
+                               OLED_FontChinese16x16[Index].Index,
+                               OLED_ChineseBytesCount) != 0 &&
+                       ++Index < ChineseFontLength) {
+                }
+
+                if (Index == ChineseFontLength) {
+                    OLED_SetFont(self, OLEDFont_8X16);
+                    OLED_ShowChar(self, X, Y, '?');
+                    X += self->FontWidth;
+                    OLED_SetFont(self, OLEDFont_Chinese16X16);
+
+                } else {
+                    OLED_ShowImage(self, X, Y, self->FontWidth,
+                                   self->FontHeight,
+                                   OLED_FontChinese16x16[Index].Data);
+                    X += self->FontWidth;
+                }
+
+                i += OLED_ChineseBytesCount;
             }
         }
 
