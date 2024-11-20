@@ -491,9 +491,11 @@ void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
 
             } else {
                 uint8_t Index = 0;
-                while (strncmp((char *)&String[i],
-                               OLED_FontChinese12x12[Index].Index,
-                               OLED_ChineseBytesCount) != 0 &&
+                while (strncmp(
+                           (char *)&String[i],
+                           &OLED_FontChinese12x12_Index[Index *
+                                                        OLED_ChineseBytesCount],
+                           OLED_ChineseBytesCount) != 0 &&
                        ++Index < ChineseFontLength) {
                 }
 
@@ -506,7 +508,7 @@ void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
                 } else {
                     OLED_ShowImage(self, X, Y, self->FontWidth,
                                    self->FontHeight,
-                                   OLED_FontChinese12x12[Index].Data);
+                                   OLED_FontChinese12x12[Index]);
                     X += self->FontWidth;
                 }
 
