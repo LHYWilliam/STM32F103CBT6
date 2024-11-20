@@ -51,7 +51,7 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-#define LENGTH 64
+#define LENGTH 128
 uint16_t Data[LENGTH];
 
 Sampler_t Sampler = {

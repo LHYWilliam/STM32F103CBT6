@@ -8,7 +8,6 @@
 #include "OLED.h"
 #include "Sampler.h"
 
-
 extern LED_t LED;
 
 extern Sampler_t Sampler;
@@ -43,23 +42,18 @@ void vSamplerTimerCallback(TimerHandle_t pxTimer) {
                 "%3d %%", time);
     time = xTaskGetTickCount();
 
-    uint16_t x = 0;
-    uint16_t Index = (Sampler.Index + 1) % Sampler.Length;
-
-    while (x < OLED.Width - 1) {
+    for (uint16_t x = 0, Index = (Sampler.Index + 1) % Sampler.Length;
+         x < OLED.Width - 1; x++, Index = (Index + 1) % Sampler.Length) {
         OLED_DrawLine(
-            &OLED, x * (OLED.Width - 1) / (Sampler.Length - 1),
+            &OLED, x,
             OLED.Height - 1 -
                 (Sampler.Data[Index] * (OLED.Height - 1) / 2. / 4095. +
                  (OLED.Height - 1) / 4.),
-            (x + 1) * (OLED.Width - 1) / (Sampler.Length - 1),
+            x + 1,
             OLED.Height - 1 -
                 (Sampler.Data[(Index + 1) % Sampler.Length] *
                      (OLED.Height - 1) / 2. / 4095. +
                  (OLED.Height - 1) / 4.));
-
-        x++;
-        Index = (Index + 1) % Sampler.Length;
     }
 
     OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
