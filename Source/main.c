@@ -13,8 +13,13 @@ LED_t LED = {
     .Mode = HIGH,
 };
 
-LED_t ADC_LED = {
+LED_t MQ3_LED = {
     .GPIOxPiny = B11,
+    .Mode = LOW,
+};
+
+LED_t MQ135_LED = {
+    .GPIOxPiny = B1,
     .Mode = LOW,
 };
 
@@ -51,16 +56,23 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-#define LENGTH 128
-uint16_t Data[LENGTH];
+#define MQx_DataLength 128
 
+int16_t MQ3_Index = -1;
+uint16_t MQ3_Data[MQx_DataLength];
+
+int16_t MQ135_Index = -1;
+uint16_t MQ135_Data[MQx_DataLength];
+
+#define LENGTH 2
+uint16_t Data[LENGTH];
 Sampler_t Sampler = {
     .Data = Data,
     .Length = LENGTH,
 
     .ADCx = ADC1,
-    .ADC_Channel = "1",
-    .GPIOxPiny = A1,
+    .ADC_Channel = "1 | 2",
+    .GPIOxPiny = "A1 | A2",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
@@ -87,7 +99,8 @@ TextMenu_t Menu = {
         },
 };
 TextPage_t *HomePage;
-TextPage_t *ADCPage;
+TextPage_t *MQ3Page;
+TextPage_t *MQ135Page;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);
@@ -106,7 +119,8 @@ int main() {
     LED_Init(&LED);
     Key_Init(&Key);
 
-    LED_Init(&ADC_LED);
+    LED_Init(&MQ3_LED);
+    LED_Init(&MQ135_LED);
     Key_Init(&KeyUp);
     Key_Init(&KeyDown);
     Key_Init(&KeyConfirm);
@@ -117,7 +131,8 @@ int main() {
 
     TextMenu_Init(&Menu);
     HomePage = Menu.Page;
-    ADCPage = &Menu.Page->LowerPages[0];
+    MQ3Page = &Menu.Page->LowerPages[0];
+    MQ135Page = &Menu.Page->LowerPages[1];
 
     Sampler_Init(&Sampler);
 

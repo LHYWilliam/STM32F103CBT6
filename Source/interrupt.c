@@ -5,9 +5,19 @@
 
 extern Sampler_t Sampler;
 
+extern int16_t MQ3_Index;
+extern uint16_t MQ3_Data[128];
+
+extern int16_t MQ135_Index;
+extern uint16_t MQ135_Data[128];
+
 void TIM3_IRQHandler() {
     if (TIM_GetITStatus(Sampler.TIMx, TIM_IT_Update)) {
-        Sampler.Index = (Sampler.Index + 1) % Sampler.Length;
+        MQ3_Index = (MQ3_Index + 1) % 128;
+        MQ3_Data[MQ3_Index] = Sampler.Data[0];
+
+        MQ135_Index = (MQ135_Index + 1) % 128;
+        MQ135_Data[MQ135_Index] = Sampler.Data[1];
 
         TIM_ClearITPendingBit(Sampler.TIMx, TIM_IT_Update);
     }
