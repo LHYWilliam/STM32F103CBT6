@@ -15,7 +15,9 @@ extern LED_t LED;
 extern TextMenu_t Menu;
 extern Sampler_t Sampler;
 extern OLED_t OLED;
-extern TextPage_t *ADC_Page;
+
+extern TextPage_t *HomePage;
+extern TextPage_t *ADCPage;
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Turn(&LED); }
 
@@ -62,7 +64,7 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
                 OLED.Height - OLED.FontHeight - 1, "%2d %%", time);
     time = xTaskGetTickCount();
 
-    if (Menu.Page == ADC_Page) {
+    if (Menu.Page == ADCPage) {
         uint16_t x = 0;
         uint16_t Index = (Sampler.Index + 1) % Sampler.Length;
 
@@ -86,23 +88,28 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
                     Sampler.Data[Sampler.Index] * 3.3 / 4095.);
 
     } else {
+        if (Menu.Page == HomePage) {
+            OLED_SetFont(&OLED, OLEDFont_Chinese12X12);
+            OLED_Printf(&OLED, 10 + 1 - 1, 1 - 1, "异味检测与开窗系统");
+            OLED_SetFont(&OLED, OLEDFont_6X8);
+        }
+
         uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
 
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
-            if (&Menu.Page->LowerPages[begin + i] == ADC_Page) {
-                OLED_Printf(&OLED, 0, i * OLED.FontHeight, "%s %.3f %s",
+            if (&Menu.Page->LowerPages[begin + i] == ADCPage) {
+                OLED_Printf(&OLED, 0, 20 + i * OLED.FontHeight, "%s %s %.3f %s",
+                            begin + i == Menu.Cursor ? ">" : "-",
                             Menu.Page->LowerPages[begin + i].Title,
                             Sampler.Data[Sampler.Index] * 3.3 / 4095.,
                             begin + i == Menu.Cursor ? "<-" : "");
             } else {
-                OLED_Printf(&OLED, 0, i * OLED.FontHeight, "%s %s",
+                OLED_Printf(&OLED, 0, 20 + i * OLED.FontHeight, "%s %s %s",
+                            begin + i == Menu.Cursor ? ">" : "-",
                             Menu.Page->LowerPages[begin + i].Title,
                             begin + i == Menu.Cursor ? "<-" : "");
             }
         }
-        OLED_SetFont(&OLED, OLEDFont_Chinese16X16);
-        OLED_Printf(&OLED, 64, 32, "刘浩元");
-        OLED_SetFont(&OLED, OLEDFont_6X8);
     }
 
     OLED_SendBuffer(&OLED);

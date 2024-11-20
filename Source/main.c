@@ -87,7 +87,8 @@ TextMenu_t Menu = {
                 },
         },
 };
-TextPage_t *ADC_Page;
+TextPage_t *HomePage;
+TextPage_t *ADCPage;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);
@@ -115,7 +116,8 @@ int main() {
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
     TextMenu_Init(&Menu);
-    ADC_Page = &Menu.Page->LowerPages[0];
+    HomePage = Menu.Page;
+    ADCPage = &Menu.Page->LowerPages[0];
 
     Sampler_Init(&Sampler);
 
