@@ -11,8 +11,10 @@ typedef enum {
 	OLEDFont_Chinese16X16,
 } OLEDFont;
 
+#define  OLED_ChineseBytesCount 3
+
 typedef struct {
-	char Index[3];			
+	char Index[OLED_ChineseBytesCount];			
 	uint8_t Data[32];				
 } ChineseCell_t;
 
@@ -308,8 +310,6 @@ static const uint8_t OLED_Font8x16[][16]  = {
 	0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x00,// ~ 94
 };	
 
-static uint8_t OLED_ChineseBytesCount = 3;
-static uint16_t ChineseFontCount = 3;
 static ChineseCell_t OLED_FontChinese16x16[] = {
 	"刘",
 	0x08,0x28,0x49,0x8a,0x0e,0x88,0x78,0x0c,0x08,0x00,0xfc,0x00,0x00,0xff,0x00,0x00,
