@@ -11,8 +11,7 @@ typedef struct {
     char GPIOxPiny[32];
     uint8_t Mode;
 
-    GPIO_TypeDef *GPIOx;
-    uint16_t GPIO_Pin;
+    uint32_t ODR;
 } LED_t;
 
 void LED_Init(LED_t *self);

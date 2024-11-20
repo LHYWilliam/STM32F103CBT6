@@ -1,25 +1,39 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
 #include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
 
-extern Key_t KeyUp;
-extern Key_t KeyDown;
-extern Key_t KeyConfirm;
-extern Key_t KeyCancel;
+
 extern LED_t LED;
-extern TextMenu_t Menu;
+
 extern Sampler_t Sampler;
+
+extern TextMenu_t Menu;
 extern OLED_t OLED;
 
 extern TextPage_t *HomePage;
 extern TextPage_t *ADCPage;
 
-void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Turn(&LED); }
+extern LED_t ADC_LED;
+extern Key_t KeyUp;
+extern Key_t KeyDown;
+extern Key_t KeyConfirm;
+extern Key_t KeyCancel;
+
+void vLEDTimerCallback(TimerHandle_t pxTimer) {
+    if (Sampler.Data[Sampler.Index] > 2048 + 256) {
+        LED_On(&ADC_LED);
+    } else if (Sampler.Data[Sampler.Index] < 2048 - 256) {
+        LED_Off(&ADC_LED);
+    }
+
+    LED_Turn(&LED);
+}
 
 void vSamplerTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
@@ -56,7 +70,7 @@ void vSamplerTimerCallback(TimerHandle_t pxTimer) {
     time = xTaskGetTickCount() - time;
 }
 
-void vMenuTimerCallback(TimerHandle_t pxTimer) {
+void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
@@ -84,6 +98,10 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
             Index = (Index + 1) % Sampler.Length;
         }
 
+        OLED_Printf(&OLED, 1 - 1, 1 - 1, "ADC %s",
+                    GPIO_ReadInput(ADC_LED.ODR) == ADC_LED.Mode ? "Danger"
+                                                                : "Safe");
+
         OLED_Printf(&OLED, 1 - 1, OLED.Height - OLED.FontHeight - 1, "%.3f V",
                     Sampler.Data[Sampler.Index] * 3.3 / 4095.);
 
@@ -98,11 +116,14 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
 
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
             if (&Menu.Page->LowerPages[begin + i] == ADCPage) {
-                OLED_Printf(&OLED, 0, 20 + i * OLED.FontHeight, "%s %s %.3f %s",
-                            begin + i == Menu.Cursor ? ">" : "-",
-                            Menu.Page->LowerPages[begin + i].Title,
-                            Sampler.Data[Sampler.Index] * 3.3 / 4095.,
-                            begin + i == Menu.Cursor ? "<-" : "");
+                OLED_Printf(
+                    &OLED, 0, 20 + i * OLED.FontHeight, "%s %s %.3f %s %s",
+                    begin + i == Menu.Cursor ? ">" : "-",
+                    Menu.Page->LowerPages[begin + i].Title,
+                    Sampler.Data[Sampler.Index] * 3.3 / 4095.,
+                    begin + i == Menu.Cursor ? "<-" : "",
+                    GPIO_ReadInput(ADC_LED.ODR) == ADC_LED.Mode ? "Danger"
+                                                                : "Safe");
             } else {
                 OLED_Printf(&OLED, 0, 20 + i * OLED.FontHeight, "%s %s %s",
                             begin + i == Menu.Cursor ? ">" : "-",

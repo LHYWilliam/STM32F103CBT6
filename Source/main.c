@@ -13,6 +13,11 @@ LED_t LED = {
     .Mode = HIGH,
 };
 
+LED_t ADC_LED = {
+    .GPIOxPiny = B11,
+    .Mode = LOW,
+};
+
 Key_t Key = {
     .GPIOxPiny = A0,
     .Mode = HIGH,
@@ -95,10 +100,10 @@ void vMenuKeyTaskCode(void *pvParameters);
 
 TimerHandle_t vLEDTimer;
 TimerHandle_t vSamplerTimer;
-TimerHandle_t vMenuTimer;
+TimerHandle_t vOLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 void vSamplerTimerCallback(TimerHandle_t pxTimer);
-void vMenuTimerCallback(TimerHandle_t pxTimer);
+void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
 int main() {
     SystemInit();
@@ -107,6 +112,7 @@ int main() {
     LED_Init(&LED);
     Key_Init(&Key);
 
+    LED_Init(&ADC_LED);
     Key_Init(&KeyUp);
     Key_Init(&KeyDown);
     Key_Init(&KeyConfirm);
@@ -128,12 +134,12 @@ int main() {
                              vLEDTimerCallback);
     vSamplerTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
                                  (void *)1, vSamplerTimerCallback);
-    vMenuTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(100), pdTRUE,
-                              (void *)2, vMenuTimerCallback);
+    vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(100), pdTRUE,
+                              (void *)2, vOLEDTimerCallback);
 
     xTimerStart(vLEDTimer, 0);
     // xTimerStart(vSamplerTimer, 0);
-    xTimerStart(vMenuTimer, 0);
+    xTimerStart(vOLEDTimer, 0);
 
     vTaskStartScheduler();
 }

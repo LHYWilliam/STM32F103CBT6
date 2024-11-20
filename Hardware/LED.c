@@ -6,22 +6,15 @@ void LED_Init(LED_t *self) {
     GPIO.Mode = GPIO_Mode_Out_PP;
     GPIO_InitPin(&GPIO, self->GPIOxPiny);
 
-    self->GPIOx = GPIO.GPIOx;
-    self->GPIO_Pin = GPIO.GPIO_Pin;
+    self->ODR = GPIO_ODR(self->GPIOxPiny);
 
     LED_Off(self);
 }
 
-void LED_On(LED_t *self) {
-    GPIO_WriteBit(self->GPIOx, self->GPIO_Pin, (BitAction)(self->Mode));
-}
+void LED_On(LED_t *self) { GPIO_Write(self->ODR, self->Mode); }
 
-void LED_Off(LED_t *self) {
-    GPIO_WriteBit(self->GPIOx, self->GPIO_Pin, (BitAction)(!self->Mode));
-}
+void LED_Off(LED_t *self) { GPIO_Write(self->ODR, !self->Mode); }
 
 void LED_Turn(LED_t *self) {
-    GPIO_WriteBit(
-        self->GPIOx, self->GPIO_Pin,
-        (BitAction)(!GPIO_ReadOutputDataBit(self->GPIOx, self->GPIO_Pin)));
+    GPIO_Write(self->ODR, !GPIO_ReadInput(self->ODR));
 }
