@@ -100,6 +100,9 @@ void vMenuTimerCallback(TimerHandle_t pxTimer) {
                             begin + i == Menu.Cursor ? "<-" : "");
             }
         }
+        OLED_SetFont(&OLED, OLEDFont_Chinese16X16);
+        OLED_Printf(&OLED, 64, 32, "刘浩元");
+        OLED_SetFont(&OLED, OLEDFont_6X8);
     }
 
     OLED_SendBuffer(&OLED);

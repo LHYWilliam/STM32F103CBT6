@@ -444,8 +444,14 @@ void OLED_SetFont(OLED_t *self, OLEDFont Font) {
         self->FontWidth = 6;
         self->FontHeight = 8;
         break;
+
     case OLEDFont_8X16:
         self->FontWidth = 8;
+        self->FontHeight = 16;
+        break;
+
+    case OLEDFont_Chinese16X16:
+        self->FontWidth = 16;
         self->FontHeight = 16;
         break;
     }
@@ -457,16 +463,37 @@ void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
         OLED_ShowImage(self, X, Y, self->FontWidth, self->FontHeight,
                        OLED_Font6x8[Char - ' ']);
         break;
+
     case OLEDFont_8X16:
         OLED_ShowImage(self, X, Y, self->FontWidth, self->FontHeight,
                        OLED_Font8x16[Char - ' ']);
+        break;
+
+    default:
         break;
     }
 }
 
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
-    for (uint8_t i = 0; String[i]; i++) {
-        OLED_ShowChar(self, X + i * self->FontWidth, Y, String[i]);
+    if (self->Font == OLEDFont_Chinese16X16) {
+        uint8_t count = 0;
+        for (uint8_t i = 0; String[i > 0 ? i - 1 : 0];
+             i += OLED_ChineseBytesCount) {
+            for (uint16_t Index = 0; Index < ChineseFontCount; Index += 1)
+                if (strncmp((char *)&String[i],
+                            OLED_FontChinese16x16[Index].Index,
+                            OLED_ChineseBytesCount) == 0) {
+                    OLED_ShowImage(self, X + count * self->FontWidth, Y,
+                                   self->FontWidth, self->FontHeight,
+                                   OLED_FontChinese16x16[Index].Data);
+                    count++;
+                }
+        }
+
+    } else {
+        for (uint8_t i = 0; String[i]; i++) {
+            OLED_ShowChar(self, X + i * self->FontWidth, Y, String[i]);
+        }
     }
 }
 
