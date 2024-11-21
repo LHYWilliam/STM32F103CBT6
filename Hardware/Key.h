@@ -4,12 +4,14 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#define LOW  0
-#define HIGH 1
+typedef enum {
+    KeyMode_Low,
+    KeyMode_High,
+} KeyMode;
 
 typedef struct {
     char GPIOxPiny[32];
-    uint8_t Mode;
+    KeyMode Mode;
 
     GPIO_TypeDef *GPIOx;
     uint16_t GPIO_Pin;

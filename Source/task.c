@@ -1,9 +1,9 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
-#include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
+#include "MQSensor.h"
 #include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
@@ -21,39 +21,23 @@ extern TextPage_t *HomePage;
 extern TextPage_t *MQ3Page;
 extern TextPage_t *MQ135Page;
 
-extern LED_t MQ3_LED;
-extern LED_t MQ135_LED;
 extern Key_t KeyUp;
 extern Key_t KeyDown;
 extern Key_t KeyConfirm;
 extern Key_t KeyCancel;
 
-extern int16_t MQ3_Index;
-extern uint16_t MQ3_Data[128];
-
-extern int16_t MQ135_Index;
-extern uint16_t MQ135_Data[128];
+extern MQSensor_t MQ3;
+extern MQSensor_t MQ135;
 
 static void OLED_ShowHomePage(OLED_t *OLED);
 static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
-                             uint16_t *MQx_Data, int16_t MQx_Index,
-                             LED_t *MQx_LED, uint8_t begin, uint8_t i);
+                             MQSensor_t *MQSensor, uint8_t begin, uint8_t i);
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
-                             uint16_t *MQx_Data, int16_t MQx_Index,
-                             LED_t *MQx_LED);
+                             MQSensor_t *MQSensor);
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
-    if (MQ3_Data[MQ3_Index] > 2048 + 256) {
-        LED_On(&MQ3_LED);
-    } else if (MQ3_Data[MQ3_Index] < 2048 - 256) {
-        LED_Off(&MQ3_LED);
-    }
-
-    if (MQ135_Data[MQ135_Index] > 2048 + 256) {
-        LED_On(&MQ135_LED);
-    } else if (MQ135_Data[MQ135_Index] < 2048 - 256) {
-        LED_Off(&MQ135_LED);
-    }
+    MQSensor_UpdateState(&MQ3);
+    MQSensor_UpdateState(&MQ135);
 
     LED_Turn(&LED);
 }
@@ -70,10 +54,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowHomePage(&OLED);
 
     } else if (Menu.Page == MQ3Page) {
-        OLED_ShowMQxPage(&OLED, MQ3Page, MQ3_Data, MQ3_Index, &MQ3_LED);
+        OLED_ShowMQxPage(&OLED, MQ3Page, &MQ3);
 
     } else if (Menu.Page == MQ135Page) {
-        OLED_ShowMQxPage(&OLED, MQ135Page, MQ135_Data, MQ135_Index, &MQ135_LED);
+        OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
         uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
@@ -117,12 +101,10 @@ static void OLED_ShowHomePage(OLED_t *OLED) {
     uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
     for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
         if (&Menu.Page->LowerPages[begin + i] == MQ3Page) {
-            OLED_ShowMQxMenu(OLED, MQ3Page, MQ3_Data, MQ3_Index, &MQ3_LED,
-                             begin, i);
+            OLED_ShowMQxMenu(OLED, MQ3Page, &MQ3, begin, i);
 
         } else if (&Menu.Page->LowerPages[begin + i] == MQ135Page) {
-            OLED_ShowMQxMenu(OLED, MQ135Page, MQ135_Data, MQ135_Index,
-                             &MQ135_LED, begin, i);
+            OLED_ShowMQxMenu(OLED, MQ135Page, &MQ135, begin, i);
 
         } else {
             OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%s%s",
@@ -134,39 +116,36 @@ static void OLED_ShowHomePage(OLED_t *OLED) {
 }
 
 static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
-                             uint16_t *MQx_Data, int16_t MQx_Index,
-                             LED_t *MQx_LED, uint8_t begin, uint8_t i) {
+                             MQSensor_t *MQSensor, uint8_t begin, uint8_t i) {
     OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
                 begin + i == Menu.Cursor ? ">" : ".",
                 Menu.Page->LowerPages[begin + i].Title,
-                MQx_Data[MQx_Index] * 3.3 / 4095.,
+                MQSensor->Data[MQSensor->Index] * 3.3 / 4095.,
                 begin + i == Menu.Cursor ? "<" : "");
     OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
                 20 + i * (OLED->FontHeight + 2), "%6s",
-                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
-                                                              : "Safe");
+                MQSensor->State ? "Danger" : "Safe");
 }
 
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
-                             uint16_t *MQx_Data, int16_t MQx_Index,
-                             LED_t *MQx_LED) {
-    for (uint16_t x = 0, Index = (MQx_Index + 1) % MQx_DataLength;
+                             MQSensor_t *MQSensor) {
+    for (uint16_t x = 0, Index = (MQSensor->Index + 1) % MQx_DataLength;
          x < OLED->Width - 1; x++, Index = (Index + 1) % MQx_DataLength) {
-        OLED_DrawLine(OLED, x * (OLED->Width - 1) / (MQx_DataLength - 1),
-                      OLED->Height - 1 -
-                          (MQx_Data[Index] * (OLED->Height - 1) / 2. / 4095. +
-                           (OLED->Height - 1) / 4.),
-                      (x + 1) * (OLED->Width - 1) / (MQx_DataLength - 1),
-                      OLED->Height - 1 -
-                          (MQx_Data[(Index + 1) % MQx_DataLength] *
-                               (OLED->Height - 1) / 2. / 4095. +
-                           (OLED->Height - 1) / 4.));
+        OLED_DrawLine(
+            OLED, x * (OLED->Width - 1) / (MQx_DataLength - 1),
+            OLED->Height - 1 -
+                (MQSensor->Data[Index] * (OLED->Height - 1) / 2. / 4095. +
+                 (OLED->Height - 1) / 4.),
+            (x + 1) * (OLED->Width - 1) / (MQx_DataLength - 1),
+            OLED->Height - 1 -
+                (MQSensor->Data[(Index + 1) % MQx_DataLength] *
+                     (OLED->Height - 1) / 2. / 4095. +
+                 (OLED->Height - 1) / 4.));
     }
 
     OLED_Printf(OLED, 1 - 1, 1 - 1, "%S %s", MQxPage->Title,
-                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
-                                                              : "Safe");
+                MQSensor->State ? "Danger" : "Safe");
 
     OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
-                MQx_Data[MQx_Index] * 3.3 / 4095.);
+                MQSensor->Data[MQSensor->Index] * 3.3 / 4095.);
 }

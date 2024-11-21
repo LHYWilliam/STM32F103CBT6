@@ -4,48 +4,39 @@
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
+#include "MQSensor.h"
 #include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
 
 LED_t LED = {
     .GPIOxPiny = B2,
-    .Mode = HIGH,
-};
-
-LED_t MQ3_LED = {
-    .GPIOxPiny = B11,
-    .Mode = LOW,
-};
-
-LED_t MQ135_LED = {
-    .GPIOxPiny = B1,
-    .Mode = LOW,
+    .Mode = LEDMode_High,
 };
 
 Key_t Key = {
     .GPIOxPiny = A0,
-    .Mode = HIGH,
+    .Mode = KeyMode_High,
 };
 
 Key_t KeyUp = {
     .GPIOxPiny = B15,
-    .Mode = LOW,
+    .Mode = KeyMode_Low,
 };
 
 Key_t KeyDown = {
     .GPIOxPiny = A9,
-    .Mode = LOW,
+    .Mode = KeyMode_Low,
 };
 
 Key_t KeyConfirm = {
     .GPIOxPiny = A11,
-    .Mode = LOW,
+    .Mode = KeyMode_Low,
 };
 
 Key_t KeyCancel = {
     .GPIOxPiny = B13,
-    .Mode = LOW,
+    .Mode = KeyMode_Low,
 };
 
 OLED_t OLED = {
@@ -56,13 +47,19 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-#define MQx_DataLength 128
+MQSensor_t MQ3 = {
+    .LED = B11,
+    .Mode = LEDMode_Low,
+    .Threshold = 2.048 / 3.3 * 4095,
+    .Relaxation = 0.128 / 3.3 * 4095,
+};
 
-int16_t MQ3_Index = -1;
-uint16_t MQ3_Data[MQx_DataLength];
-
-int16_t MQ135_Index = -1;
-uint16_t MQ135_Data[MQx_DataLength];
+MQSensor_t MQ135 = {
+    .LED = B1,
+    .Mode = LEDMode_Low,
+    .Threshold = 2.048 / 3.3 * 4095,
+    .Relaxation = 0.128 / 3.3 * 4095,
+};
 
 #define LENGTH 2
 uint16_t Data[LENGTH];
@@ -117,8 +114,6 @@ int main() {
     LED_Init(&LED);
     Key_Init(&Key);
 
-    LED_Init(&MQ3_LED);
-    LED_Init(&MQ135_LED);
     Key_Init(&KeyUp);
     Key_Init(&KeyDown);
     Key_Init(&KeyConfirm);
@@ -133,6 +128,9 @@ int main() {
     MQ135Page = &Menu.Page->LowerPages[1];
 
     Sampler_Init(&Sampler);
+
+    MQSensor_Init(&MQ3);
+    MQSensor_Init(&MQ135);
 
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);

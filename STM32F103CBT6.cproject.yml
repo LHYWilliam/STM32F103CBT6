@@ -117,6 +117,8 @@ project:
         - file: Hardware/OLED/OLED_SPI.h
         - file: Hardware/OLED/Menu.c
         - file: Hardware/OLED/Menu.h
+        - file: Hardware/MQSensor.c
+        - file: Hardware/MQSensor.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

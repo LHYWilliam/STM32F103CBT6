@@ -674,6 +674,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED\Menu.h</FilePath>
             </File>
+            <File>
+              <FileName>MQSensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\MQSensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQSensor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MQSensor.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
