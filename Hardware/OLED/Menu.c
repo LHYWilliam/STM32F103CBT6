@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include "OLED.h"
 
 void TextMenu_Init(TextMenu_t *self) { TextPage_Init(self->Page); }
 
@@ -40,6 +41,24 @@ void ImageMenu_CursorInc(ImageMenu_t *self) {
 
 void ImageMenu_CursorDec(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
+}
+
+void SelectioneBar_Init(SelectioneBar_t *self, uint8_t X, uint8_t Y,
+                        uint8_t Width, uint8_t Height, uint8_t Speed) {
+    self->X = X;
+    self->Y = Y;
+    self->Width = Width;
+    self->Height = Height;
+    self->Speed = Speed;
+}
+
+void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar,
+                            uint8_t GoalY) {
+    int8_t dy = SelectioneBar->Y < GoalY   ? SelectioneBar->Speed
+                : SelectioneBar->Y > GoalY ? -SelectioneBar->Speed
+                                           : 0;
+    OLED_ReverseArea(OLED, SelectioneBar->X, SelectioneBar->Y += dy,
+                     SelectioneBar->Width, SelectioneBar->Height);
 }
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {

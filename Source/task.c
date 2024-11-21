@@ -85,40 +85,20 @@ static void OLED_ShowHomePage(OLED_t *OLED) {
             OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s",
                         Menu.Page->LowerPages[begin + i].Title);
         }
-
-        // if (begin + i == Menu.Cursor) {
-        //     OLED_ReverseArea(OLED, 0, 20 + i * (OLED->FontHeight + 2) - 1,
-        //                      OLED->Width, OLED->FontHeight + 1);
-        // }
     }
 
-    static uint8_t LastCursor = 0;
-    static uint16_t Y = 20 - 1;
-    static uint16_t GoalY = 20 - 1;
-
-    if (LastCursor != Menu.Cursor) {
-        LastCursor = Menu.Cursor;
-        GoalY = 20 +
-                (Menu.Cursor >= TextPage_CountOfOnePage
-                     ? TextPage_CountOfOnePage - 1
-                     : Menu.Cursor) *
-                    (OLED->FontHeight + 2) -
-                1;
+    static SelectioneBar_t Bar;
+    if (Bar.Speed == 0) {
+        SelectioneBar_Init(&Bar, 0, 20 - 1, OLED->FontWidth * 12 + 1,
+                           OLED->FontHeight + 1, 2);
     }
-
-    if (Y != GoalY) {
-        OLED_ReverseArea(OLED, 0, Y, OLED->FontWidth * 12 + 1,
-                         OLED->FontHeight + 1);
-
-        if (Y < GoalY) {
-            Y += 5;
-        } else {
-            Y -= 5;
-        }
-    }
-
-    OLED_ReverseArea(OLED, 0, Y, OLED->FontWidth * 12 + 1,
-                     OLED->FontHeight + 1);
+    OLED_ShowSelectioneBar(OLED, &Bar,
+                           20 +
+                               (Menu.Cursor >= TextPage_CountOfOnePage
+                                    ? TextPage_CountOfOnePage - 1
+                                    : Menu.Cursor) *
+                                   (OLED->FontHeight + 2) -
+                               1);
 }
 
 static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
