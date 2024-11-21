@@ -95,5 +95,7 @@ void vMenuKeyTaskCode(void *pvParameters);
 
 TimerHandle_t vLEDTimer;
 TimerHandle_t vOLEDTimer;
+TimerHandle_t vMQSensorTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 void vOLEDTimerCallback(TimerHandle_t pxTimer);
+void vMQSensorTimerCallback(TimerHandle_t pxTimer);

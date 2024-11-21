@@ -6,12 +6,7 @@ static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 
-void vLEDTimerCallback(TimerHandle_t pxTimer) {
-    MQSensor_UpdateState(&MQ3);
-    MQSensor_UpdateState(&MQ135);
-
-    LED_Turn(&LED);
-}
+void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Turn(&LED); }
 
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
@@ -44,6 +39,11 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_SendBuffer(&OLED);
 
     time = xTaskGetTickCount() - time;
+}
+
+void vMQSensorTimerCallback(TimerHandle_t pxTimer) {
+    MQSensor_UpdateState(&MQ3);
+    MQSensor_UpdateState(&MQ135);
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {

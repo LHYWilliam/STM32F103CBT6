@@ -30,9 +30,11 @@ extern TextPage_t *MQ3Page;
 extern TextPage_t *MQ135Page;
 
 extern TaskHandle_t xMenuKeyTaskHandle;
-void vMenuKeyTaskCode(void *pvParameters);
+extern void vMenuKeyTaskCode(void *pvParameters);
 
 extern TimerHandle_t vLEDTimer;
 extern TimerHandle_t vOLEDTimer;
-void vLEDTimerCallback(TimerHandle_t pxTimer);
-void vOLEDTimerCallback(TimerHandle_t pxTimer);
+extern TimerHandle_t vMQSensorTimer;
+extern void vLEDTimerCallback(TimerHandle_t pxTimer);
+extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
+extern void vMQSensorTimerCallback(TimerHandle_t pxTimer);
