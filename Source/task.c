@@ -34,12 +34,13 @@ extern uint16_t MQ3_Data[128];
 extern int16_t MQ135_Index;
 extern uint16_t MQ135_Data[128];
 
-static void OLED_ShowMQxPage(OLED_t *OLED, uint16_t *MQx_Data,
-                             int16_t MQx_Index, TextPage_t *MQxPage,
-                             LED_t *MQx_LED);
-static void OLED_ShowMQxMenu(OLED_t *OLED, uint16_t *MQx_Data,
-                             int16_t MQx_Index, TextPage_t *MQxPage,
+static void OLED_ShowHomePage(OLED_t *OLED);
+static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
+                             uint16_t *MQx_Data, int16_t MQx_Index,
                              LED_t *MQx_LED, uint8_t begin, uint8_t i);
+static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
+                             uint16_t *MQx_Data, int16_t MQx_Index,
+                             LED_t *MQx_LED);
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
     if (MQ3_Data[MQ3_Index] > 2048 + 256) {
@@ -65,40 +66,28 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
                 OLED.Height - OLED.FontHeight - 1, "%2d %%", time);
     time = xTaskGetTickCount();
 
-    if (Menu.Page == MQ3Page) {
-        OLED_ShowMQxPage(&OLED, MQ3_Data, MQ3_Index, MQ3Page, &MQ3_LED);
+    if (Menu.Page == HomePage) {
+        OLED_ShowHomePage(&OLED);
+
+    } else if (Menu.Page == MQ3Page) {
+        OLED_ShowMQxPage(&OLED, MQ3Page, MQ3_Data, MQ3_Index, &MQ3_LED);
 
     } else if (Menu.Page == MQ135Page) {
-        OLED_ShowMQxPage(&OLED, MQ135_Data, MQ135_Index, MQ135Page, &MQ135_LED);
+        OLED_ShowMQxPage(&OLED, MQ135Page, MQ135_Data, MQ135_Index, &MQ135_LED);
 
     } else {
-        if (Menu.Page == HomePage) {
-            OLED_SetFont(&OLED, OLEDFont_Chinese12X12);
-            OLED_Printf(&OLED, 10 + 1 - 1, 1 - 1, "异味检测与开窗系统");
-            OLED_SetFont(&OLED, OLEDFont_6X8);
-        }
-
         uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
-
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
-            if (&Menu.Page->LowerPages[begin + i] == MQ3Page) {
-                OLED_ShowMQxMenu(&OLED, MQ3_Data, MQ3_Index, MQ3Page, &MQ3_LED,
-                                 begin, i);
 
-            } else if (&Menu.Page->LowerPages[begin + i] == MQ135Page) {
-                OLED_ShowMQxMenu(&OLED, MQ135_Data, MQ135_Index, MQ135Page,
-                                 &MQ135_LED, begin, i);
-
-            } else {
-                OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2),
-                            "%s %s %s", begin + i == Menu.Cursor ? ">" : "-",
-                            Menu.Page->LowerPages[begin + i].Title,
-                            begin + i == Menu.Cursor ? "<-" : "");
-            }
+            OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2), "%s%s%s",
+                        begin + i == Menu.Cursor ? ">" : ".",
+                        Menu.Page->LowerPages[begin + i].Title,
+                        begin + i == Menu.Cursor ? "<" : "");
         }
     }
 
     OLED_SendBuffer(&OLED);
+
     time = xTaskGetTickCount() - time;
 }
 
@@ -120,8 +109,46 @@ void vMenuKeyTaskCode(void *pvParameters) {
     }
 }
 
-static void OLED_ShowMQxPage(OLED_t *OLED, uint16_t *MQx_Data,
-                             int16_t MQx_Index, TextPage_t *MQxPage,
+static void OLED_ShowHomePage(OLED_t *OLED) {
+    OLED_SetFont(OLED, OLEDFont_Chinese12X12);
+    OLED_Printf(OLED, 10 + 1 - 1, 1 - 1, "异味检测与开窗系统");
+    OLED_SetFont(OLED, OLEDFont_6X8);
+
+    uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
+    for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
+        if (&Menu.Page->LowerPages[begin + i] == MQ3Page) {
+            OLED_ShowMQxMenu(OLED, MQ3Page, MQ3_Data, MQ3_Index, &MQ3_LED,
+                             begin, i);
+
+        } else if (&Menu.Page->LowerPages[begin + i] == MQ135Page) {
+            OLED_ShowMQxMenu(OLED, MQ135Page, MQ135_Data, MQ135_Index,
+                             &MQ135_LED, begin, i);
+
+        } else {
+            OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%s%s",
+                        begin + i == Menu.Cursor ? ">" : ".",
+                        Menu.Page->LowerPages[begin + i].Title,
+                        begin + i == Menu.Cursor ? "<" : "");
+        }
+    }
+}
+
+static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
+                             uint16_t *MQx_Data, int16_t MQx_Index,
+                             LED_t *MQx_LED, uint8_t begin, uint8_t i) {
+    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
+                begin + i == Menu.Cursor ? ">" : ".",
+                Menu.Page->LowerPages[begin + i].Title,
+                MQx_Data[MQx_Index] * 3.3 / 4095.,
+                begin + i == Menu.Cursor ? "<" : "");
+    OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
+                20 + i * (OLED->FontHeight + 2), "%6s",
+                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
+                                                              : "Safe");
+}
+
+static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
+                             uint16_t *MQx_Data, int16_t MQx_Index,
                              LED_t *MQx_LED) {
     for (uint16_t x = 0, Index = (MQx_Index + 1) % MQx_DataLength;
          x < OLED->Width - 1; x++, Index = (Index + 1) % MQx_DataLength) {
@@ -142,18 +169,4 @@ static void OLED_ShowMQxPage(OLED_t *OLED, uint16_t *MQx_Data,
 
     OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
                 MQx_Data[MQx_Index] * 3.3 / 4095.);
-}
-
-static void OLED_ShowMQxMenu(OLED_t *OLED, uint16_t *MQx_Data,
-                             int16_t MQx_Index, TextPage_t *MQxPage,
-                             LED_t *MQx_LED, uint8_t begin, uint8_t i) {
-    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
-                begin + i == Menu.Cursor ? ">" : ".",
-                Menu.Page->LowerPages[begin + i].Title,
-                MQx_Data[MQx_Index] * 3.3 / 4095.,
-                begin + i == Menu.Cursor ? "<" : "");
-    OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
-                20 + i * (OLED->FontHeight + 2), "%6s",
-                GPIO_ReadInput(MQx_LED->ODR) == MQx_LED->Mode ? "Danger"
-                                                              : "Safe");
 }
