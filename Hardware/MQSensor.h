@@ -6,7 +6,7 @@
 
 #include "LED.h"
 
-#define MQx_DataLength 128
+#define MQSensor_DataLength 128
 
 typedef enum {
     MQSensorState_Safe,
@@ -23,7 +23,8 @@ typedef struct {
     MQSensorState State;
 
     int16_t Index;
-    uint16_t Data[MQx_DataLength];
+    uint16_t Length;
+    uint16_t Data[MQSensor_DataLength];
 } MQSensor_t;
 
 void MQSensor_Init(MQSensor_t *self);

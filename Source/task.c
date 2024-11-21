@@ -8,8 +8,6 @@
 #include "OLED.h"
 #include "Sampler.h"
 
-#define MQx_DataLength 128
-
 extern LED_t LED;
 
 extern Sampler_t Sampler;
@@ -129,16 +127,16 @@ static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
 
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor) {
-    for (uint16_t x = 0, Index = (MQSensor->Index + 1) % MQx_DataLength;
-         x < OLED->Width - 1; x++, Index = (Index + 1) % MQx_DataLength) {
+    for (uint16_t x = 0, Index = (MQSensor->Index + 1) % MQSensor->Length;
+         x < OLED->Width - 1; x++, Index = (Index + 1) % MQSensor->Length) {
         OLED_DrawLine(
-            OLED, x * (OLED->Width - 1) / (MQx_DataLength - 1),
+            OLED, x * (OLED->Width - 1) / (MQSensor->Length - 1),
             OLED->Height - 1 -
                 (MQSensor->Data[Index] * (OLED->Height - 1) / 2. / 4095. +
                  (OLED->Height - 1) / 4.),
-            (x + 1) * (OLED->Width - 1) / (MQx_DataLength - 1),
+            (x + 1) * (OLED->Width - 1) / (MQSensor->Length - 1),
             OLED->Height - 1 -
-                (MQSensor->Data[(Index + 1) % MQx_DataLength] *
+                (MQSensor->Data[(Index + 1) % MQSensor->Length] *
                      (OLED->Height - 1) / 2. / 4095. +
                  (OLED->Height - 1) / 4.));
     }
