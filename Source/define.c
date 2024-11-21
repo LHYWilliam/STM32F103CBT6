@@ -74,7 +74,7 @@ TextMenu_t Menu = {
     .NumOfTexts = 4,
     .Page =
         &(TextPage_t){
-            .Title = "Home Page",
+            .Title = "异味检测与开窗系统",
             .NumOfLowerPages = 8,
             .LowerPages =
                 (TextPage_t[]){
