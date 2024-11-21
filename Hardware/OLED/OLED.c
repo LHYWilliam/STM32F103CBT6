@@ -477,7 +477,7 @@ void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char) {
 void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String) {
     if (self->Font == OLEDFont_Chinese12X12) {
         uint8_t ChineseFontLength =
-            sizeof(OLED_FontChinese12x12) / sizeof(OLED_FontChinese12x12[0]);
+            strlen(OLED_FontChinese12x12_Index) / OLED_ChineseBytesCount;
 
         for (uint8_t i = 0; String[i];) {
 

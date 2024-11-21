@@ -109,6 +109,7 @@ project:
         - file: Hardware/Servo.h
         - file: Hardware/OLED/OLED.c
         - file: Hardware/OLED/OLED.h
+        - file: Hardware/OLED/OLED_Font.c
         - file: Hardware/OLED/OLED_Font.h
         - file: Hardware/OLED/OLED_I2C.c
         - file: Hardware/OLED/OLED_I2C.h

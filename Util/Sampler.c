@@ -55,6 +55,12 @@ void Sampler_Init(Sampler_t *self) {
 }
 
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {
+    static uint8_t ADC_Channel[] = {
+        ADC_Channel_0, ADC_Channel_1, ADC_Channel_2, ADC_Channel_3,
+        ADC_Channel_4, ADC_Channel_5, ADC_Channel_6, ADC_Channel_7,
+        ADC_Channel_8, ADC_Channel_9,
+    };
+
     if (self->NbrOfChannel > 1) {
         ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
                                  ADC_SampleTime_55Cycles5);

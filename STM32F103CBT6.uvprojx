@@ -635,6 +635,11 @@
               <FilePath>.\Hardware\OLED\OLED.h</FilePath>
             </File>
             <File>
+              <FileName>OLED_Font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_Font.c</FilePath>
+            </File>
+            <File>
               <FileName>OLED_Font.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
