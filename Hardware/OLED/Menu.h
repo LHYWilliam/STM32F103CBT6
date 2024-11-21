@@ -11,6 +11,8 @@
 typedef struct TextPage {
     char Title[32];
 
+    uint8_t Cursor;
+
     uint8_t NumOfLowerPages;
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;

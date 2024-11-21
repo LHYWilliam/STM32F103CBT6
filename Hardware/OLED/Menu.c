@@ -11,14 +11,13 @@ void TextPage_Init(TextPage_t *self) {
 
 void TextMenu_CursorInc(TextMenu_t *self) {
     self->Cursor = (self->Cursor + 1) % self->Page->NumOfLowerPages;
+    self->Page->Cursor = self->Cursor;
 }
 
 void TextMenu_CursorDec(TextMenu_t *self) {
-    if (self->Cursor == 0) {
-        self->Cursor = self->Page->NumOfLowerPages - 1;
-    } else {
-        self->Cursor--;
-    }
+    self->Cursor = (self->Cursor + self->Page->NumOfLowerPages - 1) %
+                   self->Page->NumOfLowerPages;
+    self->Page->Cursor = self->Cursor;
 }
 
 void TextMenu_EnterLowerPage(TextMenu_t *self) {
@@ -31,7 +30,7 @@ void TextMenu_EnterLowerPage(TextMenu_t *self) {
 void TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
         self->Page = self->Page->UpperPage;
-        self->Cursor = 0;
+        self->Cursor = self->Page->Cursor;
     }
 }
 
@@ -40,11 +39,7 @@ void ImageMenu_CursorInc(ImageMenu_t *self) {
 }
 
 void ImageMenu_CursorDec(ImageMenu_t *self) {
-    if (self->Cursor == 0) {
-        self->Cursor = self->NumOfPages - 1;
-    } else {
-        self->Cursor--;
-    }
+    self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
 }
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
