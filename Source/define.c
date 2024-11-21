@@ -52,11 +52,11 @@ MQSensor_t MQ135 = {
     .Relaxation = VoltageToADC(0.128),
 };
 
-#define Samper_Length 2
-uint16_t Data[Samper_Length];
+#define Samper_DataLength 2
+uint16_t Data[Samper_DataLength];
 Sampler_t Sampler = {
     .Data = Data,
-    .Length = Samper_Length,
+    .Length = Samper_DataLength,
 
     .ADCx = ADC1,
     .ADC_Channel = "1 | 2",
