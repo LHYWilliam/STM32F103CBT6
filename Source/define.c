@@ -41,15 +41,15 @@ OLED_t OLED = {
 MQSensor_t MQ3 = {
     .LED = B11,
     .Mode = LEDMode_Low,
-    .Threshold = 2.048 / 3.3 * 4095,
-    .Relaxation = 0.128 / 3.3 * 4095,
+    .Threshold = VoltageToADC(2.048),
+    .Relaxation = VoltageToADC(0.128),
 };
 
 MQSensor_t MQ135 = {
     .LED = B1,
     .Mode = LEDMode_Low,
-    .Threshold = 2.048 / 3.3 * 4095,
-    .Relaxation = 0.128 / 3.3 * 4095,
+    .Threshold = VoltageToADC(2.048),
+    .Relaxation = VoltageToADC(0.128),
 };
 
 #define Samper_Length 2

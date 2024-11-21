@@ -26,7 +26,9 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
+        uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE
+                            ? Menu.Cursor - (TEXT_COUNT_OF_PAGE - 1)
+                            : 0;
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
 
             OLED_Printf(&OLED, 0, 20 + i * (OLED.FontHeight + 2), "%s%s%s",
@@ -91,7 +93,7 @@ static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
     OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
                 begin + i == Menu.Cursor ? ">" : ".",
                 Menu.Page->LowerPages[begin + i].Title,
-                MQSensor->Data[MQSensor->Index] * 3.3 / 4095.,
+                ADCToVoltage(MQSensor->Data[MQSensor->Index]),
                 begin + i == Menu.Cursor ? "<" : "");
     OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
                 20 + i * (OLED->FontHeight + 2), "%6s",
@@ -118,5 +120,5 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                 MQSensor->State ? "Danger" : "Safe");
 
     OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
-                MQSensor->Data[MQSensor->Index] * 3.3 / 4095.);
+                ADCToVoltage(MQSensor->Data[MQSensor->Index]));
 }
