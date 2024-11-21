@@ -71,6 +71,7 @@ Sampler_t Sampler = {
 };
 
 TextMenu_t Menu = {
+    .NumOfTexts = 4,
     .Page =
         &(TextPage_t){
             .Title = "Home Page",

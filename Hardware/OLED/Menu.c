@@ -62,8 +62,7 @@ void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar,
 }
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
-    uint8_t begin =
-        Menu->Cursor >= TextPage_CountOfOnePage ? Menu->Cursor - 3 : 0;
+    uint8_t begin = Menu->Cursor >= Menu->NumOfTexts ? Menu->Cursor - 3 : 0;
 
     for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
         if (begin + i == Menu->Cursor) {
