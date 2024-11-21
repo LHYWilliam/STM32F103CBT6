@@ -74,7 +74,7 @@ TextMenu_t Menu = {
     .Page =
         &(TextPage_t){
             .Title = "Home Page",
-            .NumOfLowerPages = 2,
+            .NumOfLowerPages = 6,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
@@ -82,6 +82,18 @@ TextMenu_t Menu = {
                     },
                     (TextPage_t){
                         .Title = "MQ-135",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-1",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-2",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-3",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-4",
                     },
                 },
         },

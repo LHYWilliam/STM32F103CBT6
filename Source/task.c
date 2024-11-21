@@ -13,7 +13,8 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
     static uint32_t time;
     OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
-                OLED.Height - OLED.FontHeight - 1, "%2d %%", time);
+                OLED.Height - OLED.FontHeight - 1, "%2d %%",
+                (uint8_t)(time / 20.0 * 100.0));
     time = xTaskGetTickCount();
 
     if (Menu.Page == HomePage) {
@@ -26,8 +27,8 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE
-                            ? Menu.Cursor - (TEXT_COUNT_OF_PAGE - 1)
+        uint8_t begin = Menu.Cursor >= TextPage_CountOfOnePage
+                            ? Menu.Cursor - (TextPage_CountOfOnePage - 1)
                             : 0;
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
 
@@ -71,8 +72,9 @@ static void OLED_ShowHomePage(OLED_t *OLED) {
     OLED_Printf(OLED, 10 + 1 - 1, 1 - 1, "异味检测与开窗系统");
     OLED_SetFont(OLED, OLEDFont_6X8);
 
-    uint8_t begin = Menu.Cursor >= TEXT_COUNT_OF_PAGE ? Menu.Cursor - 3 : 0;
-    for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
+    uint8_t begin =
+        Menu.Cursor >= TextPage_CountOfOnePage ? Menu.Cursor - 3 : 0;
+    for (uint8_t i = 0; i < TextPage_CountOfOnePage; i++) {
         if (&Menu.Page->LowerPages[begin + i] == MQ3Page) {
             OLED_ShowMQxMenu(OLED, MQ3Page, &MQ3, begin, i);
 
@@ -80,21 +82,50 @@ static void OLED_ShowHomePage(OLED_t *OLED) {
             OLED_ShowMQxMenu(OLED, MQ135Page, &MQ135, begin, i);
 
         } else {
-            OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%s%s",
-                        begin + i == Menu.Cursor ? ">" : ".",
-                        Menu.Page->LowerPages[begin + i].Title,
-                        begin + i == Menu.Cursor ? "<" : "");
+            OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s",
+                        Menu.Page->LowerPages[begin + i].Title);
+        }
+
+        // if (begin + i == Menu.Cursor) {
+        //     OLED_ReverseArea(OLED, 0, 20 + i * (OLED->FontHeight + 2) - 1,
+        //                      OLED->Width, OLED->FontHeight + 1);
+        // }
+    }
+
+    static uint8_t LastCursor = 0;
+    static uint16_t Y = 20 - 1;
+    static uint16_t GoalY = 20 - 1;
+
+    if (LastCursor != Menu.Cursor) {
+        LastCursor = Menu.Cursor;
+        GoalY = 20 +
+                (Menu.Cursor >= TextPage_CountOfOnePage
+                     ? TextPage_CountOfOnePage - 1
+                     : Menu.Cursor) *
+                    (OLED->FontHeight + 2) -
+                1;
+    }
+
+    if (Y != GoalY) {
+        OLED_ReverseArea(OLED, 0, Y, OLED->FontWidth * 12 + 1,
+                         OLED->FontHeight + 1);
+
+        if (Y < GoalY) {
+            Y += 5;
+        } else {
+            Y -= 5;
         }
     }
+
+    OLED_ReverseArea(OLED, 0, Y, OLED->FontWidth * 12 + 1,
+                     OLED->FontHeight + 1);
 }
 
 static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor, uint8_t begin, uint8_t i) {
-    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s%-6s %.3f%s",
-                begin + i == Menu.Cursor ? ">" : ".",
+    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%-6s %.3f",
                 Menu.Page->LowerPages[begin + i].Title,
-                ADCToVoltage(MQSensor->Data[MQSensor->Index]),
-                begin + i == Menu.Cursor ? "<" : "");
+                ADCToVoltage(MQSensor->Data[MQSensor->Index]));
     OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
                 20 + i * (OLED->FontHeight + 2), "%6s",
                 MQSensor->State ? "Danger" : "Safe");

@@ -6,7 +6,7 @@
 
 #include "OLED.h"
 
-#define TEXT_COUNT_OF_PAGE 8
+#define TextPage_CountOfOnePage 4
 
 typedef struct TextPage {
     char Title[32];
