@@ -9,6 +9,9 @@
 #include "OLED.h"
 #include "Sampler.h"
 
+#define MAX(a, b)             ((a) > (b) ? (a) : (b))
+#define MIN(a, b)             ((a) < (b) ? (a) : (b))
+
 #define ADCToVoltage(ADC)     ((ADC) / 4095.0 * 3.3)
 #define VoltageToADC(Voltage) (uint32_t)((Voltage) / 3.3 * 4095.0)
 
