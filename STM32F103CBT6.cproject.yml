@@ -57,6 +57,8 @@ project:
     - group: Source
       files:
         - file: Source/main.c
+        - file: Source/main.h
+        - file: Source/define.c
         - file: Source/task.c
         - file: Source/interrupt.c
     - group: Util

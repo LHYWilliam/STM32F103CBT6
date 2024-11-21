@@ -1,13 +1,4 @@
-#include "RTE_Components.h"
-#include CMSIS_device_header
-
-#include "MQSensor.h"
-#include "Sampler.h"
-
-extern Sampler_t Sampler;
-
-extern MQSensor_t MQ3;
-extern MQSensor_t MQ135;
+#include "main.h"
 
 void TIM3_IRQHandler() {
     if (TIM_GetITStatus(Sampler.TIMx, TIM_IT_Update)) {

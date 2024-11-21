@@ -390,6 +390,16 @@
               <FilePath>.\Source\main.c</FilePath>
             </File>
             <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Source\main.h</FilePath>
+            </File>
+            <File>
+              <FileName>define.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\define.c</FilePath>
+            </File>
+            <File>
               <FileName>task.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Source\task.c</FilePath>

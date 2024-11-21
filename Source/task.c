@@ -1,31 +1,4 @@
-#include "FreeRTOS.h"
-#include "timers.h"
-
-#include "Key.h"
-#include "LED.h"
-#include "MQSensor.h"
-#include "Menu.h"
-#include "OLED.h"
-#include "Sampler.h"
-
-extern LED_t LED;
-
-extern Sampler_t Sampler;
-
-extern TextMenu_t Menu;
-extern OLED_t OLED;
-
-extern TextPage_t *HomePage;
-extern TextPage_t *MQ3Page;
-extern TextPage_t *MQ135Page;
-
-extern Key_t KeyUp;
-extern Key_t KeyDown;
-extern Key_t KeyConfirm;
-extern Key_t KeyCancel;
-
-extern MQSensor_t MQ3;
-extern MQSensor_t MQ135;
+#include "main.h"
 
 static void OLED_ShowHomePage(OLED_t *OLED);
 static void OLED_ShowMQxMenu(OLED_t *OLED, TextPage_t *MQxPage,
