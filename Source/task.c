@@ -108,24 +108,21 @@ void vMenuKeyTaskCode(void *pvParameters) {
 }
 
 static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
+    uint8_t Y = 0;
     if (Menu->Cursor < Menu->TextCountOfHomePage) {
         OLED_SetFont(OLED, OLEDFont_Chinese12X12);
         OLED_Printf(OLED, 10 + 1 - 1, 1 - 1, Menu->Page->Title);
         OLED_SetFont(OLED, OLEDFont_6X8);
+
+        Y += 20;
+    } else {
+        Y += Menu->Bar.Speed;
     }
 
-    uint8_t begin =
-        Menu->Cursor < Menu->TextCountOfHomePage
-            ? 0
-            : Menu->Cursor - (Menu->Cursor - Menu->TextCountOfHomePage) %
-                                 TextCount(Menu->Cursor);
-
-    for (uint8_t i = 0, Y = Menu->Cursor < Menu->TextCountOfHomePage
-                                ? 16
-                                : Menu->Bar.Speed;
-         (begin + i < Menu->Page->NumOfLowerPages) &&
-         (i < TextCount(Menu->Cursor));
-         i++, Y += OLED->FontHeight + 2) {
+    uint8_t begin = TextMenu_BeginText(Menu);
+    for (uint8_t i = 0; (begin + i < Menu->Page->NumOfLowerPages) &&
+                        (i < TextMenu_TextCount(Menu));
+         i++) {
         if (&Menu->Page->LowerPages[begin + i] == MQ3Page) {
             OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3, Y, begin, i);
 
@@ -136,17 +133,14 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
             OLED_Printf(OLED, 0, Y, "%s",
                         Menu->Page->LowerPages[begin + i].Title);
         }
+
+        Y += OLED->FontHeight + 2;
     }
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
-        (Menu->Cursor < Menu->TextCountOfHomePage ? 16 : Menu->Bar.Speed) +
-            (Menu->Cursor < Menu->TextCountOfHomePage
-                 ? Menu->Cursor
-                 : (Menu->Cursor - Menu->TextCountOfHomePage) %
-                       TextCount(Menu->Cursor)) *
-                (OLED->FontHeight + 2) -
-            1,
+        (Menu->Cursor < Menu->TextCountOfHomePage ? 20 : Menu->Bar.Speed) +
+            (Menu->Cursor - begin) * (OLED->FontHeight + 2) - 1,
         OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
         OLED->FontHeight + 1);
@@ -163,7 +157,7 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
 
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor) {
-    for (uint16_t x = 0, Index = (MQSensor->Index + 1) % MQSensor->Length;
+    for (uint8_t x = 0, Index = (MQSensor->Index + 1) % MQSensor->Length;
          x < OLED->Width - 1; x++, Index = (Index + 1) % MQSensor->Length) {
         OLED_DrawLine(
             OLED, x * (OLED->Width - 1) / (MQSensor->Length - 1),
@@ -184,27 +178,34 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
 
 static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
                                  TextPage_t *SettingPage) {
-    OLED_Printf(OLED, 0, 0, "Setting");
+    if (Menu->Cursor < Menu->TextCountOfHomePage) {
+        OLED_Printf(OLED, 0, 0, Menu->Page->Title);
+    }
 
-    uint8_t begin = Menu->Cursor - Menu->Cursor % TextCount(Menu->Cursor);
-    for (uint8_t i = 0; (begin + i < Menu->Page->NumOfLowerPages) &&
-                        (i < TextCount(Menu->Cursor));
-         i++) {
+    uint8_t begin = TextMenu_BeginText(Menu);
+    for (uint8_t i = 0, Y = Menu->Cursor < Menu->TextCountOfHomePage
+                                ? 20
+                                : Menu->Bar.Speed;
+         (begin + i < Menu->Page->NumOfLowerPages) &&
+         (i < TextMenu_TextCount(Menu));
+         i++, Y += OLED->FontHeight + 2) {
+        OLED_Printf(OLED, 0, Y, "%s", Menu->Page->LowerPages[begin + i].Title);
 
-        OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s",
-                    Menu->Page->LowerPages[begin + i].Title);
-
-        OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7,
-                    20 + i * (OLED->FontHeight + 2), "%7s",
+        OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7, Y, "%7s",
                     SettingPage->LowerPages[begin + i].Setting ? "Enable"
                                                                : "Disable");
     }
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
-        20 + Menu->Cursor % TextCount(Menu->Cursor) * (OLED->FontHeight + 2) -
+        (Menu->Cursor < Menu->TextCountOfHomePage ? 20 : Menu->Bar.Speed) +
+            (Menu->Cursor < Menu->TextCountOfHomePage
+                 ? Menu->Cursor
+                 : (Menu->Cursor - Menu->TextCountOfHomePage) %
+                       TextMenu_TextCount(Menu)) *
+                (OLED->FontHeight + 2) -
             1,
-        OLED->FontWidth * strlen(SettingPage->LowerPages[Menu->Cursor].Title) +
+        OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
         OLED->FontHeight + 1);
 }

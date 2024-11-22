@@ -9,10 +9,12 @@
 typedef struct TextPage {
     char Title[32];
 
-    uint8_t Cursor;
+    uint8_t X;
+    uint8_t Y;
 
     uint8_t Setting;
 
+    uint8_t Cursor;
     uint8_t NumOfLowerPages;
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
@@ -29,11 +31,11 @@ typedef struct {
 
 typedef struct {
     TextPage_t *Page;
-    uint8_t TextCountOfHomePage;
-    uint8_t TextCountOfOtherPage;
 
     uint8_t Cursor;
     SelectioneBar_t Bar;
+    uint8_t TextCountOfHomePage;
+    uint8_t TextCountOfOtherPage;
 } TextMenu_t;
 
 typedef struct {
@@ -43,10 +45,10 @@ typedef struct {
 } ImagePage_t;
 
 typedef struct {
-    uint8_t NumOfPages;
     ImagePage_t *Page;
 
     uint8_t Cursor;
+    uint8_t NumOfPages;
 } ImageMenu_t;
 
 void TextMenu_Init(TextMenu_t *self);

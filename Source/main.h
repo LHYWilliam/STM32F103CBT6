@@ -18,9 +18,15 @@
     (OLED->Height - 1 -                                                        \
      ((ADC) * (OLED->Height - 1) / 2. / 4095. + (OLED->Height - 1) / 4.))
 
-#define TextCount(Cursor)                                                      \
-    ((Cursor) >= Menu->TextCountOfHomePage ? Menu->TextCountOfOtherPage        \
-                                           : Menu->TextCountOfHomePage)
+#define TextMenu_TextCount(Menu)                                               \
+    (Menu->Cursor < Menu->TextCountOfHomePage ? Menu->TextCountOfHomePage      \
+                                              : Menu->TextCountOfOtherPage)
+
+#define TextMenu_BeginText(Menu)                                               \
+    (Menu->Cursor < Menu->TextCountOfHomePage                                  \
+         ? 0                                                                   \
+         : Menu->Cursor - (Menu->Cursor - Menu->TextCountOfHomePage) %         \
+                              TextMenu_TextCount(Menu))
 
 extern LED_t LED;
 

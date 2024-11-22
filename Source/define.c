@@ -98,7 +98,7 @@ TextMenu_t Menu = {
                     },
                     (TextPage_t){
                         .Title = "Setting",
-                        .NumOfLowerPages = 2,
+                        .NumOfLowerPages = 11,
                         .LowerPages =
                             (TextPage_t[]){
                                 (TextPage_t){
@@ -107,28 +107,55 @@ TextMenu_t Menu = {
                                 (TextPage_t){
                                     .Title = "Reset",
                                 },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
+                                (TextPage_t){
+                                    .Title = "...",
+                                },
                             },
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                     (TextPage_t){
-                        .Title = "MQ-...",
+                        .Title = "...",
                     },
                 },
         },
