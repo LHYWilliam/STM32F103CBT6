@@ -29,7 +29,8 @@ typedef struct {
 
 typedef struct {
     TextPage_t *Page;
-    uint8_t NumOfTexts;
+    uint8_t TextCountOfHomePage;
+    uint8_t TextCountOfOtherPage;
 
     uint8_t Cursor;
     SelectioneBar_t Bar;

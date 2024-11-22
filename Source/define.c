@@ -71,7 +71,8 @@ Sampler_t Sampler = {
 };
 
 TextMenu_t Menu = {
-    .NumOfTexts = 4,
+    .TextCountOfHomePage = 4,
+    .TextCountOfOtherPage = 8,
     .Bar =
         {
             .X = 0,
@@ -83,7 +84,7 @@ TextMenu_t Menu = {
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
-            .NumOfLowerPages = 4,
+            .NumOfLowerPages = 11,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
@@ -107,6 +108,27 @@ TextMenu_t Menu = {
                                     .Title = "Reset",
                                 },
                             },
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-...",
                     },
                 },
         },
