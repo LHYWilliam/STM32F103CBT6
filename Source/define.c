@@ -72,7 +72,7 @@ Sampler_t Sampler = {
 
 TextMenu_t Menu = {
     .TextCountOfHomePage = 4,
-    .TextCountOfOtherPage = 8,
+    .TextCountOfOtherPage = 6,
     .Bar =
         {
             .X = 0,

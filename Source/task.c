@@ -34,7 +34,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
     } else {
         uint8_t begin = Menu.Cursor >= Menu.TextCountOfHomePage
-                            ? Menu.Cursor - (Menu.TextCountOfHomePage - 1)
+                            ? Menu.Cursor - (Menu.TextCountOfOtherPage - 1)
                             : 0;
         for (uint8_t i = 0; i < Menu.Page->NumOfLowerPages; i++) {
 
@@ -114,12 +114,17 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
         OLED_SetFont(OLED, OLEDFont_6X8);
     }
 
-    uint8_t begin = Menu->Cursor - Menu->Cursor % Menu->TextCountOfHomePage;
+    uint8_t begin =
+        Menu->Cursor < Menu->TextCountOfHomePage
+            ? 0
+            : Menu->Cursor - (Menu->Cursor - Menu->TextCountOfHomePage) %
+                                 TextCount(Menu->Cursor);
+
     for (uint8_t i = 0, Y = Menu->Cursor < Menu->TextCountOfHomePage
                                 ? 16
                                 : Menu->Bar.Speed;
          (begin + i < Menu->Page->NumOfLowerPages) &&
-         (i < Menu->TextCountOfHomePage);
+         (i < TextCount(Menu->Cursor));
          i++, Y += OLED->FontHeight + 2) {
         if (&Menu->Page->LowerPages[begin + i] == MQ3Page) {
             OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3, Y, begin, i);
@@ -136,7 +141,11 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
         (Menu->Cursor < Menu->TextCountOfHomePage ? 16 : Menu->Bar.Speed) +
-            Menu->Cursor % Menu->TextCountOfHomePage * (OLED->FontHeight + 2) -
+            (Menu->Cursor < Menu->TextCountOfHomePage
+                 ? Menu->Cursor
+                 : (Menu->Cursor - Menu->TextCountOfHomePage) %
+                       TextCount(Menu->Cursor)) *
+                (OLED->FontHeight + 2) -
             1,
         OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
@@ -177,9 +186,9 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
                                  TextPage_t *SettingPage) {
     OLED_Printf(OLED, 0, 0, "Setting");
 
-    uint8_t begin = Menu->Cursor - Menu->Cursor % Menu->TextCountOfHomePage;
+    uint8_t begin = Menu->Cursor - Menu->Cursor % TextCount(Menu->Cursor);
     for (uint8_t i = 0; (begin + i < Menu->Page->NumOfLowerPages) &&
-                        (i < Menu->TextCountOfHomePage);
+                        (i < TextCount(Menu->Cursor));
          i++) {
 
         OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s",
@@ -193,7 +202,7 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
-        20 + Menu->Cursor % Menu->TextCountOfHomePage * (OLED->FontHeight + 2) -
+        20 + Menu->Cursor % TextCount(Menu->Cursor) * (OLED->FontHeight + 2) -
             1,
         OLED->FontWidth * strlen(SettingPage->LowerPages[Menu->Cursor].Title) +
             1,
