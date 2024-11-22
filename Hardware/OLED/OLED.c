@@ -351,6 +351,13 @@ void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y) {
     }
 }
 
+void OLED_DrawHLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, uint8_t step) {
+    for (uint8_t i = 0; i < Width; i += step) {
+        OLED_DrawPoint(self, X + i, Y);
+    }
+}
+
 void OLED_DrawLine(OLED_t *self, int16_t X1, int16_t Y1, int16_t X2,
                    int16_t Y2) {
     uint16_t dx, dy;

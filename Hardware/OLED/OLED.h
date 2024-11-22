@@ -82,6 +82,8 @@ void OLED_ReverseArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                       uint8_t Height);
 
 void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y);
+void OLED_DrawHLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, uint8_t step);
 void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
                    int16_t Y1);
 

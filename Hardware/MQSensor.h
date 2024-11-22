@@ -29,5 +29,6 @@ typedef struct {
 
 void MQSensor_Init(MQSensor_t *self);
 void MQSensor_UpdateState(MQSensor_t *self);
+void MQSensor_UpdateThreshold(MQSensor_t *self, int16_t dt);
 
 #endif

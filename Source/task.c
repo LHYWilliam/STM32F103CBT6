@@ -48,9 +48,6 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     if (ReverseSetting->Setting) {
         OLED_Reverse(&OLED);
     }
-    if (ResetSetting->Setting) {
-        __NVIC_SystemReset();
-    }
 
     OLED_SendBuffer(&OLED);
 
@@ -65,11 +62,29 @@ void vMQSensorTimerCallback(TimerHandle_t pxTimer) {
 void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
-            TextMenu_CursorDec(&Menu);
+            if (Menu.Page == MQ3Page) {
+                MQSensor_UpdateThreshold(&MQ3, 128);
+
+            } else if (Menu.Page == MQ135Page) {
+                MQSensor_UpdateThreshold(&MQ135, 128);
+
+            } else {
+                TextMenu_CursorDec(&Menu);
+            }
         }
+
         if (Key_Read(&KeyDown)) {
-            TextMenu_CursorInc(&Menu);
+            if (Menu.Page == MQ3Page) {
+                MQSensor_UpdateThreshold(&MQ3, -128);
+
+            } else if (Menu.Page == MQ135Page) {
+                MQSensor_UpdateThreshold(&MQ135, -128);
+
+            } else {
+                TextMenu_CursorInc(&Menu);
+            }
         }
+
         if (Key_Read(&KeyConfirm)) {
             if (Menu.Page == SettingPage) {
                 SettingPage->LowerPages[Menu.Cursor].Setting =
@@ -79,9 +94,15 @@ void vMenuKeyTaskCode(void *pvParameters) {
                 TextMenu_EnterLowerPage(&Menu);
             }
         }
+
         if (Key_Read(&KeyCancel)) {
             TextMenu_ReturnUpperPage(&Menu);
         }
+
+        if (ResetSetting->Setting) {
+            __NVIC_SystemReset();
+        }
+
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
@@ -118,11 +139,11 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
                              TextPage_t *MQxPage, MQSensor_t *MQSensor,
                              uint8_t begin, uint8_t i) {
-    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%-6s %.3f",
-                Menu->Page->LowerPages[begin + i].Title,
-                ADCToVoltage(MQSensor->Data[MQSensor->Index]));
-    OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 6,
-                20 + i * (OLED->FontHeight + 2), "%6s",
+    OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%-6s",
+                Menu->Page->LowerPages[begin + i].Title);
+    OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 12,
+                20 + i * (OLED->FontHeight + 2), "%.3f %6s",
+                ADCToVoltage(MQSensor->Data[MQSensor->Index]),
                 MQSensor->State ? "Danger" : "Safe");
 }
 
@@ -132,15 +153,13 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
          x < OLED->Width - 1; x++, Index = (Index + 1) % MQSensor->Length) {
         OLED_DrawLine(
             OLED, x * (OLED->Width - 1) / (MQSensor->Length - 1),
-            OLED->Height - 1 -
-                (MQSensor->Data[Index] * (OLED->Height - 1) / 2. / 4095. +
-                 (OLED->Height - 1) / 4.),
+            ADCToOLED(MQSensor->Data[Index]),
             (x + 1) * (OLED->Width - 1) / (MQSensor->Length - 1),
-            OLED->Height - 1 -
-                (MQSensor->Data[(Index + 1) % MQSensor->Length] *
-                     (OLED->Height - 1) / 2. / 4095. +
-                 (OLED->Height - 1) / 4.));
+            ADCToOLED(MQSensor->Data[(Index + 1) % MQSensor->Length]));
     }
+
+    OLED_DrawHLine(OLED, 0, ADCToOLED(MQSensor->Threshold), OLED->Width - 1, 1,
+                   2);
 
     OLED_Printf(OLED, 1 - 1, 1 - 1, "%S %s", MQxPage->Title,
                 MQSensor->State ? "Danger" : "Safe");

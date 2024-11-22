@@ -24,3 +24,9 @@ void MQSensor_UpdateState(MQSensor_t *self) {
         self->State = MQSensorState_Safe;
     }
 }
+
+void MQSensor_UpdateThreshold(MQSensor_t *self, int16_t dt) {
+    if ((0 <= self->Threshold + dt) && (self->Threshold + dt <= 4095)) {
+        self->Threshold += dt;
+    }
+}
