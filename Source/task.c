@@ -48,6 +48,9 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     if (ReverseSetting->Setting) {
         OLED_Reverse(&OLED);
     }
+    if (ResetSetting->Setting) {
+        __NVIC_SystemReset();
+    }
 
     OLED_SendBuffer(&OLED);
 
@@ -104,15 +107,12 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
         }
     }
 
-    if (Menu->Bar.Speed == 0) {
-        SelectioneBar_Init(&Menu->Bar, 0, 20 - 1, OLED->FontWidth * 12 + 1,
-                           OLED->FontHeight + 1, 2);
-    }
-
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
         20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1,
-        OLED->FontWidth * 12 + 1);
+        OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
+            1,
+        OLED->FontHeight + 1);
 }
 
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
@@ -163,12 +163,14 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
 
         OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7,
                     20 + i * (OLED->FontHeight + 2), "%7s",
-                    SettingPage->LowerPages[Menu->Cursor].Setting ? "Enable"
-                                                                  : "Disable");
+                    SettingPage->LowerPages[begin + i].Setting ? "Enable"
+                                                               : "Disable");
     }
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
         20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1,
-        OLED->FontWidth * 7 + 1);
+        OLED->FontWidth * strlen(SettingPage->LowerPages[Menu->Cursor].Title) +
+            1,
+        OLED->FontHeight + 1);
 }

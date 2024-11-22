@@ -72,6 +72,14 @@ Sampler_t Sampler = {
 
 TextMenu_t Menu = {
     .NumOfTexts = 4,
+    .Bar =
+        {
+            .X = 0,
+            .Y = 20 - 1,
+            .Width = 1,
+            .Height = 1,
+            .Speed = 2,
+        },
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
@@ -89,11 +97,14 @@ TextMenu_t Menu = {
                     },
                     (TextPage_t){
                         .Title = "Setting",
-                        .NumOfLowerPages = 1,
+                        .NumOfLowerPages = 2,
                         .LowerPages =
                             (TextPage_t[]){
                                 (TextPage_t){
                                     .Title = "Reverse",
+                                },
+                                (TextPage_t){
+                                    .Title = "Reset",
                                 },
                             },
                     },
@@ -105,7 +116,9 @@ TextPage_t *HomePage;
 TextPage_t *MQ3Page;
 TextPage_t *MQ135Page;
 TextPage_t *SettingPage;
+
 TextPage_t *ReverseSetting;
+TextPage_t *ResetSetting;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);

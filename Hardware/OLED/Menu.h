@@ -62,7 +62,8 @@ void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar,
-                            uint8_t GoalY, uint8_t GoalWidth);
+                            uint8_t GoalY, uint8_t GoalWidth,
+                            uint8_t GoalHeight);
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu);
 void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
