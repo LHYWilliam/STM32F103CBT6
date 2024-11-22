@@ -105,6 +105,7 @@ TextPage_t *HomePage;
 TextPage_t *MQ3Page;
 TextPage_t *MQ135Page;
 TextPage_t *SettingPage;
+TextPage_t *ReverseSetting;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);

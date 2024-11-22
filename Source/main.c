@@ -20,6 +20,7 @@ int main() {
     MQ3Page = &Menu.Page->LowerPages[0];
     MQ135Page = &Menu.Page->LowerPages[1];
     SettingPage = &Menu.Page->LowerPages[3];
+    ReverseSetting = &SettingPage->LowerPages[0];
 
     Sampler_Init(&Sampler);
 

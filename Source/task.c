@@ -45,6 +45,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         }
     }
 
+    if (ReverseSetting->Setting) {
+        OLED_Reverse(&OLED);
+    }
+
     OLED_SendBuffer(&OLED);
 
     time = xTaskGetTickCount() - time;
@@ -64,7 +68,13 @@ void vMenuKeyTaskCode(void *pvParameters) {
             TextMenu_CursorInc(&Menu);
         }
         if (Key_Read(&KeyConfirm)) {
-            TextMenu_EnterLowerPage(&Menu);
+            if (Menu.Page == SettingPage) {
+                SettingPage->LowerPages[Menu.Cursor].Setting =
+                    !SettingPage->LowerPages[Menu.Cursor].Setting;
+
+            } else {
+                TextMenu_EnterLowerPage(&Menu);
+            }
         }
         if (Key_Read(&KeyCancel)) {
             TextMenu_ReturnUpperPage(&Menu);
@@ -150,6 +160,11 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
 
         OLED_Printf(OLED, 0, 20 + i * (OLED->FontHeight + 2), "%s",
                     Menu->Page->LowerPages[begin + i].Title);
+
+        OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7,
+                    20 + i * (OLED->FontHeight + 2), "%7s",
+                    SettingPage->LowerPages[Menu->Cursor].Setting ? "Enable"
+                                                                  : "Disable");
     }
 
     OLED_ShowSelectioneBar(
