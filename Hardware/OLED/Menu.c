@@ -5,8 +5,45 @@ void TextMenu_Init(TextMenu_t *self) { TextPage_Init(self->Page); }
 
 void TextPage_Init(TextPage_t *self) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
+        if (i == 0) {
+            self->LowerPages[i].Y = self->Y + self->Height;
+        } else {
+            self->LowerPages[i].Y = self->LowerPages[i - 1].Y + self->Space;
+        }
+
         self->LowerPages[i].UpperPage = self;
         TextPage_Init(&self->LowerPages[i]);
+    }
+}
+
+void TextMenu_Update(TextMenu_t *self, int16_t Y) {
+    int16_t dy = self->Page->Y < Y   ? self->Speed
+                 : self->Page->Y > Y ? -self->Speed
+                                     : 0;
+    if (dy) {
+        self->Page->Y += dy;
+
+        for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
+            if (i == 0) {
+                self->Page->LowerPages[i].Y +=
+                    self->Page->LowerPages[i].Y <
+                            self->Page->Y + self->Page->Height
+                        ? self->Speed
+                    : self->Page->LowerPages[i].Y >
+                            self->Page->Y + self->Page->Height
+                        ? -self->Speed
+                        : 0;
+            } else {
+                self->Page->LowerPages[i].Y +=
+                    self->Page->LowerPages[i].Y <
+                            self->Page->LowerPages[i - 1].Y + self->Page->Space
+                        ? self->Speed
+                    : self->Page->LowerPages[i].Y >
+                            self->Page->LowerPages[i - 1].Y + self->Page->Space
+                        ? -self->Speed
+                        : 0;
+            }
+        }
     }
 }
 
@@ -43,7 +80,7 @@ void ImageMenu_CursorDec(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
 }
 
-void SelectioneBar_Init(SelectioneBar_t *self, uint8_t X, uint8_t Y,
+void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
                         uint8_t Width, uint8_t Height, uint8_t Speed) {
     self->X = X;
     self->Y = Y;
@@ -52,21 +89,20 @@ void SelectioneBar_Init(SelectioneBar_t *self, uint8_t X, uint8_t Y,
     self->Speed = Speed;
 }
 
-void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar,
-                            uint8_t GoalY, uint8_t GoalWidth,
-                            uint8_t GoalHeight) {
-    int8_t dy = SelectioneBar->Y < GoalY   ? SelectioneBar->Speed
-                : SelectioneBar->Y > GoalY ? -SelectioneBar->Speed
-                                           : 0;
-    int8_t dw = SelectioneBar->Width < GoalWidth   ? SelectioneBar->Speed
-                : SelectioneBar->Width > GoalWidth ? -SelectioneBar->Speed
-                                                   : 0;
-    int8_t dh = SelectioneBar->Height < GoalHeight   ? SelectioneBar->Speed
-                : SelectioneBar->Height > GoalHeight ? -SelectioneBar->Speed
-                                                     : 0;
+void SelectioneBar_Update(SelectioneBar_t *self, int16_t Y, uint8_t Width,
+                          uint8_t Height) {
+    self->Y += self->Y < Y ? self->Speed : self->Y > Y ? -self->Speed : 0;
+    self->Width += self->Width < Width   ? self->Speed
+                   : self->Width > Width ? -self->Speed
+                                         : 0;
+    self->Height += self->Height < Height   ? self->Speed
+                    : self->Height > Height ? -self->Speed
+                                            : 0;
+}
 
-    OLED_ReverseArea(OLED, SelectioneBar->X, SelectioneBar->Y += dy,
-                     SelectioneBar->Width += dw, SelectioneBar->Height += dh);
+void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {
+    OLED_ReverseArea(OLED, SelectioneBar->X, SelectioneBar->Y,
+                     SelectioneBar->Width, SelectioneBar->Height);
 }
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {

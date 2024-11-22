@@ -71,6 +71,7 @@ Sampler_t Sampler = {
 };
 
 TextMenu_t Menu = {
+    .Speed = 2,
     .TextCountOfHomePage = 4,
     .TextCountOfOtherPage = 6,
     .Bar =
@@ -84,6 +85,8 @@ TextMenu_t Menu = {
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
+            .Height = 20,
+            .Space = 8 + 2,
             .NumOfLowerPages = 11,
             .LowerPages =
                 (TextPage_t[]){
@@ -98,6 +101,8 @@ TextMenu_t Menu = {
                     },
                     (TextPage_t){
                         .Title = "Setting",
+                        .Height = 20,
+                        .Space = 8 + 2,
                         .NumOfLowerPages = 11,
                         .LowerPages =
                             (TextPage_t[]){
@@ -137,25 +142,25 @@ TextMenu_t Menu = {
                             },
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "5",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "6",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "7",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "8",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "9",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "10",
                     },
                     (TextPage_t){
-                        .Title = "...",
+                        .Title = "11",
                     },
                 },
         },
