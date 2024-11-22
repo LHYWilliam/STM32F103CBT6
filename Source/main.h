@@ -18,33 +18,12 @@
     (OLED->Height - 1 -                                                        \
      ((ADC) * (OLED->Height - 1) / 2. / 4095. + (OLED->Height - 1) / 4.))
 
-#define TextMenu_TextCount(Menu)                                               \
-    (Menu->Cursor < Menu->TextCountOfHomePage ? Menu->TextCountOfHomePage      \
-                                              : Menu->TextCountOfOtherPage)
-
-#define TextMenu_BeginText(Menu)                                               \
-    (Menu->Cursor < Menu->TextCountOfHomePage                                  \
-         ? 0                                                                   \
-         : Menu->Cursor - (Menu->Cursor - Menu->TextCountOfHomePage) %         \
-                              TextMenu_TextCount(Menu))
-
 #define TextMenu_PageNumber(Menu)                                              \
     (Menu->Cursor < Menu->TextCountOfHomePage                                  \
          ? 0                                                                   \
          : (Menu->Cursor - Menu->TextCountOfHomePage) /                        \
                    Menu->TextCountOfOtherPage +                                \
                1)
-
-#define TextMenu_PageYMap(Menu, begin, i)                                      \
-    (Menu->PageNumber ? Menu->Page->LowerPages[begin + i].Y -                  \
-                            Menu->Page->LowerPages[begin].Y + Menu->Bar.Speed  \
-                      : Menu->Page->LowerPages[begin + i].Y)
-
-#define SelectioneBar_YMap(Menu, begin)                                        \
-    (Menu->PageNumber                                                          \
-         ? Menu->Page->LowerPages[Menu->Cursor].Y -                            \
-               Menu->Page->LowerPages[begin].Y + Menu->Bar.Speed - 1           \
-         : Menu->Page->LowerPages[Menu->Cursor].Y - 1)
 
 extern LED_t LED;
 

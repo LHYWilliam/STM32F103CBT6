@@ -194,26 +194,45 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
 
 static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
                                  TextPage_t *SettingPage) {
-    if (Menu->Cursor < Menu->TextCountOfHomePage) {
-        OLED_Printf(OLED, 0, 0, Menu->Page->Title);
+    Menu->PageNumber = TextMenu_PageNumber(Menu);
+
+    if (Menu->Page->NumOfLowerPages) {
+        if (Menu->PageNumber < 1) {
+            TextMenu_Update(Menu, 0);
+
+        } else {
+            TextMenu_Update(Menu,
+                            Menu->Page->Y -
+                                (Menu->Page
+                                     ->LowerPages[Menu->TextCountOfHomePage +
+                                                  Menu->TextCountOfOtherPage *
+                                                      (Menu->PageNumber - 1)]
+                                     .Y -
+                                 Menu->Speed));
+        }
     }
 
-    uint8_t begin = TextMenu_BeginText(Menu);
-    for (uint8_t i = 0, Y = Menu->Cursor < Menu->TextCountOfHomePage
-                                ? 20
-                                : Menu->Bar.Speed;
-         (begin + i < Menu->Page->NumOfLowerPages) &&
-         (i < TextMenu_TextCount(Menu));
-         i++, Y += OLED->FontHeight + 2) {
-        OLED_Printf(OLED, 0, Y, "%s", Menu->Page->LowerPages[begin + i].Title);
+    if (Menu->Cursor < Menu->TextCountOfHomePage) {
+        OLED_Printf(OLED, Menu->Page->X, Menu->Page->Y, Menu->Page->Title);
+    }
 
-        OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7, Y, "%7s",
-                    SettingPage->LowerPages[begin + i].Setting ? "Enable"
-                                                               : "Disable");
+    for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
+        if (Menu->Page->LowerPages[i].Y < 0) {
+            continue;
+        }
+        if (Menu->Page->LowerPages[i].Y + Menu->Page->Space > OLED->Height) {
+            break;
+        }
+
+        OLED_Printf(OLED, OLED->Width - OLED->FontWidth * 7,
+                    Menu->Page->LowerPages[i].Y, "%7s",
+                    SettingPage->LowerPages[i].Setting ? "Enable" : "Disable");
+        OLED_Printf(OLED, 0, Menu->Page->LowerPages[i].Y, "%s",
+                    Menu->Page->LowerPages[i].Title);
     }
 
     SelectioneBar_Update(
-        &Menu->Bar, SelectioneBar_YMap(Menu, begin),
+        &Menu->Bar, Menu->Page->LowerPages[Menu->Cursor].Y - 1,
         OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
         OLED->FontHeight + 1);

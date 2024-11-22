@@ -62,11 +62,17 @@ void TextMenu_EnterLowerPage(TextMenu_t *self) {
     if (self->Page->NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
         self->Cursor = 0;
+
+        self->Page->XBack = self->Page->X;
+        self->Page->YBack = self->Page->Y;
     }
 }
 
 void TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
+        self->Page->X = self->Page->XBack;
+        self->Page->Y = self->Page->YBack;
+
         self->Page = self->Page->UpperPage;
         self->Cursor = self->Page->Cursor;
     }
