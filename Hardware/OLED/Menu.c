@@ -53,12 +53,15 @@ void SelectioneBar_Init(SelectioneBar_t *self, uint8_t X, uint8_t Y,
 }
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar,
-                            uint8_t GoalY) {
+                            uint8_t GoalY, uint8_t GoalWidth) {
     int8_t dy = SelectioneBar->Y < GoalY   ? SelectioneBar->Speed
                 : SelectioneBar->Y > GoalY ? -SelectioneBar->Speed
                                            : 0;
+    int8_t dw = SelectioneBar->Width < GoalWidth   ? SelectioneBar->Speed
+                : SelectioneBar->Width > GoalWidth ? -SelectioneBar->Speed
+                                                   : 0;
     OLED_ReverseArea(OLED, SelectioneBar->X, SelectioneBar->Y += dy,
-                     SelectioneBar->Width, SelectioneBar->Height);
+                     SelectioneBar->Width += dw, SelectioneBar->Height);
 }
 
 void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {

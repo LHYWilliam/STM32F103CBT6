@@ -101,7 +101,8 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
-        20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1);
+        20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1,
+        OLED->FontWidth * 12 + 1);
 }
 
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
@@ -153,5 +154,6 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
 
     OLED_ShowSelectioneBar(
         OLED, &Menu->Bar,
-        20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1);
+        20 + Menu->Cursor % Menu->NumOfTexts * (OLED->FontHeight + 2) - 1,
+        OLED->FontWidth * 7 + 1);
 }
