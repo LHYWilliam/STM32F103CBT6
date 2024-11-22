@@ -19,6 +19,7 @@ int main() {
     HomePage = Menu.Page;
     MQ3Page = &Menu.Page->LowerPages[0];
     MQ135Page = &Menu.Page->LowerPages[1];
+    SettingPage = &Menu.Page->LowerPages[3];
 
     Sampler_Init(&Sampler);
 

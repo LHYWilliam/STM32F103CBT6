@@ -34,6 +34,7 @@ extern TextMenu_t Menu;
 extern TextPage_t *HomePage;
 extern TextPage_t *MQ3Page;
 extern TextPage_t *MQ135Page;
+extern TextPage_t *SettingPage;
 
 extern TaskHandle_t xMenuKeyTaskHandle;
 extern void vMenuKeyTaskCode(void *pvParameters);
