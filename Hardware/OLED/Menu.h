@@ -33,6 +33,11 @@ typedef struct {
     uint8_t Width;
     uint8_t Height;
 
+    int16_t *TextX;
+    int16_t *TextY;
+    uint8_t *TextWidth;
+    uint8_t *TextHeight;
+
     uint8_t Speed;
 } SelectioneBar_t;
 
@@ -61,19 +66,17 @@ typedef struct {
     uint8_t NumOfPages;
 } ImageMenu_t;
 
-void TextPage_Init(TextPage_t *self);
+void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu);
 
-void TextMenu_Init(TextMenu_t *self);
+void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
 void TextMenu_Update(TextMenu_t *self, int16_t Y);
 void TextMenu_CursorInc(TextMenu_t *self);
 void TextMenu_CursorDec(TextMenu_t *self);
 void TextMenu_EnterLowerPage(TextMenu_t *self);
 void TextMenu_ReturnUpperPage(TextMenu_t *self);
 
-void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
-                        uint8_t Width, uint8_t Height, uint8_t Speed);
-void SelectioneBar_Update(SelectioneBar_t *self, int16_t X, int16_t Y,
-                          uint8_t Width, uint8_t Height);
+void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
+void SelectioneBar_Update(SelectioneBar_t *self);
 
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);

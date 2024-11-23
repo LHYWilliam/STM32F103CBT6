@@ -145,19 +145,16 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
         }
     }
 
-    SelectioneBar_Update(
-        &Menu->Bar, Menu->Page->LowerPages[Menu->Cursor].X - 1,
-        Menu->Page->LowerPages[Menu->Cursor].Y - 1,
-        OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
-            2,
-        OLED->FontHeight + 2);
+    SelectioneBar_Bind(&Menu->Bar, &Menu->Page->LowerPages[Menu->Cursor]);
+    SelectioneBar_Update(&Menu->Bar);
     OLED_ShowSelectioneBar(OLED, &Menu->Bar);
 }
 
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
                              TextPage_t *MQxPage, MQSensor_t *MQSensor,
                              uint8_t Y, uint8_t i) {
-    OLED_Printf(OLED, 0, Y, "%-6s", Menu->Page->LowerPages[i].Title);
+    OLED_Printf(OLED, Menu->Page->LowerPages[i].X, Y, "%-6s",
+                Menu->Page->LowerPages[i].Title);
     OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, Y, "%.3f %6s",
                 ADCToVoltage(MQSensor->Data[MQSensor->Index]),
                 MQSensor->State ? "Danger" : "Safe");
@@ -226,11 +223,7 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
                        SettingImage[SettingPage->LowerPages[i].Setting]);
     }
 
-    SelectioneBar_Update(
-        &Menu->Bar, Menu->Page->LowerPages[Menu->Cursor].X - 1,
-        Menu->Page->LowerPages[Menu->Cursor].Y - 1,
-        OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
-            2,
-        OLED->FontHeight + 2);
+    SelectioneBar_Bind(&Menu->Bar, &Menu->Page->LowerPages[Menu->Cursor]);
+    SelectioneBar_Update(&Menu->Bar);
     OLED_ShowSelectioneBar(OLED, &Menu->Bar);
 }

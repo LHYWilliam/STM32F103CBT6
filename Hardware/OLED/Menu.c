@@ -1,25 +1,35 @@
+#include <string.h>
+
 #include "Menu.h"
 #include "OLED.h"
 
 #define Update(now, goal, speed)                                               \
     ((now) += ((now) < (goal) ? (speed) : (now) > (goal) ? -(speed) : 0))
 
-void TextMenu_Init(TextMenu_t *self) { TextPage_Init(self->Page); }
+void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
+    TextPage_Init(self->Page, OLED, self);
+}
 
-void TextPage_Init(TextPage_t *self) {
+void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
+        self->LowerPages[i].X += 1;
+        self->LowerPages[i].Width =
+            strlen(self->LowerPages[i].Title) * OLED->FontWidth;
+        self->LowerPages[i].Height = OLED->FontHeight;
+
         if (i == 0) {
             Update(self->LowerPages[0].Y, self->TitleY + self->TitleHeight + 1,
-                   1);
+                   Menu->Speed);
         } else {
             Update(self->LowerPages[i].Y,
                    self->LowerPages[i - 1].Y + self->LowerPages[i - 1].Height +
                        2,
-                   1);
+                   Menu->Speed);
         }
 
         self->LowerPages[i].UpperPage = self;
-        TextPage_Init(&self->LowerPages[i]);
+
+        TextPage_Init(&self->LowerPages[i], OLED, Menu);
     }
 }
 
@@ -73,21 +83,18 @@ void ImageMenu_CursorDec(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
 }
 
-void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
-                        uint8_t Width, uint8_t Height, uint8_t Speed) {
-    self->X = X;
-    self->Y = Y;
-    self->Width = Width;
-    self->Height = Height;
-    self->Speed = Speed;
+void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page) {
+    self->TextX = &Page->X;
+    self->TextY = &Page->Y;
+    self->TextWidth = &Page->Width;
+    self->TextHeight = &Page->Height;
 }
 
-void SelectioneBar_Update(SelectioneBar_t *self, int16_t X, int16_t Y,
-                          uint8_t Width, uint8_t Height) {
-    Update(self->X, X, self->Speed);
-    Update(self->Y, Y, self->Speed);
-    Update(self->Width, Width, self->Speed);
-    Update(self->Height, Height, self->Speed);
+void SelectioneBar_Update(SelectioneBar_t *self) {
+    Update(self->X, *self->TextX - 1, self->Speed);
+    Update(self->Y, *self->TextY - 1, self->Speed);
+    Update(self->Width, *self->TextWidth + 2, self->Speed);
+    Update(self->Height, *self->TextHeight + 2, self->Speed);
 }
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {

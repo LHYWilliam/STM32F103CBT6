@@ -15,7 +15,7 @@ int main() {
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
-    TextMenu_Init(&Menu);
+    TextMenu_Init(&Menu, &OLED);
     HomePage = Menu.Page;
     MQ3Page = &Menu.Page->LowerPages[0];
     MQ135Page = &Menu.Page->LowerPages[1];
