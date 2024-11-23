@@ -6,6 +6,13 @@
 
 #include "OLED.h"
 
+#define TextMenu_PageNumber(Menu)                                              \
+    (Menu->Cursor < Menu->TextCountOfHomePage                                  \
+         ? 0                                                                   \
+         : (Menu->Cursor - Menu->TextCountOfHomePage) /                        \
+                   Menu->TextCountOfOtherPage +                                \
+               1)
+
 typedef struct TextPage {
     char Title[32];
 
@@ -67,16 +74,16 @@ typedef struct {
 } ImageMenu_t;
 
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu);
+void TextPage_Update(TextPage_t *self, TextMenu_t *Menu);
+
+void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
+void SelectioneBar_Update(SelectioneBar_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
-void TextMenu_Update(TextMenu_t *self, int16_t Y);
 void TextMenu_CursorInc(TextMenu_t *self);
 void TextMenu_CursorDec(TextMenu_t *self);
 void TextMenu_EnterLowerPage(TextMenu_t *self);
 void TextMenu_ReturnUpperPage(TextMenu_t *self);
-
-void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
-void SelectioneBar_Update(SelectioneBar_t *self);
 
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);

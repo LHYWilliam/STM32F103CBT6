@@ -18,13 +18,6 @@
     (OLED->Height - 1 -                                                        \
      ((ADC) * (OLED->Height - 1) / 2. / 4095. + (OLED->Height - 1) / 4.))
 
-#define TextMenu_PageNumber(Menu)                                              \
-    (Menu->Cursor < Menu->TextCountOfHomePage                                  \
-         ? 0                                                                   \
-         : (Menu->Cursor - Menu->TextCountOfHomePage) /                        \
-                   Menu->TextCountOfOtherPage +                                \
-               1)
-
 extern LED_t LED;
 
 extern Key_t Key;

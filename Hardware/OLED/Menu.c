@@ -3,11 +3,12 @@
 #include "Menu.h"
 #include "OLED.h"
 
-#define Update(now, goal, speed)                                               \
-    ((now) += ((now) < (goal) ? (speed) : (now) > (goal) ? -(speed) : 0))
+#define Update(now, target, speed)                                             \
+    ((now) += ((now) < (target) ? (speed) : (now) > (target) ? -(speed) : 0))
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
     TextPage_Init(self->Page, OLED, self);
+    SelectioneBar_Bind(&self->Bar, &self->Page->LowerPages[0]);
 }
 
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
@@ -33,19 +34,28 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     }
 }
 
-void TextMenu_Update(TextMenu_t *self, int16_t Y) {
-    Update(self->Page->TitleY, Y, self->Speed);
+void TextPage_Update(TextPage_t *self, TextMenu_t *Menu) {
+    Menu->PageNumber = TextMenu_PageNumber(Menu);
 
-    for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
+    int16_t Y =
+        Menu->PageNumber == 0
+            ? 0
+            : (self->TitleY - (self->LowerPages[Menu->TextCountOfHomePage +
+                                                Menu->TextCountOfOtherPage *
+                                                    (Menu->PageNumber - 1)]
+                                   .Y -
+                               1));
+    Update(self->TitleY, Y, Menu->Speed);
+
+    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
         if (i == 0) {
-            Update(self->Page->LowerPages[0].Y,
-                   self->Page->TitleY + self->Page->TitleHeight + 1,
-                   self->Speed);
+            Update(self->LowerPages[0].Y, self->TitleY + self->TitleHeight + 1,
+                   Menu->Speed);
         } else {
-            Update(self->Page->LowerPages[i].Y,
-                   self->Page->LowerPages[i - 1].Y +
-                       self->Page->LowerPages[i - 1].Height + 2,
-                   self->Speed);
+            Update(self->LowerPages[i].Y,
+                   self->LowerPages[i - 1].Y + self->LowerPages[i - 1].Height +
+                       2,
+                   Menu->Speed);
         }
     }
 }
