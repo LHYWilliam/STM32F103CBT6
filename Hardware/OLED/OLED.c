@@ -352,9 +352,16 @@ void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y) {
 }
 
 void OLED_DrawHLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
-                    uint8_t Height, uint8_t step) {
+                    uint8_t step) {
     for (uint8_t i = 0; i < Width; i += step) {
         OLED_DrawPoint(self, X + i, Y);
+    }
+}
+
+void OLED_DrawVLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Height,
+                    uint8_t step) {
+    for (uint8_t i = 0; i < Height; i += step) {
+        OLED_DrawPoint(self, X, Y + i);
     }
 }
 
@@ -417,20 +424,22 @@ void OLED_DrawLine(OLED_t *self, int16_t X1, int16_t Y1, int16_t X2,
     }
 }
 
-void OLED_ShowChart(OLED_t *self, uint16_t *Data, uint16_t Length,
+void OLED_ShowChart(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, uint16_t *Data, uint16_t Length,
                     int16_t Index) {
-#define ADCToOLED(ADC)                                                         \
-    (self->Height - 1 -                                                        \
-     ((ADC) * (self->Height - 1) / 2. / 4095. + (self->Height - 1) / 4.))
-
     Index = (Index + 1) % Length;
     for (uint8_t x = 0; x < self->Width - 1;
          x++, Index = (Index + 1) % Length) {
-        OLED_DrawLine(self, x * (self->Width - 1) / (Length - 1),
-                      ADCToOLED(Data[Index]),
-                      (x + 1) * (self->Width - 1) / (Length - 1),
-                      ADCToOLED(Data[(Index + 1) % Length]));
+        OLED_DrawLine(self, OLED_IndexToX(x, Length, X, Width),
+                      OLED_ADCToY(Data[Index], Y, Height),
+                      OLED_IndexToX(x + 1, Length, X, Width),
+                      OLED_ADCToY(Data[(Index + 1) % Length], Y, Height));
     }
+
+    OLED_DrawHLine(self, X, Y, Width, 3);
+    OLED_DrawHLine(self, X, Y + Height - 1, Width, 3);
+    OLED_DrawVLine(self, X, Y, Height, 3);
+    OLED_DrawVLine(self, X + Width - 1, Y, Height, 3);
 }
 
 void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,

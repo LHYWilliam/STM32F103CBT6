@@ -14,9 +14,6 @@
 
 #define ADCToVoltage(ADC)     ((ADC) / 4095.0 * 3.3)
 #define VoltageToADC(Voltage) (uint32_t)((Voltage) / 3.3 * 4095.0)
-#define ADCToOLED(ADC)                                                         \
-    (OLED->Height - 1 -                                                        \
-     ((ADC) * (OLED->Height - 1) / 2. / 4095. + (OLED->Height - 1) / 4.))
 
 extern LED_t LED;
 

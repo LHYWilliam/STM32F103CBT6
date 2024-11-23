@@ -102,8 +102,14 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
 
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor) {
-    OLED_ShowChart(OLED, MQSensor->Data, MQSensor->Length, MQSensor->Index);
-    OLED_DrawHLine(OLED, 0, ADCToOLED(MQSensor->Threshold), OLED->Width - 1, 1,
+    int16_t X = 0;
+    int16_t Y = OLED->Height / 4;
+    int16_t Width = OLED->Width;
+    int16_t Height = OLED->Height / 2;
+
+    OLED_ShowChart(OLED, X, Y, Width, Height, MQSensor->Data, MQSensor->Length,
+                   MQSensor->Index);
+    OLED_DrawHLine(OLED, X, OLED_ADCToY(MQSensor->Threshold, Y, Height), Width,
                    2);
 
     OLED_Printf(OLED, 1 - 1, 1 - 1, "%S %s", MQxPage->Title,

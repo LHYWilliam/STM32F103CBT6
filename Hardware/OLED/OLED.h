@@ -6,7 +6,11 @@
 
 #include "OLED_Font.h"
 
-#define U8G2 0
+#define OLED_IndexToX(Index, Length, X, Width)                                 \
+    ((Index) * (Width - 1) / (Length - 1) + X)
+#define OLED_ADCToY(ADC, Y, Height) ((4095 - ADC) * (Height - 1) / 4095 + Y)
+
+#define U8G2                        0
 
 #if U8G2
 
@@ -83,10 +87,13 @@ void OLED_ReverseArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
 
 void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y);
 void OLED_DrawHLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
-                    uint8_t Height, uint8_t step);
+                    uint8_t step);
+void OLED_DrawVLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Height,
+                    uint8_t step);
 void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
                    int16_t Y1);
-void OLED_ShowChart(OLED_t *self, uint16_t *Data, uint16_t Length,
+void OLED_ShowChart(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                    uint8_t Height, uint16_t *Data, uint16_t Length,
                     int16_t Index);
 
 void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
