@@ -6,11 +6,6 @@
 #define Update(now, target, speed)                                             \
     ((now) += ((now) < (target) ? (speed) : (now) > (target) ? -(speed) : 0))
 
-void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
-    TextPage_Init(self->Page, OLED, self);
-    SelectioneBar_Bind(&self->Bar, &self->Page->LowerPages[0]);
-}
-
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
         self->LowerPages[i].X += 1;
@@ -60,29 +55,59 @@ void TextPage_Update(TextPage_t *self, TextMenu_t *Menu) {
     }
 }
 
-void TextMenu_CursorInc(TextMenu_t *self) {
-    self->Cursor = (self->Cursor + 1) % self->Page->NumOfLowerPages;
-    self->Page->Cursor = self->Cursor;
+void TextPage_ReverseSetting(TextPage_t *self) {
+    self->LowerPages[self->Cursor].Setting =
+        !self->LowerPages[self->Cursor].Setting;
 }
 
-void TextMenu_CursorDec(TextMenu_t *self) {
-    self->Cursor = (self->Cursor + self->Page->NumOfLowerPages - 1) %
-                   self->Page->NumOfLowerPages;
-    self->Page->Cursor = self->Cursor;
+void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
+    TextPage_Init(self->Page, OLED, self);
+    SelectioneBar_Bind(&self->Bar, &self->Page->LowerPages[0]);
 }
 
-void TextMenu_EnterLowerPage(TextMenu_t *self) {
+ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
+    if (self->Page->NumOfLowerPages) {
+        self->Cursor = (self->Cursor + 1) % self->Page->NumOfLowerPages;
+        self->Page->Cursor = self->Cursor;
+
+        return SUCCESS;
+    }
+
+    return ERROR;
+}
+
+ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
+    if (self->Page->NumOfLowerPages) {
+        self->Cursor = (self->Cursor + self->Page->NumOfLowerPages - 1) %
+                       self->Page->NumOfLowerPages;
+        self->Page->Cursor = self->Cursor;
+
+        return SUCCESS;
+    }
+
+    return ERROR;
+}
+
+ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
     if (self->Page->NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
         self->Cursor = 0;
+
+        return SUCCESS;
     }
+
+    return ERROR;
 }
 
-void TextMenu_ReturnUpperPage(TextMenu_t *self) {
+ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
         self->Page = self->Page->UpperPage;
         self->Cursor = self->Page->Cursor;
+
+        return SUCCESS;
     }
+
+    return ERROR;
 }
 
 void ImageMenu_CursorInc(ImageMenu_t *self) {

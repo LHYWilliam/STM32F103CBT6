@@ -78,8 +78,6 @@ TextMenu_t Menu = {
     .TextCountOfOtherPage = 6,
     .Bar =
         {
-            .Width = 1,
-            .Height = 1,
             .Speed = 1,
         },
     .Page =
