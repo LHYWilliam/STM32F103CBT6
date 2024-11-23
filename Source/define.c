@@ -89,9 +89,17 @@ TextMenu_t Menu = {
                 (TextPage_t[]){
                     (TextPage_t){
                         .Title = "MQ-3",
+                        .TitleX = 0,
+                        .TitleY = 64 / 4,
+                        .TitleWidth = 128,
+                        .TitleHeight = 64 / 2,
                     },
                     (TextPage_t){
                         .Title = "MQ-135",
+                        .TitleX = 0,
+                        .TitleY = 64 / 4,
+                        .TitleWidth = 128,
+                        .TitleHeight = 64 / 2,
                     },
                     (TextPage_t){
                         .Title = "MQ-...",
