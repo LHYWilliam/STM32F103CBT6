@@ -14,10 +14,10 @@ typedef struct TextPage {
     uint8_t Width;
     uint8_t Height;
 
-    int16_t XBack;
-    int16_t YBack;
-
-    uint8_t Space;
+    int16_t TitleX;
+    int16_t TitleY;
+    uint8_t TitleWidth;
+    uint8_t TitleHeight;
 
     uint8_t Setting;
 

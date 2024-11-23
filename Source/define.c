@@ -70,97 +70,118 @@ Sampler_t Sampler = {
     .Priority = 14,
 };
 
+#define TextHeight   8
+#define TitleHeight_ 20
+
 TextMenu_t Menu = {
-    .Speed = 2,
+    .Speed = 1,
     .TextCountOfHomePage = 4,
     .TextCountOfOtherPage = 6,
     .Bar =
         {
-            .X = 0,
-            .Y = 20 - 1,
             .Width = 1,
             .Height = 1,
-            .Speed = 2,
+            .Speed = 1,
         },
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
-            .Height = 20,
-            .Space = 8 + 2,
+            .TitleHeight = TitleHeight_,
             .NumOfLowerPages = 11,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
                         .Title = "MQ-3",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "MQ-135",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "MQ-...",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "Setting",
-                        .Height = 20,
-                        .Space = 8 + 2,
+                        .TitleHeight = TitleHeight_,
+                        .Height = TextHeight,
                         .NumOfLowerPages = 11,
                         .LowerPages =
                             (TextPage_t[]){
                                 (TextPage_t){
                                     .Title = "Reverse",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "Reset",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                                 (TextPage_t){
                                     .Title = "...",
+                                    .Height = TextHeight,
                                 },
                             },
                     },
                     (TextPage_t){
                         .Title = "5",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "6",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "7",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "8",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "9",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "10",
+                        .Height = TextHeight,
                     },
                     (TextPage_t){
                         .Title = "11",
+                        .Height = TextHeight,
                     },
                 },
         },

@@ -1,14 +1,21 @@
 #include "Menu.h"
 #include "OLED.h"
 
+#define Update(now, goal, speed)                                               \
+    ((now) += ((now) < (goal) ? (speed) : (now) > (goal) ? -(speed) : 0))
+
 void TextMenu_Init(TextMenu_t *self) { TextPage_Init(self->Page); }
 
 void TextPage_Init(TextPage_t *self) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
         if (i == 0) {
-            self->LowerPages[i].Y = self->Y + self->Height;
+            Update(self->LowerPages[0].Y, self->TitleY + self->TitleHeight + 1,
+                   1);
         } else {
-            self->LowerPages[i].Y = self->LowerPages[i - 1].Y + self->Space;
+            Update(self->LowerPages[i].Y,
+                   self->LowerPages[i - 1].Y + self->LowerPages[i - 1].Height +
+                       2,
+                   1);
         }
 
         self->LowerPages[i].UpperPage = self;
@@ -17,32 +24,18 @@ void TextPage_Init(TextPage_t *self) {
 }
 
 void TextMenu_Update(TextMenu_t *self, int16_t Y) {
-    int16_t dy = self->Page->Y < Y   ? self->Speed
-                 : self->Page->Y > Y ? -self->Speed
-                                     : 0;
-    if (dy) {
-        self->Page->Y += dy;
+    Update(self->Page->TitleY, Y, self->Speed);
 
-        for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
-            if (i == 0) {
-                self->Page->LowerPages[i].Y +=
-                    self->Page->LowerPages[i].Y <
-                            self->Page->Y + self->Page->Height
-                        ? self->Speed
-                    : self->Page->LowerPages[i].Y >
-                            self->Page->Y + self->Page->Height
-                        ? -self->Speed
-                        : 0;
-            } else {
-                self->Page->LowerPages[i].Y +=
-                    self->Page->LowerPages[i].Y <
-                            self->Page->LowerPages[i - 1].Y + self->Page->Space
-                        ? self->Speed
-                    : self->Page->LowerPages[i].Y >
-                            self->Page->LowerPages[i - 1].Y + self->Page->Space
-                        ? -self->Speed
-                        : 0;
-            }
+    for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
+        if (i == 0) {
+            Update(self->Page->LowerPages[0].Y,
+                   self->Page->TitleY + self->Page->TitleHeight + 1,
+                   self->Speed);
+        } else {
+            Update(self->Page->LowerPages[i].Y,
+                   self->Page->LowerPages[i - 1].Y +
+                       self->Page->LowerPages[i - 1].Height + 2,
+                   self->Speed);
         }
     }
 }
@@ -62,17 +55,11 @@ void TextMenu_EnterLowerPage(TextMenu_t *self) {
     if (self->Page->NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
         self->Cursor = 0;
-
-        self->Page->XBack = self->Page->X;
-        self->Page->YBack = self->Page->Y;
     }
 }
 
 void TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
-        self->Page->X = self->Page->XBack;
-        self->Page->Y = self->Page->YBack;
-
         self->Page = self->Page->UpperPage;
         self->Cursor = self->Page->Cursor;
     }
@@ -97,13 +84,9 @@ void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
 
 void SelectioneBar_Update(SelectioneBar_t *self, int16_t Y, uint8_t Width,
                           uint8_t Height) {
-    self->Y += self->Y < Y ? self->Speed : self->Y > Y ? -self->Speed : 0;
-    self->Width += self->Width < Width   ? self->Speed
-                   : self->Width > Width ? -self->Speed
-                                         : 0;
-    self->Height += self->Height < Height   ? self->Speed
-                    : self->Height > Height ? -self->Speed
-                                            : 0;
+    Update(self->Y, Y, self->Speed);
+    Update(self->Width, Width, self->Speed);
+    Update(self->Height, Height, self->Speed);
 }
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {

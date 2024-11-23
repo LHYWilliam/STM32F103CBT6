@@ -17,7 +17,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     static uint32_t time;
     OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
                 OLED.Height - OLED.FontHeight - 1, "%2d %%",
-                (uint8_t)(time / 20.0 * 100.0));
+                (uint8_t)(time / 10.0 * 100.0));
     time = xTaskGetTickCount();
 
     if (Menu.Page == HomePage) {
@@ -111,24 +111,25 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
     Menu->PageNumber = TextMenu_PageNumber(Menu);
 
     if (Menu->Page->NumOfLowerPages) {
-        if (Menu->PageNumber < 1) {
+        if (Menu->PageNumber == 0) {
             TextMenu_Update(Menu, 0);
 
         } else {
             TextMenu_Update(Menu,
-                            Menu->Page->Y -
+                            Menu->Page->TitleY -
                                 (Menu->Page
                                      ->LowerPages[Menu->TextCountOfHomePage +
                                                   Menu->TextCountOfOtherPage *
                                                       (Menu->PageNumber - 1)]
                                      .Y -
-                                 Menu->Speed));
+                                 1));
         }
     }
 
     if (Menu->Cursor < Menu->TextCountOfHomePage) {
         OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-        OLED_Printf(OLED, Menu->Page->X, Menu->Page->Y, Menu->Page->Title);
+        OLED_Printf(OLED, Menu->Page->TitleX, Menu->Page->TitleY,
+                    Menu->Page->Title);
         OLED_SetFont(OLED, OLEDFont_6X8);
     }
 
@@ -136,7 +137,8 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
         if (Menu->Page->LowerPages[i].Y < 0) {
             continue;
         }
-        if (Menu->Page->LowerPages[i].Y + Menu->Page->Space > OLED->Height) {
+        if (Menu->Page->LowerPages[i].Y + Menu->Page->LowerPages[i].Height >
+            OLED->Height) {
             break;
         }
 
@@ -158,7 +160,7 @@ static void OLED_ShowHomePage(OLED_t *OLED, TextMenu_t *Menu) {
         &Menu->Bar, Menu->Page->LowerPages[Menu->Cursor].Y - 1,
         OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
-        OLED->FontHeight + 1);
+        OLED->FontHeight + 2);
     OLED_ShowSelectioneBar(OLED, &Menu->Bar);
 }
 
@@ -197,30 +199,32 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
     Menu->PageNumber = TextMenu_PageNumber(Menu);
 
     if (Menu->Page->NumOfLowerPages) {
-        if (Menu->PageNumber < 1) {
+        if (Menu->PageNumber == 0) {
             TextMenu_Update(Menu, 0);
 
         } else {
             TextMenu_Update(Menu,
-                            Menu->Page->Y -
+                            Menu->Page->TitleY -
                                 (Menu->Page
                                      ->LowerPages[Menu->TextCountOfHomePage +
                                                   Menu->TextCountOfOtherPage *
                                                       (Menu->PageNumber - 1)]
                                      .Y -
-                                 Menu->Speed));
+                                 1));
         }
     }
 
     if (Menu->Cursor < Menu->TextCountOfHomePage) {
-        OLED_Printf(OLED, Menu->Page->X, Menu->Page->Y, Menu->Page->Title);
+        OLED_Printf(OLED, Menu->Page->TitleX, Menu->Page->TitleY,
+                    Menu->Page->Title);
     }
 
     for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
         if (Menu->Page->LowerPages[i].Y < 0) {
             continue;
         }
-        if (Menu->Page->LowerPages[i].Y + Menu->Page->Space > OLED->Height) {
+        if (Menu->Page->LowerPages[i].Y + Menu->Page->LowerPages[i].Height >
+            OLED->Height) {
             break;
         }
 
@@ -235,6 +239,6 @@ static void OLED_ShowSettingPage(OLED_t *OLED, TextMenu_t *Menu,
         &Menu->Bar, Menu->Page->LowerPages[Menu->Cursor].Y - 1,
         OLED->FontWidth * strlen(Menu->Page->LowerPages[Menu->Cursor].Title) +
             1,
-        OLED->FontHeight + 1);
+        OLED->FontHeight + 2);
     OLED_ShowSelectioneBar(OLED, &Menu->Bar);
 }
