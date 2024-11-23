@@ -82,8 +82,9 @@ void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
     self->Speed = Speed;
 }
 
-void SelectioneBar_Update(SelectioneBar_t *self, int16_t Y, uint8_t Width,
-                          uint8_t Height) {
+void SelectioneBar_Update(SelectioneBar_t *self, int16_t X, int16_t Y,
+                          uint8_t Width, uint8_t Height) {
+    Update(self->X, X, self->Speed);
     Update(self->Y, Y, self->Speed);
     Update(self->Width, Width, self->Speed);
     Update(self->Height, Height, self->Speed);

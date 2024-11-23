@@ -72,8 +72,8 @@ void TextMenu_ReturnUpperPage(TextMenu_t *self);
 
 void SelectioneBar_Init(SelectioneBar_t *self, int16_t X, int16_t Y,
                         uint8_t Width, uint8_t Height, uint8_t Speed);
-void SelectioneBar_Update(SelectioneBar_t *self, int16_t Y, uint8_t Width,
-                          uint8_t Height);
+void SelectioneBar_Update(SelectioneBar_t *self, int16_t X, int16_t Y,
+                          uint8_t Width, uint8_t Height);
 
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
