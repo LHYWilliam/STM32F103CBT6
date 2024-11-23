@@ -22,7 +22,7 @@ int main() {
     SettingPage = &Menu.Page->LowerPages[3];
     StatusLEDSetting = &SettingPage->LowerPages[0];
     ReverseSetting = &SettingPage->LowerPages[1];
-    ResetSetting = &SettingPage->LowerPages[2];
+    RestartSetting = &SettingPage->LowerPages[2];
 
     Sampler_Init(&Sampler);
 

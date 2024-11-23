@@ -174,7 +174,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
             }
         }
 
-        if (ResetSetting->Setting) {
+        if (RestartSetting->Setting) {
             __NVIC_SystemReset();
         }
 

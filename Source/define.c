@@ -118,7 +118,7 @@ TextMenu_t Menu = {
                                     .Title = "Reverse",
                                 },
                                 (TextPage_t){
-                                    .Title = "Reset",
+                                    .Title = "Restart",
                                 },
                             },
                     },
@@ -133,7 +133,7 @@ TextPage_t *SettingPage;
 
 TextPage_t *StatusLEDSetting;
 TextPage_t *ReverseSetting;
-TextPage_t *ResetSetting;
+TextPage_t *RestartSetting;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);

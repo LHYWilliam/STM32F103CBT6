@@ -38,7 +38,7 @@ extern TextPage_t *SettingPage;
 
 extern TextPage_t *StatusLEDSetting;
 extern TextPage_t *ReverseSetting;
-extern TextPage_t *ResetSetting;
+extern TextPage_t *RestartSetting;
 
 extern TaskHandle_t xMenuKeyTaskHandle;
 extern void vMenuKeyTaskCode(void *pvParameters);

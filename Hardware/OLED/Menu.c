@@ -92,6 +92,7 @@ ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
     if (self->Page->NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
         self->Cursor = 0;
+        self->Page->Cursor = self->Cursor;
 
         return SUCCESS;
     }
