@@ -102,21 +102,12 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
 
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor) {
-    for (uint8_t x = 0, Index = (MQSensor->Index + 1) % MQSensor->Length;
-         x < OLED->Width - 1; x++, Index = (Index + 1) % MQSensor->Length) {
-        OLED_DrawLine(
-            OLED, x * (OLED->Width - 1) / (MQSensor->Length - 1),
-            ADCToOLED(MQSensor->Data[Index]),
-            (x + 1) * (OLED->Width - 1) / (MQSensor->Length - 1),
-            ADCToOLED(MQSensor->Data[(Index + 1) % MQSensor->Length]));
-    }
-
+    OLED_ShowChart(OLED, MQSensor->Data, MQSensor->Length, MQSensor->Index);
     OLED_DrawHLine(OLED, 0, ADCToOLED(MQSensor->Threshold), OLED->Width - 1, 1,
                    2);
 
     OLED_Printf(OLED, 1 - 1, 1 - 1, "%S %s", MQxPage->Title,
                 MQSensor->State ? "Danger" : "Safe");
-
     OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
                 ADCToVoltage(MQSensor->Data[MQSensor->Index]));
 }

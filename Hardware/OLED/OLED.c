@@ -417,6 +417,22 @@ void OLED_DrawLine(OLED_t *self, int16_t X1, int16_t Y1, int16_t X2,
     }
 }
 
+void OLED_ShowChart(OLED_t *self, uint16_t *Data, uint16_t Length,
+                    int16_t Index) {
+#define ADCToOLED(ADC)                                                         \
+    (self->Height - 1 -                                                        \
+     ((ADC) * (self->Height - 1) / 2. / 4095. + (self->Height - 1) / 4.))
+
+    Index = (Index + 1) % Length;
+    for (uint8_t x = 0; x < self->Width - 1;
+         x++, Index = (Index + 1) % Length) {
+        OLED_DrawLine(self, x * (self->Width - 1) / (Length - 1),
+                      ADCToOLED(Data[Index]),
+                      (x + 1) * (self->Width - 1) / (Length - 1),
+                      ADCToOLED(Data[(Index + 1) % Length]));
+    }
+}
+
 void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, const uint8_t *Image) {
     for (uint8_t j = 0; j < (Height - 1) / 8 + 1; j++) {
