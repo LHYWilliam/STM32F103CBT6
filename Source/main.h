@@ -43,9 +43,7 @@ extern TextPage_t *RestartSetting;
 extern TaskHandle_t xMenuKeyTaskHandle;
 extern void vMenuKeyTaskCode(void *pvParameters);
 
-extern TimerHandle_t vLEDTimer;
+extern TimerHandle_t vStateTimer;
 extern TimerHandle_t vOLEDTimer;
-extern TimerHandle_t vMQSensorTimer;
-extern void vLEDTimerCallback(TimerHandle_t pxTimer);
+extern void vStateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
-extern void vMQSensorTimerCallback(TimerHandle_t pxTimer);

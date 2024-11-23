@@ -3,22 +3,9 @@
 static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu);
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
                              TextPage_t *MQxPage, MQSensor_t *MQSensor,
-                             uint8_t Y, uint8_t i);
+                             uint8_t i);
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
-
-void vLEDTimerCallback(TimerHandle_t pxTimer) {
-    if (StatusLEDSetting->Setting) {
-        LED_Turn(&LED);
-    } else {
-        LED_Off(&LED);
-    }
-}
-
-void vMQSensorTimerCallback(TimerHandle_t pxTimer) {
-    MQSensor_UpdateState(&MQ3);
-    MQSensor_UpdateState(&MQ135);
-}
 
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
@@ -71,12 +58,10 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu) {
         }
 
         if (&Menu->Page->LowerPages[i] == MQ3Page) {
-            OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3,
-                             Menu->Page->LowerPages[i].Y, i);
+            OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3, i);
 
         } else if (&Menu->Page->LowerPages[i] == MQ135Page) {
-            OLED_ShowMQxText(OLED, Menu, MQ135Page, &MQ135,
-                             Menu->Page->LowerPages[i].Y, i);
+            OLED_ShowMQxText(OLED, Menu, MQ135Page, &MQ135, i);
 
         } else if (Menu->Page == SettingPage) {
             OLED_Printf(OLED, Menu->Page->LowerPages[i].X,
@@ -98,10 +83,11 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu) {
 
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
                              TextPage_t *MQxPage, MQSensor_t *MQSensor,
-                             uint8_t Y, uint8_t i) {
-    OLED_Printf(OLED, Menu->Page->LowerPages[i].X, Y, "%-6s",
-                Menu->Page->LowerPages[i].Title);
-    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, Y, "%.3f %6s",
+                             uint8_t i) {
+    OLED_Printf(OLED, Menu->Page->LowerPages[i].X, Menu->Page->LowerPages[i].Y,
+                "%-6s", Menu->Page->LowerPages[i].Title);
+    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12,
+                Menu->Page->LowerPages[i].Y, "%.3f %6s",
                 ADCToVoltage(MQSensor->Data[MQSensor->Index]),
                 MQSensor->State ? "Danger" : "Safe");
 }
@@ -121,6 +107,17 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                 MQSensor->State ? "Danger" : "Safe");
     OLED_Printf(OLED, 1 - 1, OLED->Height - OLED->FontHeight - 1, "%.3f V",
                 ADCToVoltage(MQSensor->Data[MQSensor->Index]));
+}
+
+void vStateTimerCallback(TimerHandle_t pxTimer) {
+    if (StatusLEDSetting->Setting) {
+        LED_Turn(&LED);
+    } else {
+        LED_Off(&LED);
+    }
+
+    MQSensor_UpdateState(&MQ3);
+    MQSensor_UpdateState(&MQ135);
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {

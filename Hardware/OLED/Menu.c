@@ -8,6 +8,16 @@
 
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
+        if (IsChinese(self->Title)) {
+            self->TitleX = OLED->Width / 2 - strlen(self->Title) /
+                                                 OLED_ChineseBytesCount * 12 /
+                                                 2;
+
+        } else {
+            self->TitleX =
+                OLED->Width / 2 - strlen(self->Title) * OLED->FontWidth / 2;
+        }
+
         self->LowerPages[i].X += 1;
         self->LowerPages[i].Width =
             strlen(self->LowerPages[i].Title) * OLED->FontWidth;

@@ -32,16 +32,13 @@ int main() {
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);
 
-    vLEDTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
-                             vLEDTimerCallback);
+    vStateTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
+                               (void *)0, vStateTimerCallback);
     vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(10), pdTRUE,
                               (void *)1, vOLEDTimerCallback);
-    vMQSensorTimer = xTimerCreate("vMQSensorTimer", pdMS_TO_TICKS(100), pdTRUE,
-                                  (void *)2, vMQSensorTimerCallback);
 
-    xTimerStart(vLEDTimer, 0);
+    xTimerStart(vStateTimer, 0);
     xTimerStart(vOLEDTimer, 0);
-    xTimerStart(vMQSensorTimer, 0);
 
     vTaskStartScheduler();
 }
