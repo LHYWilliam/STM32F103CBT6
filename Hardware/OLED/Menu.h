@@ -26,7 +26,7 @@ typedef struct TextPage {
     uint8_t TitleWidth;
     uint8_t TitleHeight;
 
-    uint8_t Setting;
+    FlagStatus Setting;
 
     uint8_t Cursor;
     uint8_t NumOfLowerPages;

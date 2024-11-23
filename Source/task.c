@@ -7,7 +7,13 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 
-void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Turn(&LED); }
+void vLEDTimerCallback(TimerHandle_t pxTimer) {
+    if (StatusLEDSetting->Setting) {
+        LED_Turn(&LED);
+    } else {
+        LED_Off(&LED);
+    }
+}
 
 void vMQSensorTimerCallback(TimerHandle_t pxTimer) {
     MQSensor_UpdateState(&MQ3);

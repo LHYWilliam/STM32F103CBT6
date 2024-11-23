@@ -84,7 +84,7 @@ TextMenu_t Menu = {
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
             .TitleHeight = TitleHeight_,
-            .NumOfLowerPages = 11,
+            .NumOfLowerPages = 4,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
@@ -107,64 +107,20 @@ TextMenu_t Menu = {
                     (TextPage_t){
                         .Title = "Setting",
                         .TitleHeight = TitleHeight_,
-                        .NumOfLowerPages = 11,
+                        .NumOfLowerPages = 3,
                         .LowerPages =
                             (TextPage_t[]){
+                                (TextPage_t){
+                                    .Title = "Status LED",
+                                    .Setting = SET,
+                                },
                                 (TextPage_t){
                                     .Title = "Reverse",
                                 },
                                 (TextPage_t){
                                     .Title = "Reset",
                                 },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
-                                (TextPage_t){
-                                    .Title = "...",
-                                },
                             },
-                    },
-                    (TextPage_t){
-                        .Title = "5",
-                    },
-                    (TextPage_t){
-                        .Title = "6",
-                    },
-                    (TextPage_t){
-                        .Title = "7",
-                    },
-                    (TextPage_t){
-                        .Title = "8",
-                    },
-                    (TextPage_t){
-                        .Title = "9",
-                    },
-                    (TextPage_t){
-                        .Title = "10",
-                    },
-                    (TextPage_t){
-                        .Title = "11",
                     },
                 },
         },
@@ -175,6 +131,7 @@ TextPage_t *MQ3Page;
 TextPage_t *MQ135Page;
 TextPage_t *SettingPage;
 
+TextPage_t *StatusLEDSetting;
 TextPage_t *ReverseSetting;
 TextPage_t *ResetSetting;
 
