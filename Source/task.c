@@ -1,6 +1,6 @@
 #include "main.h"
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu);
+static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page, TextMenu_t *Menu);
 static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
                              TextPage_t *MQxPage, MQSensor_t *MQSensor,
                              uint8_t i);
@@ -23,7 +23,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        OLED_ShowTextPage(&OLED, &Menu);
+        OLED_ShowTextPage(&OLED, Menu.Page, &Menu);
     }
 
     if (ReverseSetting->Setting) {
@@ -35,46 +35,43 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     time = xTaskGetTickCount() - time;
 }
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu) {
+static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page,
+                              TextMenu_t *Menu) {
     TextPage_Update(Menu->Page, Menu);
     SelectioneBar_Update(&Menu->Bar);
 
-    if (Menu->Page->TitleY >= 0) {
-        if (IsChinese(Menu->Page->Title)) {
+    if (Page->TitleY >= 0) {
+        if (IsChinese(Page->Title)) {
             OLED_SetFont(OLED, OLEDFont_Chinese12X12);
         }
-        OLED_Printf(OLED, Menu->Page->TitleX, Menu->Page->TitleY,
-                    Menu->Page->Title);
+        OLED_Printf(OLED, Page->TitleX, Page->TitleY, Page->Title);
         OLED_SetFont(OLED, OLEDFont_6X8);
     }
 
-    for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
-        if (Menu->Page->LowerPages[i].Y < 0) {
+    for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
+        if (Page->LowerPages[i].Y < 0) {
             continue;
         }
-        if (Menu->Page->LowerPages[i].Y + Menu->Page->LowerPages[i].Height >
-            OLED->Height) {
+        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height > OLED->Height) {
             break;
         }
 
-        if (&Menu->Page->LowerPages[i] == MQ3Page) {
+        if (&Page->LowerPages[i] == MQ3Page) {
             OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3, i);
 
-        } else if (&Menu->Page->LowerPages[i] == MQ135Page) {
+        } else if (&Page->LowerPages[i] == MQ135Page) {
             OLED_ShowMQxText(OLED, Menu, MQ135Page, &MQ135, i);
 
-        } else if (Menu->Page == SettingPage) {
-            OLED_Printf(OLED, Menu->Page->LowerPages[i].X,
-                        Menu->Page->LowerPages[i].Y, "%s",
-                        Menu->Page->LowerPages[i].Title);
+        } else if (Page == SettingPage) {
+            OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
+                        "%s", Page->LowerPages[i].Title);
             OLED_ShowImage(OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
-                           Menu->Page->LowerPages[i].Y, 8, 8,
+                           Page->LowerPages[i].Y, 8, 8,
                            SettingImage[SettingPage->LowerPages[i].Setting]);
 
         } else {
-            OLED_Printf(OLED, Menu->Page->LowerPages[i].X,
-                        Menu->Page->LowerPages[i].Y, "%s",
-                        Menu->Page->LowerPages[i].Title);
+            OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
+                        "%s", Page->LowerPages[i].Title);
         }
     }
 

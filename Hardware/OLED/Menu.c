@@ -147,31 +147,3 @@ void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {
     OLED_ReverseArea(OLED, SelectioneBar->X, SelectioneBar->Y,
                      SelectioneBar->Width, SelectioneBar->Height);
 }
-
-void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
-    uint8_t begin =
-        Menu->Cursor >= Menu->TextCountOfHomePage ? Menu->Cursor - 3 : 0;
-    for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
-        if (begin + i == Menu->Cursor) {
-            OLED_Printf(OLED, 0, i * 16, "%s <-",
-                        Menu->Page->LowerPages[begin + i].Title);
-        } else {
-            OLED_Printf(OLED, 0, i * 16, "%s",
-                        Menu->Page->LowerPages[begin + i].Title);
-        }
-    }
-}
-
-void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
-    OLED_ShowImage(
-        OLED, 0, 16, 32, 32,
-        Menu->Page[Menu->Cursor != 0 ? Menu->Cursor - 1 : Menu->NumOfPages - 1]
-            .Image);
-
-    OLED_ShowImage(OLED, 48, 16, 32, 32, Menu->Page[Menu->Cursor].Image);
-
-    OLED_ShowImage(
-        OLED, 96, 16, 32, 32,
-        Menu->Page[Menu->Cursor != Menu->NumOfPages - 1 ? Menu->Cursor + 1 : 0]
-            .Image);
-}
