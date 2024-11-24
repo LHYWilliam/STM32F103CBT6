@@ -1,7 +1,6 @@
 #include "main.h"
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu, TextPage_t *Page,
-                              SelectioneBar_t *Bar);
+static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page);
 static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
@@ -23,7 +22,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        OLED_ShowTextPage(&OLED, &Menu, Menu.Page, &Bar);
+        TextMenu_Update(&Menu);
+        OLED_ShowTextPage(&OLED, Menu.Page);
+        SelectioneBar_Update(&Bar);
+        OLED_ShowSelectioneBar(&OLED, &Bar);
     }
 
     if (ReverseSetting->Setting) {
@@ -35,11 +37,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     time = xTaskGetTickCount() - time;
 }
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu, TextPage_t *Page,
-                              SelectioneBar_t *Bar) {
-    TextPage_Update(Page, Menu);
-    SelectioneBar_Update(Bar);
-
+static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
     if (Page->TitleY >= 0) {
         if (IsChinese(Page->Title)) {
             OLED_SetFont(OLED, OLEDFont_Chinese12X12);
@@ -74,8 +72,6 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu, TextPage_t *Page,
                         "%s", Page->LowerPages[i].Title);
         }
     }
-
-    OLED_ShowSelectioneBar(OLED, Bar);
 }
 
 static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
@@ -108,6 +104,10 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
         LED_Turn(&LED);
     } else {
         LED_Off(&LED);
+    }
+
+    if (RestartSetting->Setting) {
+        __NVIC_SystemReset();
     }
 
     MQSensor_UpdateState(&MQ3);
@@ -162,10 +162,6 @@ void vMenuKeyTaskCode(void *pvParameters) {
             if (TextMenu_ReturnUpperPage(&Menu)) {
                 SelectioneBar_Bind(&Bar, &Menu.Page->LowerPages[Menu.Cursor]);
             }
-        }
-
-        if (RestartSetting->Setting) {
-            __NVIC_SystemReset();
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));

@@ -39,27 +39,29 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     }
 }
 
-void TextPage_Update(TextPage_t *self, TextMenu_t *Menu) {
+void TextMenu_Update(TextMenu_t *Menu) {
     Menu->PageNumber = TextMenu_PageNumber(Menu);
 
-    int16_t Y =
-        Menu->PageNumber == 0
-            ? 0
-            : (self->TitleY - (self->LowerPages[Menu->TextCountOfHomePage +
-                                                Menu->TextCountOfOtherPage *
-                                                    (Menu->PageNumber - 1)]
-                                   .Y -
-                               1));
-    Update(self->TitleY, Y, Menu->Speed);
+    int16_t Y = Menu->PageNumber == 0
+                    ? 0
+                    : (Menu->Page->TitleY -
+                       (Menu->Page
+                            ->LowerPages[Menu->TextCountOfHomePage +
+                                         Menu->TextCountOfOtherPage *
+                                             (Menu->PageNumber - 1)]
+                            .Y -
+                        1));
+    Update(Menu->Page->TitleY, Y, Menu->Speed);
 
-    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
+    for (uint8_t i = 0; i < Menu->Page->NumOfLowerPages; i++) {
         if (i == 0) {
-            Update(self->LowerPages[0].Y, self->TitleY + self->TitleHeight + 1,
+            Update(Menu->Page->LowerPages[0].Y,
+                   Menu->Page->TitleY + Menu->Page->TitleHeight + 1,
                    Menu->Speed);
         } else {
-            Update(self->LowerPages[i].Y,
-                   self->LowerPages[i - 1].Y + self->LowerPages[i - 1].Height +
-                       2,
+            Update(Menu->Page->LowerPages[i].Y,
+                   Menu->Page->LowerPages[i - 1].Y +
+                       Menu->Page->LowerPages[i - 1].Height + 2,
                    Menu->Speed);
         }
     }
