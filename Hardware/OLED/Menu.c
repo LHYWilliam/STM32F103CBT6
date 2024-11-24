@@ -176,6 +176,59 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     return ERROR;
 }
 
+void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
+    for (uint8_t i = 0; i < self->NumOfPages; i++) {
+        if (i == 0) {
+            PositionUpdate(self->Page[0].X,
+                           OLED->Width / 2 - self->ImageWidth / 2);
+
+        } else {
+            PositionUpdate(self->Page[i].X, self->Page[i - 1].X +
+                                                self->ImageWidth + self->Space);
+        }
+
+        self->Page[i].Y = OLED->Height / 2 - self->ImageHeight / 2;
+
+        if (IsChinese(self->Page[i].Title)) {
+            OLEDFont Font = OLED->Font;
+            OLED_SetFont(OLED, OLEDFont_Chinese12X12);
+            self->Page[i].TitleY =
+                self->Page[i].Y + self->ImageHeight + OLED->FontHeight;
+            self->Page[i].TitleWidth = strlen(self->Page[i].Title) /
+                                       OLED_ChineseBytesCount * OLED->FontWidth;
+            self->Page[i].TitleHeight = OLED->FontHeight;
+            OLED_SetFont(OLED, Font);
+
+        } else {
+            self->Page[i].TitleY =
+                self->Page[i].Y + self->ImageHeight + OLED->FontHeight;
+            self->Page[i].TitleWidth =
+                strlen(self->Page[i].Title) * OLED->FontWidth;
+            self->Page[i].TitleHeight = OLED->FontHeight;
+        }
+
+        if (self->Page[i].TextPage) {
+            TextPage_Init(self->Page[i].TextPage, OLED, Menu);
+        }
+    }
+}
+
+void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED) {
+    int16_t X = self->Page[0].X - (self->Page[self->Cursor].X +
+                                   self->ImageWidth / 2 - OLED->Width / 2);
+    PositionUpdate(self->Page[0].X, X);
+    self->Page[0].TitleX =
+        self->Page[0].X + self->ImageWidth / 2 - self->Page[0].TitleWidth / 2;
+
+    for (uint8_t i = 1; i < self->NumOfPages; i++) {
+        PositionUpdate(self->Page[i].X,
+                       self->Page[i - 1].X + self->ImageWidth + self->Space);
+
+        self->Page[i].TitleX = self->Page[i].X + self->ImageWidth / 2 -
+                               self->Page[i].TitleWidth / 2;
+    }
+}
+
 void ImageMenu_CursorInc(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + 1) % self->NumOfPages;
 }

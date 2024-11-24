@@ -16,6 +16,7 @@ int main() {
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
     TextMenu_Init(&Menu, &OLED);
+    ImageMenu_Init(&ImageMenu, &OLED, &Menu);
     SelectioneBar_BindTextPage(&Bar, &Menu.Page->LowerPages[0]);
     HomePage = Menu.Page;
     MQ2Page = &Menu.Page->LowerPages[0];
@@ -44,6 +45,39 @@ int main() {
 
     xTimerStart(vStateTimer, 0);
     xTimerStart(vOLEDTimer, 0);
+
+    // for (;;) {
+    //     ImageMenu_Update(&ImageMenu, &OLED);
+
+    //     OLED_ClearBuffer(&OLED);
+
+    //     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
+    //         if (ImageMenu.Page[i].X + ImageMenu.ImageWidth < 0) {
+    //             continue;
+    //         }
+    //         if (ImageMenu.Page[i].X >= OLED.Width) {
+    //             break;
+    //         }
+
+    //         OLED_ShowImage(&OLED, ImageMenu.Page[i].X, ImageMenu.Page[i].Y,
+    //                        ImageMenu.ImageWidth, ImageMenu.ImageHeight,
+    //                        ImageMenu.Page[i].Image);
+
+    //         OLED_Printf(&OLED, ImageMenu.Page[i].TitleX,
+    //                     ImageMenu.Page[i].TitleY, "%s",
+    //                     ImageMenu.Page[i].Title);
+    //     }
+
+    //     OLED_SendBuffer(&OLED);
+
+    //     if (Key_Read(&KeyDown)) {
+    //         ImageMenu_CursorInc(&ImageMenu);
+    //     }
+
+    //     if (Key_Read(&KeyUp)) {
+    //         ImageMenu_CursorDec(&ImageMenu);
+    //     }
+    // }
 
     vTaskStartScheduler();
 }

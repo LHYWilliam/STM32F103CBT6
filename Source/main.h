@@ -40,6 +40,8 @@ extern TextPage_t *MQ7Page;
 extern TextPage_t *MQ135Page;
 extern TextPage_t *SettingPage;
 
+extern ImageMenu_t ImageMenu;
+
 extern SelectioneBar_t Bar;
 
 extern TextPage_t *StatusLEDSetting;

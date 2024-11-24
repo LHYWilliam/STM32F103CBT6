@@ -29,12 +29,12 @@ typedef struct TextPage {
     uint8_t TitleWidth;
     uint8_t TitleHeight;
 
-    uint8_t Setting;
-
     uint8_t Cursor;
     uint8_t NumOfLowerPages;
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
+
+    uint8_t Setting;
 } TextPage_t;
 
 typedef enum {
@@ -43,27 +43,40 @@ typedef enum {
 } TextMenuUpdate;
 
 typedef struct {
-    TextPage_t *Page;
-    uint8_t PageNumber;
-
-    TextMenuUpdate Update;
-
     uint8_t Cursor;
+    TextPage_t *Page;
+
+    uint8_t PageNumber;
     uint8_t TextCountOfHomePage;
     uint8_t TextCountOfOtherPage;
+
+    TextMenuUpdate Update;
 } TextMenu_t;
 
 typedef struct {
+    char Title[32];
     const uint8_t *Image;
 
-    TextPage_t *LowerPages;
+    int16_t X;
+    int16_t Y;
+
+    int16_t TitleX;
+    int16_t TitleY;
+    uint8_t TitleWidth;
+    uint8_t TitleHeight;
+
+    TextPage_t *TextPage;
 } ImagePage_t;
 
 typedef struct {
-    ImagePage_t *Page;
-
     uint8_t Cursor;
+    ImagePage_t *Page;
     uint8_t NumOfPages;
+
+    uint8_t ImageWidth;
+    uint8_t ImageHeight;
+
+    uint8_t Space;
 } ImageMenu_t;
 
 typedef struct {
@@ -89,6 +102,8 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);
 ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self);
 
+void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu);
+void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED);
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
 

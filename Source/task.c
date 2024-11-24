@@ -1,5 +1,6 @@
 #include "main.h"
 
+static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu);
 static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page);
 static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
@@ -9,38 +10,34 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
-    static uint32_t time;
-    // OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
-    //             OLED.Height - OLED.FontHeight - 1, "%2d %%",
-    //             (uint8_t)(time / 10.0 * 100.0));
-    time = xTaskGetTickCount();
-
-    if (Menu.Page == MQ2Page) {
-        OLED_ShowMQxPage(&OLED, MQ2Page, &MQ2);
-
-    } else if (Menu.Page == MQ3Page) {
-        OLED_ShowMQxPage(&OLED, MQ3Page, &MQ3);
-
-    } else if (Menu.Page == MQ7Page) {
-        OLED_ShowMQxPage(&OLED, MQ7Page, &MQ7);
-
-    } else if (Menu.Page == MQ135Page) {
-        OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
-
-    } else {
-        TextMenu_Update(&Menu, &OLED);
-        OLED_ShowTextPage(&OLED, Menu.Page);
-        SelectioneBar_Update(&Bar);
-        OLED_ShowSelectioneBar(&OLED, &Bar);
-    }
+    OLED_ShowTextMenu(&OLED, &Menu);
 
     if (ReverseSetting->Setting) {
         OLED_Reverse(&OLED);
     }
 
     OLED_SendBuffer(&OLED);
+}
 
-    time = xTaskGetTickCount() - time;
+static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
+    if (Menu->Page == MQ2Page) {
+        OLED_ShowMQxPage(OLED, MQ2Page, &MQ2);
+
+    } else if (Menu->Page == MQ3Page) {
+        OLED_ShowMQxPage(OLED, MQ3Page, &MQ3);
+
+    } else if (Menu->Page == MQ7Page) {
+        OLED_ShowMQxPage(OLED, MQ7Page, &MQ7);
+
+    } else if (Menu->Page == MQ135Page) {
+        OLED_ShowMQxPage(OLED, MQ135Page, &MQ135);
+
+    } else {
+        TextMenu_Update(Menu, OLED);
+        OLED_ShowTextPage(OLED, Menu->Page);
+        SelectioneBar_Update(&Bar);
+        OLED_ShowSelectioneBar(OLED, &Bar);
+    }
 }
 
 static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {

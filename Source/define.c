@@ -144,6 +144,24 @@ TextMenu_t Menu = {
         },
 };
 
+ImageMenu_t ImageMenu = {
+    .NumOfPages = 2,
+    .ImageWidth = 32,
+    .ImageHeight = 32,
+    .Space = 16,
+    .Page =
+        (ImagePage_t[]){
+            (ImagePage_t){
+                .Title = "Home Page",
+                .Image = MenuImage[0],
+            },
+            (ImagePage_t){
+                .Title = "Setting Page",
+                .Image = MenuImage[1],
+            },
+        },
+};
+
 SelectioneBar_t Bar;
 
 TextPage_t *HomePage;
