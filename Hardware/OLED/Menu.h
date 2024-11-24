@@ -73,13 +73,14 @@ typedef struct {
 } ImageMenu_t;
 
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu);
+void TextPage_SetY(TextPage_t *self, int16_t Y);
 void TextPage_ReverseSetting(TextPage_t *self);
 
 void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
 void SelectioneBar_Update(SelectioneBar_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
-void TextMenu_Update(TextMenu_t *Menu);
+void TextMenu_Update(TextMenu_t *self);
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self);
 ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);

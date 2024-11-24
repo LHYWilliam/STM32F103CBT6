@@ -10,9 +10,9 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     static uint32_t time;
-    OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
-                OLED.Height - OLED.FontHeight - 1, "%2d %%",
-                (uint8_t)(time / 10.0 * 100.0));
+    // OLED_Printf(&OLED, OLED.Width - OLED.FontWidth * 4 - 1,
+    //             OLED.Height - OLED.FontHeight - 1, "%2d %%",
+    //             (uint8_t)(time / 10.0 * 100.0));
     time = xTaskGetTickCount();
 
     if (Menu.Page == MQ2Page) {
