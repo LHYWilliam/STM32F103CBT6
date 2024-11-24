@@ -3,9 +3,6 @@
 #include "Menu.h"
 #include "OLED.h"
 
-#define PositionUpdate(now, target)                                            \
-    ((now) += ((now) < (target) ? 1 : (now) > (target) ? -1 : 0))
-
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
         if (IsChinese(self->Title)) {
@@ -75,6 +72,15 @@ void TextPage_SetY(TextPage_t *self, int16_t Y) {
     }
 }
 
+void TextPage_ReverseSetting(TextPage_t *self) {
+    self->LowerPages[self->Cursor].Setting =
+        !self->LowerPages[self->Cursor].Setting;
+}
+
+void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
+    TextPage_Init(self->Page, OLED, self);
+}
+
 void TextMenu_Update(TextMenu_t *self, OLED_t *OLED) {
     self->PageNumber = TextMenu_PageNumber(self);
 
@@ -121,15 +127,6 @@ void TextMenu_Update(TextMenu_t *self, OLED_t *OLED) {
                                self->Page->LowerPages[i - 1].Height + 2);
         }
     }
-}
-
-void TextPage_ReverseSetting(TextPage_t *self) {
-    self->LowerPages[self->Cursor].Setting =
-        !self->LowerPages[self->Cursor].Setting;
-}
-
-void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
-    TextPage_Init(self->Page, OLED, self);
 }
 
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
@@ -187,7 +184,7 @@ void ImageMenu_CursorDec(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
 }
 
-void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page) {
+void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page) {
     self->TextX = &Page->X;
     self->TextY = &Page->Y;
     self->TextWidth = &Page->Width;

@@ -92,7 +92,7 @@ TextMenu_t Menu = {
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
-            .NumOfLowerPages = 10,
+            .NumOfLowerPages = 5,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
@@ -139,21 +139,6 @@ TextMenu_t Menu = {
                                     .Title = "Restart",
                                 },
                             },
-                    },
-                    (TextPage_t){
-                        .Title = "1",
-                    },
-                    (TextPage_t){
-                        .Title = "2",
-                    },
-                    (TextPage_t){
-                        .Title = "3",
-                    },
-                    (TextPage_t){
-                        .Title = "4",
-                    },
-                    (TextPage_t){
-                        .Title = "5",
                     },
                 },
         },

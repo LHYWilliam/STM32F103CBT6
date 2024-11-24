@@ -16,7 +16,7 @@ int main() {
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
     TextMenu_Init(&Menu, &OLED);
-    SelectioneBar_Bind(&Bar, &Menu.Page->LowerPages[0]);
+    SelectioneBar_BindTextPage(&Bar, &Menu.Page->LowerPages[0]);
     HomePage = Menu.Page;
     MQ2Page = &Menu.Page->LowerPages[0];
     MQ3Page = &Menu.Page->LowerPages[1];

@@ -142,8 +142,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_CursorDec(&Menu)) {
-                    SelectioneBar_Bind(&Bar,
-                                       &Menu.Page->LowerPages[Menu.Cursor]);
+                    SelectioneBar_BindTextPage(
+                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
         }
@@ -163,8 +163,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_CursorInc(&Menu)) {
-                    SelectioneBar_Bind(&Bar,
-                                       &Menu.Page->LowerPages[Menu.Cursor]);
+                    SelectioneBar_BindTextPage(
+                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
         }
@@ -175,15 +175,16 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_EnterLowerPage(&Menu)) {
-                    SelectioneBar_Bind(&Bar,
-                                       &Menu.Page->LowerPages[Menu.Cursor]);
+                    SelectioneBar_BindTextPage(
+                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
         }
 
         if (Key_Read(&KeyCancel)) {
             if (TextMenu_ReturnUpperPage(&Menu)) {
-                SelectioneBar_Bind(&Bar, &Menu.Page->LowerPages[Menu.Cursor]);
+                SelectioneBar_BindTextPage(&Bar,
+                                           &Menu.Page->LowerPages[Menu.Cursor]);
             }
         }
 

@@ -13,6 +13,9 @@
                    Menu->TextCountOfOtherPage +                                \
                1)
 
+#define PositionUpdate(now, target)                                            \
+    ((now) += ((now) < (target) ? 1 : (now) > (target) ? -1 : 0))
+
 typedef struct TextPage {
     char Title[32];
 
@@ -33,18 +36,6 @@ typedef struct TextPage {
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
 } TextPage_t;
-
-typedef struct {
-    int16_t X;
-    int16_t Y;
-    uint8_t Width;
-    uint8_t Height;
-
-    int16_t *TextX;
-    int16_t *TextY;
-    uint8_t *TextWidth;
-    uint8_t *TextHeight;
-} SelectioneBar_t;
 
 typedef enum {
     TextMenuUpdate_OneByOne,
@@ -75,12 +66,21 @@ typedef struct {
     uint8_t NumOfPages;
 } ImageMenu_t;
 
+typedef struct {
+    int16_t X;
+    int16_t Y;
+    uint8_t Width;
+    uint8_t Height;
+
+    int16_t *TextX;
+    int16_t *TextY;
+    uint8_t *TextWidth;
+    uint8_t *TextHeight;
+} SelectioneBar_t;
+
 void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu);
 void TextPage_SetY(TextPage_t *self, int16_t Y);
 void TextPage_ReverseSetting(TextPage_t *self);
-
-void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
-void SelectioneBar_Update(SelectioneBar_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
 void TextMenu_Update(TextMenu_t *self, OLED_t *OLED);
@@ -92,8 +92,8 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self);
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
 
-void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu);
-void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
+void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page);
+void SelectioneBar_Update(SelectioneBar_t *self);
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar);
 
 #endif
