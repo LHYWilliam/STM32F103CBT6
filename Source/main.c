@@ -18,16 +18,20 @@ int main() {
     TextMenu_Init(&Menu, &OLED);
     SelectioneBar_Bind(&Bar, &Menu.Page->LowerPages[0]);
     HomePage = Menu.Page;
-    MQ3Page = &Menu.Page->LowerPages[0];
-    MQ135Page = &Menu.Page->LowerPages[1];
-    SettingPage = &Menu.Page->LowerPages[3];
+    MQ2Page = &Menu.Page->LowerPages[0];
+    MQ3Page = &Menu.Page->LowerPages[1];
+    MQ7Page = &Menu.Page->LowerPages[2];
+    MQ135Page = &Menu.Page->LowerPages[3];
+    SettingPage = &Menu.Page->LowerPages[4];
     StatusLEDSetting = &SettingPage->LowerPages[0];
     ReverseSetting = &SettingPage->LowerPages[1];
     RestartSetting = &SettingPage->LowerPages[2];
 
     Sampler_Init(&Sampler);
 
+    MQSensor_Init(&MQ2);
     MQSensor_Init(&MQ3);
+    MQSensor_Init(&MQ7);
     MQSensor_Init(&MQ135);
 
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,

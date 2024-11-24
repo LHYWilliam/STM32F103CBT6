@@ -38,29 +38,43 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-MQSensor_t MQ3 = {
-    .LED = B11,
+MQSensor_t MQ2 = {
+    .LED = A5,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
     .Relaxation = VoltageToADC(0.128),
 };
 
-MQSensor_t MQ135 = {
+MQSensor_t MQ3 = {
+    .LED = A7,
+    .Mode = LEDMode_Low,
+    .Threshold = VoltageToADC(2.048),
+    .Relaxation = VoltageToADC(0.128),
+};
+
+MQSensor_t MQ7 = {
     .LED = B1,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
     .Relaxation = VoltageToADC(0.128),
 };
 
-#define Samper_DataLength 2
+MQSensor_t MQ135 = {
+    .LED = B11,
+    .Mode = LEDMode_Low,
+    .Threshold = VoltageToADC(2.048),
+    .Relaxation = VoltageToADC(0.128),
+};
+
+#define Samper_DataLength 4
 uint16_t Data[Samper_DataLength];
 Sampler_t Sampler = {
     .Data = Data,
     .Length = Samper_DataLength,
 
     .ADCx = ADC1,
-    .ADC_Channel = "1 | 2",
-    .GPIOxPiny = "A1 | A2",
+    .ADC_Channel = "1 | 2 | 3 | 4",
+    .GPIOxPiny = "A1 | A2 | A3 | A4",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
@@ -80,11 +94,25 @@ TextMenu_t Menu = {
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
             .TitleHeight = TitleHeight_,
-            .NumOfLowerPages = 4,
+            .NumOfLowerPages = 5,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
+                        .Title = "MQ-2",
+                        .TitleX = 0,
+                        .TitleY = 64 / 4,
+                        .TitleWidth = 128,
+                        .TitleHeight = 64 / 2,
+                    },
+                    (TextPage_t){
                         .Title = "MQ-3",
+                        .TitleX = 0,
+                        .TitleY = 64 / 4,
+                        .TitleWidth = 128,
+                        .TitleHeight = 64 / 2,
+                    },
+                    (TextPage_t){
+                        .Title = "MQ-7",
                         .TitleX = 0,
                         .TitleY = 64 / 4,
                         .TitleWidth = 128,
@@ -96,9 +124,6 @@ TextMenu_t Menu = {
                         .TitleY = 64 / 4,
                         .TitleWidth = 128,
                         .TitleHeight = 64 / 2,
-                    },
-                    (TextPage_t){
-                        .Title = "MQ-...",
                     },
                     (TextPage_t){
                         .Title = "Setting",
@@ -127,7 +152,9 @@ SelectioneBar_t Bar = {
 };
 
 TextPage_t *HomePage;
+TextPage_t *MQ2Page;
 TextPage_t *MQ3Page;
+TextPage_t *MQ7Page;
 TextPage_t *MQ135Page;
 TextPage_t *SettingPage;
 

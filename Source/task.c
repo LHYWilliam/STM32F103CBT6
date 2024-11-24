@@ -15,8 +15,14 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
                 (uint8_t)(time / 10.0 * 100.0));
     time = xTaskGetTickCount();
 
-    if (Menu.Page == MQ3Page) {
+    if (Menu.Page == MQ2Page) {
+        OLED_ShowMQxPage(&OLED, MQ2Page, &MQ2);
+
+    } else if (Menu.Page == MQ3Page) {
         OLED_ShowMQxPage(&OLED, MQ3Page, &MQ3);
+
+    } else if (Menu.Page == MQ7Page) {
+        OLED_ShowMQxPage(&OLED, MQ7Page, &MQ7);
 
     } else if (Menu.Page == MQ135Page) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
@@ -54,8 +60,14 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
             break;
         }
 
-        if (&Page->LowerPages[i] == MQ3Page) {
+        if (&Page->LowerPages[i] == MQ2Page) {
+            OLED_ShowMQxText(OLED, MQ2Page, &MQ2);
+
+        } else if (&Page->LowerPages[i] == MQ3Page) {
             OLED_ShowMQxText(OLED, MQ3Page, &MQ3);
+
+        } else if (&Page->LowerPages[i] == MQ7Page) {
+            OLED_ShowMQxText(OLED, MQ7Page, &MQ7);
 
         } else if (&Page->LowerPages[i] == MQ135Page) {
             OLED_ShowMQxText(OLED, MQ135Page, &MQ135);
@@ -110,15 +122,23 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
         __NVIC_SystemReset();
     }
 
+    MQSensor_UpdateState(&MQ2);
     MQSensor_UpdateState(&MQ3);
+    MQSensor_UpdateState(&MQ7);
     MQSensor_UpdateState(&MQ135);
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
-            if (Menu.Page == MQ3Page) {
+            if (Menu.Page == MQ2Page) {
+                MQSensor_UpdateThreshold(&MQ2, 128);
+
+            } else if (Menu.Page == MQ3Page) {
                 MQSensor_UpdateThreshold(&MQ3, 128);
+
+            } else if (Menu.Page == MQ7Page) {
+                MQSensor_UpdateThreshold(&MQ7, 128);
 
             } else if (Menu.Page == MQ135Page) {
                 MQSensor_UpdateThreshold(&MQ135, 128);
@@ -132,8 +152,14 @@ void vMenuKeyTaskCode(void *pvParameters) {
         }
 
         if (Key_Read(&KeyDown)) {
-            if (Menu.Page == MQ3Page) {
+            if (Menu.Page == MQ2Page) {
+                MQSensor_UpdateThreshold(&MQ2, -128);
+
+            } else if (Menu.Page == MQ3Page) {
                 MQSensor_UpdateThreshold(&MQ3, -128);
+
+            } else if (Menu.Page == MQ7Page) {
+                MQSensor_UpdateThreshold(&MQ7, -128);
 
             } else if (Menu.Page == MQ135Page) {
                 MQSensor_UpdateThreshold(&MQ135, -128);
