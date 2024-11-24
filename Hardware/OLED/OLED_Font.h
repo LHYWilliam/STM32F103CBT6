@@ -5,7 +5,7 @@
 
 #define OLED_ChineseBytesCount 3
 
-#define IsChinese(string)      (((string[0]) & 0x80) != 0x00)
+#define IsChinese(string)      ((((string)[0]) & 0x80) != 0x00)
 
 typedef enum {
     OLEDFont_6X8,

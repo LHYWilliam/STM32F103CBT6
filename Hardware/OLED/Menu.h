@@ -44,15 +44,18 @@ typedef struct {
     int16_t *TextY;
     uint8_t *TextWidth;
     uint8_t *TextHeight;
-
-    uint8_t Speed;
 } SelectioneBar_t;
+
+typedef enum {
+    TextMenuUpdate_OneByOne,
+    TextMenuUpdate_PageByPage,
+} TextMenuUpdate;
 
 typedef struct {
     TextPage_t *Page;
     uint8_t PageNumber;
 
-    uint8_t Speed;
+    TextMenuUpdate Update;
 
     uint8_t Cursor;
     uint8_t TextCountOfHomePage;
@@ -80,7 +83,7 @@ void SelectioneBar_Bind(SelectioneBar_t *self, TextPage_t *Page);
 void SelectioneBar_Update(SelectioneBar_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
-void TextMenu_Update(TextMenu_t *self);
+void TextMenu_Update(TextMenu_t *self, OLED_t *OLED);
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self);
 ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);

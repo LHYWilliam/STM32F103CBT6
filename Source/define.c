@@ -1,3 +1,4 @@
+#include "Menu.h"
 #include "main.h"
 
 LED_t LED = {
@@ -84,17 +85,14 @@ Sampler_t Sampler = {
     .Priority = 14,
 };
 
-#define TitleHeight_ 20
-
 TextMenu_t Menu = {
-    .Speed = 1,
+    .Update = TextMenuUpdate_OneByOne,
     .TextCountOfHomePage = 4,
     .TextCountOfOtherPage = 6,
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
-            .TitleHeight = TitleHeight_,
-            .NumOfLowerPages = 5,
+            .NumOfLowerPages = 10,
             .LowerPages =
                 (TextPage_t[]){
                     (TextPage_t){
@@ -127,7 +125,6 @@ TextMenu_t Menu = {
                     },
                     (TextPage_t){
                         .Title = "Setting",
-                        .TitleHeight = TitleHeight_,
                         .NumOfLowerPages = 3,
                         .LowerPages =
                             (TextPage_t[]){
@@ -143,13 +140,26 @@ TextMenu_t Menu = {
                                 },
                             },
                     },
+                    (TextPage_t){
+                        .Title = "1",
+                    },
+                    (TextPage_t){
+                        .Title = "2",
+                    },
+                    (TextPage_t){
+                        .Title = "3",
+                    },
+                    (TextPage_t){
+                        .Title = "4",
+                    },
+                    (TextPage_t){
+                        .Title = "5",
+                    },
                 },
         },
 };
 
-SelectioneBar_t Bar = {
-    .Speed = 1,
-};
+SelectioneBar_t Bar;
 
 TextPage_t *HomePage;
 TextPage_t *MQ2Page;

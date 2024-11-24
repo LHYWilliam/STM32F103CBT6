@@ -28,7 +28,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        TextMenu_Update(&Menu);
+        TextMenu_Update(&Menu, &OLED);
         OLED_ShowTextPage(&OLED, Menu.Page);
         SelectioneBar_Update(&Bar);
         OLED_ShowSelectioneBar(&OLED, &Bar);
@@ -45,18 +45,15 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
 static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
     if (Page->TitleY >= 0) {
-        if (IsChinese(Page->Title)) {
-            OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-        }
         OLED_Printf(OLED, Page->TitleX, Page->TitleY, Page->Title);
-        OLED_SetFont(OLED, OLEDFont_6X8);
     }
 
     for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
         if (Page->LowerPages[i].Y < 0) {
             continue;
         }
-        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height > OLED->Height) {
+        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height >=
+            OLED->Height) {
             break;
         }
 
