@@ -1,9 +1,9 @@
 #include "main.h"
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page, TextMenu_t *Menu);
-static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
-                             TextPage_t *MQxPage, MQSensor_t *MQSensor,
-                             uint8_t i);
+static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu, TextPage_t *Page,
+                              SelectioneBar_t *Bar);
+static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
+                             MQSensor_t *MQSensor);
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 
@@ -23,7 +23,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
         OLED_ShowMQxPage(&OLED, MQ135Page, &MQ135);
 
     } else {
-        OLED_ShowTextPage(&OLED, Menu.Page, &Menu);
+        OLED_ShowTextPage(&OLED, &Menu, Menu.Page, &Bar);
     }
 
     if (ReverseSetting->Setting) {
@@ -35,10 +35,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     time = xTaskGetTickCount() - time;
 }
 
-static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page,
-                              TextMenu_t *Menu) {
-    TextPage_Update(Menu->Page, Menu);
-    SelectioneBar_Update(&Menu->Bar);
+static void OLED_ShowTextPage(OLED_t *OLED, TextMenu_t *Menu, TextPage_t *Page,
+                              SelectioneBar_t *Bar) {
+    TextPage_Update(Page, Menu);
+    SelectioneBar_Update(Bar);
 
     if (Page->TitleY >= 0) {
         if (IsChinese(Page->Title)) {
@@ -57,10 +57,10 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page,
         }
 
         if (&Page->LowerPages[i] == MQ3Page) {
-            OLED_ShowMQxText(OLED, Menu, MQ3Page, &MQ3, i);
+            OLED_ShowMQxText(OLED, MQ3Page, &MQ3);
 
         } else if (&Page->LowerPages[i] == MQ135Page) {
-            OLED_ShowMQxText(OLED, Menu, MQ135Page, &MQ135, i);
+            OLED_ShowMQxText(OLED, MQ135Page, &MQ135);
 
         } else if (Page == SettingPage) {
             OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
@@ -75,17 +75,14 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page,
         }
     }
 
-    OLED_ShowSelectioneBar(OLED, &Menu->Bar);
+    OLED_ShowSelectioneBar(OLED, Bar);
 }
 
-static void OLED_ShowMQxText(OLED_t *OLED, TextMenu_t *Menu,
-                             TextPage_t *MQxPage, MQSensor_t *MQSensor,
-                             uint8_t i) {
-    OLED_Printf(OLED, Menu->Page->LowerPages[i].X, Menu->Page->LowerPages[i].Y,
-                "%-6s", Menu->Page->LowerPages[i].Title);
-    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12,
-                Menu->Page->LowerPages[i].Y, "%.3f %6s",
-                ADCToVoltage(MQSensor->Data[MQSensor->Index]),
+static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
+                             MQSensor_t *MQSensor) {
+    OLED_Printf(OLED, MQxPage->X, MQxPage->Y, "%-6s", MQxPage->Title);
+    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, MQxPage->Y,
+                "%.3f %6s", ADCToVoltage(MQSensor->Data[MQSensor->Index]),
                 MQSensor->State ? "Danger" : "Safe");
 }
 
@@ -128,7 +125,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_CursorDec(&Menu)) {
-                    SelectioneBar_Bind(&Menu.Bar,
+                    SelectioneBar_Bind(&Bar,
                                        &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
@@ -143,7 +140,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_CursorInc(&Menu)) {
-                    SelectioneBar_Bind(&Menu.Bar,
+                    SelectioneBar_Bind(&Bar,
                                        &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
@@ -155,7 +152,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
             } else {
                 if (TextMenu_EnterLowerPage(&Menu)) {
-                    SelectioneBar_Bind(&Menu.Bar,
+                    SelectioneBar_Bind(&Bar,
                                        &Menu.Page->LowerPages[Menu.Cursor]);
                 }
             }
@@ -163,8 +160,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         if (Key_Read(&KeyCancel)) {
             if (TextMenu_ReturnUpperPage(&Menu)) {
-                SelectioneBar_Bind(&Menu.Bar,
-                                   &Menu.Page->LowerPages[Menu.Cursor]);
+                SelectioneBar_Bind(&Bar, &Menu.Page->LowerPages[Menu.Cursor]);
             }
         }
 

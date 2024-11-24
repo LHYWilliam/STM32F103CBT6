@@ -36,6 +36,8 @@ extern TextPage_t *MQ3Page;
 extern TextPage_t *MQ135Page;
 extern TextPage_t *SettingPage;
 
+extern SelectioneBar_t Bar;
+
 extern TextPage_t *StatusLEDSetting;
 extern TextPage_t *ReverseSetting;
 extern TextPage_t *RestartSetting;

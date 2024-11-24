@@ -72,7 +72,6 @@ void TextPage_ReverseSetting(TextPage_t *self) {
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
     TextPage_Init(self->Page, OLED, self);
-    SelectioneBar_Bind(&self->Bar, &self->Page->LowerPages[0]);
 }
 
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {

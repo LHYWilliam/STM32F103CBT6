@@ -76,10 +76,6 @@ TextMenu_t Menu = {
     .Speed = 1,
     .TextCountOfHomePage = 4,
     .TextCountOfOtherPage = 6,
-    .Bar =
-        {
-            .Speed = 1,
-        },
     .Page =
         &(TextPage_t){
             .Title = "异味检测与开窗系统",
@@ -124,6 +120,10 @@ TextMenu_t Menu = {
                     },
                 },
         },
+};
+
+SelectioneBar_t Bar = {
+    .Speed = 1,
 };
 
 TextPage_t *HomePage;

@@ -55,7 +55,6 @@ typedef struct {
     uint8_t Speed;
 
     uint8_t Cursor;
-    SelectioneBar_t Bar;
     uint8_t TextCountOfHomePage;
     uint8_t TextCountOfOtherPage;
 } TextMenu_t;
