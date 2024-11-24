@@ -44,12 +44,12 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 }
 
 static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
-    if (Page->TitleY >= 0) {
+    if (Page->TitleY + Page->TitleHeight >= 0) {
         OLED_Printf(OLED, Page->TitleX, Page->TitleY, Page->Title);
     }
 
     for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
-        if (Page->LowerPages[i].Y < 0) {
+        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height < 0) {
             continue;
         }
         if (Page->LowerPages[i].Y + Page->LowerPages[i].Height >=
