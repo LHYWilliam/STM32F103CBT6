@@ -104,8 +104,11 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self);
 
 void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu);
 void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED);
-void ImageMenu_CursorInc(ImageMenu_t *self);
-void ImageMenu_CursorDec(ImageMenu_t *self);
+ErrorStatus ImageMenu_CursorInc(ImageMenu_t *self);
+ErrorStatus ImageMenu_CursorDec(ImageMenu_t *self);
+ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *ImageMenu,
+                                     TextMenu_t *TextMenu);
+ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu);
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page);
 void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page);

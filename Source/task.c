@@ -1,3 +1,4 @@
+#include "Menu.h"
 #include "main.h"
 
 static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu);
@@ -7,6 +8,8 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
+
+void *LastMenu;
 
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
@@ -171,9 +174,10 @@ void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
             if (Menu == &ImageMenu) {
-                ImageMenu_CursorDec(Menu);
-                SelectioneBar_BindImagePage(
-                    &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
+                if (ImageMenu_CursorDec(Menu)) {
+                    SelectioneBar_BindImagePage(
+                        &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
+                }
 
             } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
@@ -202,9 +206,10 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         if (Key_Read(&KeyDown)) {
             if (Menu == &ImageMenu) {
-                ImageMenu_CursorInc(Menu);
-                SelectioneBar_BindImagePage(
-                    &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
+                if (ImageMenu_CursorInc(Menu)) {
+                    SelectioneBar_BindImagePage(
+                        &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
+                }
 
             } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
@@ -233,8 +238,9 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         if (Key_Read(&KeyConfirm)) {
             if (Menu == &ImageMenu) {
+                LastMenu = Menu;
                 Menu = &TextMenu;
-                TextMenu.Page = ImageMenu.Page[ImageMenu.Cursor].TextPage;
+                ImageMenu_EnterLowerPage(&ImageMenu, &TextMenu);
                 SelectioneBar_BindTextPage(
                     &Bar,
                     &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Cursor]);
@@ -244,6 +250,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
                     TextPage_ReverseSetting(TextMenu.Page);
 
                 } else {
+                    LastMenu = Menu;
                     if (TextMenu_EnterLowerPage(Menu)) {
                         SelectioneBar_BindTextPage(
                             &Bar, &((TextMenu_t *)Menu)
@@ -259,13 +266,22 @@ void vMenuKeyTaskCode(void *pvParameters) {
             } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == HomeTextPage) {
                     Menu = &ImageMenu;
+                    ImageMenu_ReturnUpperPage(&ImageMenu, &TextMenu);
                     SelectioneBar_BindImagePage(
                         &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
-                } else if (TextMenu_ReturnUpperPage(Menu)) {
-                    SelectioneBar_BindTextPage(
-                        &Bar, &((TextMenu_t *)Menu)
-                                   ->Page->LowerPages[TextMenu.Cursor]);
+                } else if (LastMenu == &TextMenu) {
+                    if (TextMenu_ReturnUpperPage(Menu)) {
+                        SelectioneBar_BindTextPage(
+                            &Bar, &((TextMenu_t *)Menu)
+                                       ->Page->LowerPages[TextMenu.Cursor]);
+                    }
+
+                } else if (LastMenu == &ImageMenu) {
+                    Menu = &ImageMenu;
+                    ImageMenu_ReturnUpperPage(&ImageMenu, &TextMenu);
+                    SelectioneBar_BindImagePage(
+                        &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
                 }
             }
         }

@@ -231,12 +231,30 @@ void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED) {
     }
 }
 
-void ImageMenu_CursorInc(ImageMenu_t *self) {
+ErrorStatus ImageMenu_CursorInc(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + 1) % self->NumOfPages;
+
+    return SUCCESS;
 }
 
-void ImageMenu_CursorDec(ImageMenu_t *self) {
+ErrorStatus ImageMenu_CursorDec(ImageMenu_t *self) {
     self->Cursor = (self->Cursor + self->NumOfPages - 1) % self->NumOfPages;
+
+    return SUCCESS;
+}
+
+ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
+    TextMenu->Page = self->Page[self->Cursor].TextPage;
+    TextMenu->Cursor = 0;
+    TextMenu->Page->Cursor = TextMenu->Cursor;
+
+    return SUCCESS;
+}
+
+ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
+    TextPage_SetY(TextMenu->Page, 0);
+
+    return SUCCESS;
 }
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page) {
