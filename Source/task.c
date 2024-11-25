@@ -11,10 +11,10 @@ static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
-    if ((ImageMenu_t *)Menu == &ImageMenu) {
+    if (Menu == &ImageMenu) {
         OLED_ShowImageMenu(&OLED, Menu);
 
-    } else if ((TextMenu_t *)Menu == &TextMenu) {
+    } else if (Menu == &TextMenu) {
         OLED_ShowTextMenu(&OLED, Menu);
     }
 
@@ -145,19 +145,18 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     static uint8_t Counter = 0;
 
-    if ((ImageMenu_t *)Menu == &ImageMenu) {
+    if (Menu == &ImageMenu) {
         ImageMenu_Update(Menu, &OLED);
         SelectioneBar_Update(&Bar);
 
-    } else if ((TextMenu_t *)Menu == &TextMenu && Counter % 2) {
+    } else if (Menu == &TextMenu && Counter % 2) {
         if (((TextMenu_t *)Menu)->Page != MQ2TextPage &&
             ((TextMenu_t *)Menu)->Page != MQ3TextPage &&
             ((TextMenu_t *)Menu)->Page != MQ7TextPage &&
             ((TextMenu_t *)Menu)->Page != MQ135TextPage) {
             TextMenu_Update(Menu, &OLED);
+            SelectioneBar_Update(&Bar);
         }
-
-        SelectioneBar_Update(&Bar);
     }
 
     MQSensor_UpdateState(&MQ2Sensor);
@@ -171,12 +170,12 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
 void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
-            if ((ImageMenu_t *)Menu == &ImageMenu) {
+            if (Menu == &ImageMenu) {
                 ImageMenu_CursorDec(Menu);
                 SelectioneBar_BindImagePage(
                     &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
-            } else if ((TextMenu_t *)Menu == &TextMenu) {
+            } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
                     MQSensor_UpdateThreshold(&MQ2Sensor, 128);
 
@@ -202,12 +201,12 @@ void vMenuKeyTaskCode(void *pvParameters) {
         }
 
         if (Key_Read(&KeyDown)) {
-            if ((ImageMenu_t *)Menu == &ImageMenu) {
+            if (Menu == &ImageMenu) {
                 ImageMenu_CursorInc(Menu);
                 SelectioneBar_BindImagePage(
                     &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
-            } else if ((TextMenu_t *)Menu == &TextMenu) {
+            } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
                     MQSensor_UpdateThreshold(&MQ2Sensor, -128);
 
@@ -233,14 +232,14 @@ void vMenuKeyTaskCode(void *pvParameters) {
         }
 
         if (Key_Read(&KeyConfirm)) {
-            if ((ImageMenu_t *)Menu == &ImageMenu) {
+            if (Menu == &ImageMenu) {
                 Menu = &TextMenu;
                 TextMenu.Page = ImageMenu.Page[ImageMenu.Cursor].TextPage;
                 SelectioneBar_BindTextPage(
                     &Bar,
                     &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Cursor]);
 
-            } else if ((TextMenu_t *)Menu == &TextMenu) {
+            } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == SettingTextPage) {
                     TextPage_ReverseSetting(TextMenu.Page);
 
@@ -255,9 +254,9 @@ void vMenuKeyTaskCode(void *pvParameters) {
         }
 
         if (Key_Read(&KeyCancel)) {
-            if ((ImageMenu_t *)Menu == &ImageMenu) {
+            if (Menu == &ImageMenu) {
 
-            } else if ((TextMenu_t *)Menu == &TextMenu) {
+            } else if (Menu == &TextMenu) {
                 if (TextMenu.Page == HomeTextPage) {
                     Menu = &ImageMenu;
                     SelectioneBar_BindImagePage(
