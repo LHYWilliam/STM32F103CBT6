@@ -12,28 +12,36 @@ int main() {
     Key_Init(&KeyConfirm);
     Key_Init(&KeyCancel);
 
-    OLED_Init(&OLED);
-    OLED_SetFont(&OLED, OLEDFont_6X8);
-
-    TextMenu_Init(&Menu, &OLED);
-    ImageMenu_Init(&ImageMenu, &OLED, &Menu);
-    SelectioneBar_BindTextPage(&Bar, &Menu.Page->LowerPages[0]);
-    HomePage = Menu.Page;
-    MQ2Page = &Menu.Page->LowerPages[0];
-    MQ3Page = &Menu.Page->LowerPages[1];
-    MQ7Page = &Menu.Page->LowerPages[2];
-    MQ135Page = &Menu.Page->LowerPages[3];
-    SettingPage = &Menu.Page->LowerPages[4];
-    StatusLEDSetting = &SettingPage->LowerPages[0];
-    ReverseSetting = &SettingPage->LowerPages[1];
-    RestartSetting = &SettingPage->LowerPages[2];
+    MQSensor_Init(&MQ2Sensor);
+    MQSensor_Init(&MQ3Sensor);
+    MQSensor_Init(&MQ7Sensor);
+    MQSensor_Init(&MQ135Sensor);
 
     Sampler_Init(&Sampler);
 
-    MQSensor_Init(&MQ2);
-    MQSensor_Init(&MQ3);
-    MQSensor_Init(&MQ7);
-    MQSensor_Init(&MQ135);
+    OLED_Init(&OLED);
+    OLED_SetFont(&OLED, OLEDFont_6X8);
+
+    TextMenu_Init(&TextMenu, &OLED);
+    ImageMenu_Init(&ImageMenu, &OLED, &TextMenu);
+    SelectioneBar_BindTextPage(&Bar, &TextMenu.Page->LowerPages[0]);
+
+    HomeTextPage = TextMenu.Page;
+    MQ2TextPage = &TextMenu.Page->LowerPages[0];
+    MQ3TextPage = &TextMenu.Page->LowerPages[1];
+    MQ7TextPage = &TextMenu.Page->LowerPages[2];
+    MQ135TextPage = &TextMenu.Page->LowerPages[3];
+    SettingTextPage = &TextMenu.Page->LowerPages[4];
+    StatusLEDSetting = &SettingTextPage->LowerPages[0];
+    ReverseSetting = &SettingTextPage->LowerPages[1];
+    RestartSetting = &SettingTextPage->LowerPages[2];
+
+    ImageMenu.Page[0].TextPage = HomeTextPage;
+    ImageMenu.Page[1].TextPage = MQ2TextPage;
+    ImageMenu.Page[2].TextPage = MQ3TextPage;
+    ImageMenu.Page[3].TextPage = MQ7TextPage;
+    ImageMenu.Page[4].TextPage = MQ135TextPage;
+    ImageMenu.Page[5].TextPage = SettingTextPage;
 
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);
@@ -45,39 +53,6 @@ int main() {
 
     xTimerStart(vStateTimer, 0);
     xTimerStart(vOLEDTimer, 0);
-
-    // for (;;) {
-    //     ImageMenu_Update(&ImageMenu, &OLED);
-
-    //     OLED_ClearBuffer(&OLED);
-
-    //     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
-    //         if (ImageMenu.Page[i].X + ImageMenu.ImageWidth < 0) {
-    //             continue;
-    //         }
-    //         if (ImageMenu.Page[i].X >= OLED.Width) {
-    //             break;
-    //         }
-
-    //         OLED_ShowImage(&OLED, ImageMenu.Page[i].X, ImageMenu.Page[i].Y,
-    //                        ImageMenu.ImageWidth, ImageMenu.ImageHeight,
-    //                        ImageMenu.Page[i].Image);
-
-    //         OLED_Printf(&OLED, ImageMenu.Page[i].TitleX,
-    //                     ImageMenu.Page[i].TitleY, "%s",
-    //                     ImageMenu.Page[i].Title);
-    //     }
-
-    //     OLED_SendBuffer(&OLED);
-
-    //     if (Key_Read(&KeyDown)) {
-    //         ImageMenu_CursorInc(&ImageMenu);
-    //     }
-
-    //     if (Key_Read(&KeyUp)) {
-    //         ImageMenu_CursorDec(&ImageMenu);
-    //     }
-    // }
 
     vTaskStartScheduler();
 }

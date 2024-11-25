@@ -2,17 +2,17 @@
 
 void TIM3_IRQHandler() {
     if (TIM_GetITStatus(Sampler.TIMx, TIM_IT_Update)) {
-        MQ2.Index = (MQ2.Index + 1) % MQ2.Length;
-        MQ2.Data[MQ2.Index] = Sampler.Data[0];
+        MQ2Sensor.Index = (MQ2Sensor.Index + 1) % MQ2Sensor.Length;
+        MQ2Sensor.Data[MQ2Sensor.Index] = Sampler.Data[0];
 
-        MQ3.Index = (MQ3.Index + 1) % MQ3.Length;
-        MQ3.Data[MQ3.Index] = Sampler.Data[1];
+        MQ3Sensor.Index = (MQ3Sensor.Index + 1) % MQ3Sensor.Length;
+        MQ3Sensor.Data[MQ3Sensor.Index] = Sampler.Data[1];
 
-        MQ7.Index = (MQ7.Index + 1) % MQ7.Length;
-        MQ7.Data[MQ7.Index] = Sampler.Data[2];
+        MQ7Sensor.Index = (MQ7Sensor.Index + 1) % MQ7Sensor.Length;
+        MQ7Sensor.Data[MQ7Sensor.Index] = Sampler.Data[2];
 
-        MQ135.Index = (MQ135.Index + 1) % MQ135.Length;
-        MQ135.Data[MQ135.Index] = Sampler.Data[3];
+        MQ135Sensor.Index = (MQ135Sensor.Index + 1) % MQ135Sensor.Length;
+        MQ135Sensor.Data[MQ135Sensor.Index] = Sampler.Data[3];
 
         TIM_ClearITPendingBit(Sampler.TIMx, TIM_IT_Update);
     }

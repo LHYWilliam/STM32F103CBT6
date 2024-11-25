@@ -39,28 +39,28 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-MQSensor_t MQ2 = {
+MQSensor_t MQ2Sensor = {
     .LED = A5,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
     .Relaxation = VoltageToADC(0.128),
 };
 
-MQSensor_t MQ3 = {
+MQSensor_t MQ3Sensor = {
     .LED = A7,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
     .Relaxation = VoltageToADC(0.128),
 };
 
-MQSensor_t MQ7 = {
+MQSensor_t MQ7Sensor = {
     .LED = B1,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
     .Relaxation = VoltageToADC(0.128),
 };
 
-MQSensor_t MQ135 = {
+MQSensor_t MQ135Sensor = {
     .LED = B11,
     .Mode = LEDMode_Low,
     .Threshold = VoltageToADC(2.048),
@@ -85,7 +85,7 @@ Sampler_t Sampler = {
     .Priority = 14,
 };
 
-TextMenu_t Menu = {
+TextMenu_t TextMenu = {
     .Update = TextMenuUpdate_OneByOne,
     .TextCountOfHomePage = 4,
     .TextCountOfOtherPage = 6,
@@ -145,31 +145,49 @@ TextMenu_t Menu = {
 };
 
 ImageMenu_t ImageMenu = {
-    .NumOfPages = 2,
+    .NumOfPages = 6,
     .ImageWidth = 32,
     .ImageHeight = 32,
-    .Space = 16,
+    .Space = 32,
     .Page =
         (ImagePage_t[]){
             (ImagePage_t){
-                .Title = "Home Page",
+                .Title = "Home",
                 .Image = MenuImage[0],
             },
             (ImagePage_t){
-                .Title = "Setting Page",
+                .Title = "MQ-2",
                 .Image = MenuImage[1],
+            },
+            (ImagePage_t){
+                .Title = "MQ-3",
+                .Image = MenuImage[2],
+            },
+            (ImagePage_t){
+                .Title = "MQ-7",
+                .Image = MenuImage[3],
+            },
+            (ImagePage_t){
+                .Title = "MQ-135",
+                .Image = MenuImage[4],
+            },
+            (ImagePage_t){
+                .Title = "Setting",
+                .Image = MenuImage[5],
             },
         },
 };
 
 SelectioneBar_t Bar;
 
-TextPage_t *HomePage;
-TextPage_t *MQ2Page;
-TextPage_t *MQ3Page;
-TextPage_t *MQ7Page;
-TextPage_t *MQ135Page;
-TextPage_t *SettingPage;
+void *Menu = &ImageMenu;
+
+TextPage_t *HomeTextPage;
+TextPage_t *MQ2TextPage;
+TextPage_t *MQ3TextPage;
+TextPage_t *MQ7TextPage;
+TextPage_t *MQ135TextPage;
+TextPage_t *SettingTextPage;
 
 TextPage_t *StatusLEDSetting;
 TextPage_t *ReverseSetting;

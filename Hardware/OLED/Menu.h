@@ -57,8 +57,8 @@ typedef struct {
     char Title[32];
     const uint8_t *Image;
 
-    int16_t X;
-    int16_t Y;
+    int16_t ImageX;
+    int16_t ImageY;
 
     int16_t TitleX;
     int16_t TitleY;

@@ -6,11 +6,17 @@ static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
 static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
+static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
 
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
-    OLED_ShowTextMenu(&OLED, &Menu);
+    if ((ImageMenu_t *)Menu == &ImageMenu) {
+        OLED_ShowImageMenu(&OLED, &ImageMenu);
+
+    } else if ((TextMenu_t *)Menu == &TextMenu) {
+        OLED_ShowTextMenu(&OLED, &TextMenu);
+    }
 
     if (ReverseSetting->Setting) {
         OLED_Reverse(&OLED);
@@ -20,17 +26,17 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 }
 
 static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
-    if (Menu->Page == MQ2Page) {
-        OLED_ShowMQxPage(OLED, MQ2Page, &MQ2);
+    if (Menu->Page == MQ2TextPage) {
+        OLED_ShowMQxPage(OLED, MQ2TextPage, &MQ2Sensor);
 
-    } else if (Menu->Page == MQ3Page) {
-        OLED_ShowMQxPage(OLED, MQ3Page, &MQ3);
+    } else if (Menu->Page == MQ3TextPage) {
+        OLED_ShowMQxPage(OLED, MQ3TextPage, &MQ3Sensor);
 
-    } else if (Menu->Page == MQ7Page) {
-        OLED_ShowMQxPage(OLED, MQ7Page, &MQ7);
+    } else if (Menu->Page == MQ7TextPage) {
+        OLED_ShowMQxPage(OLED, MQ7TextPage, &MQ7Sensor);
 
-    } else if (Menu->Page == MQ135Page) {
-        OLED_ShowMQxPage(OLED, MQ135Page, &MQ135);
+    } else if (Menu->Page == MQ135TextPage) {
+        OLED_ShowMQxPage(OLED, MQ135TextPage, &MQ135Sensor);
 
     } else {
         TextMenu_Update(Menu, OLED);
@@ -54,24 +60,25 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
             break;
         }
 
-        if (&Page->LowerPages[i] == MQ2Page) {
-            OLED_ShowMQxText(OLED, MQ2Page, &MQ2);
+        if (&Page->LowerPages[i] == MQ2TextPage) {
+            OLED_ShowMQxText(OLED, MQ2TextPage, &MQ2Sensor);
 
-        } else if (&Page->LowerPages[i] == MQ3Page) {
-            OLED_ShowMQxText(OLED, MQ3Page, &MQ3);
+        } else if (&Page->LowerPages[i] == MQ3TextPage) {
+            OLED_ShowMQxText(OLED, MQ3TextPage, &MQ3Sensor);
 
-        } else if (&Page->LowerPages[i] == MQ7Page) {
-            OLED_ShowMQxText(OLED, MQ7Page, &MQ7);
+        } else if (&Page->LowerPages[i] == MQ7TextPage) {
+            OLED_ShowMQxText(OLED, MQ7TextPage, &MQ7Sensor);
 
-        } else if (&Page->LowerPages[i] == MQ135Page) {
-            OLED_ShowMQxText(OLED, MQ135Page, &MQ135);
+        } else if (&Page->LowerPages[i] == MQ135TextPage) {
+            OLED_ShowMQxText(OLED, MQ135TextPage, &MQ135Sensor);
 
-        } else if (Page == SettingPage) {
+        } else if (Page == SettingTextPage) {
             OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
                         "%s", Page->LowerPages[i].Title);
-            OLED_ShowImage(OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
-                           Page->LowerPages[i].Y, 8, 8,
-                           SettingImage[SettingPage->LowerPages[i].Setting]);
+            OLED_ShowImage(
+                OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
+                Page->LowerPages[i].Y, 8, 8,
+                SettingImage[SettingTextPage->LowerPages[i].Setting]);
 
         } else {
             OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
@@ -105,6 +112,26 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
                 ADCToVoltage(MQSensor->Data[MQSensor->Index]));
 }
 
+static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
+    ImageMenu_Update(&ImageMenu, OLED);
+
+    for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
+        if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
+            continue;
+        }
+        if (ImageMenu.Page[i].ImageX >= OLED->Width) {
+            break;
+        }
+
+        OLED_ShowImage(OLED, ImageMenu.Page[i].ImageX, ImageMenu.Page[i].ImageY,
+                       ImageMenu.ImageWidth, ImageMenu.ImageHeight,
+                       ImageMenu.Page[i].Image);
+
+        OLED_Printf(OLED, ImageMenu.Page[i].TitleX, ImageMenu.Page[i].TitleY,
+                    "%s", ImageMenu.Page[i].Title);
+    }
+}
+
 void vStateTimerCallback(TimerHandle_t pxTimer) {
     if (StatusLEDSetting->Setting) {
         LED_Turn(&LED);
@@ -116,72 +143,95 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
         __NVIC_SystemReset();
     }
 
-    MQSensor_UpdateState(&MQ2);
-    MQSensor_UpdateState(&MQ3);
-    MQSensor_UpdateState(&MQ7);
-    MQSensor_UpdateState(&MQ135);
+    MQSensor_UpdateState(&MQ2Sensor);
+    MQSensor_UpdateState(&MQ3Sensor);
+    MQSensor_UpdateState(&MQ7Sensor);
+    MQSensor_UpdateState(&MQ135Sensor);
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
-            if (Menu.Page == MQ2Page) {
-                MQSensor_UpdateThreshold(&MQ2, 128);
+            if ((ImageMenu_t *)Menu == &ImageMenu) {
+                ImageMenu_CursorDec(&ImageMenu);
 
-            } else if (Menu.Page == MQ3Page) {
-                MQSensor_UpdateThreshold(&MQ3, 128);
+            } else if ((TextMenu_t *)Menu == &TextMenu) {
+                if (TextMenu.Page == MQ2TextPage) {
+                    MQSensor_UpdateThreshold(&MQ2Sensor, 128);
 
-            } else if (Menu.Page == MQ7Page) {
-                MQSensor_UpdateThreshold(&MQ7, 128);
+                } else if (TextMenu.Page == MQ3TextPage) {
+                    MQSensor_UpdateThreshold(&MQ3Sensor, 128);
 
-            } else if (Menu.Page == MQ135Page) {
-                MQSensor_UpdateThreshold(&MQ135, 128);
+                } else if (TextMenu.Page == MQ7TextPage) {
+                    MQSensor_UpdateThreshold(&MQ7Sensor, 128);
 
-            } else {
-                if (TextMenu_CursorDec(&Menu)) {
-                    SelectioneBar_BindTextPage(
-                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
+                } else if (TextMenu.Page == MQ135TextPage) {
+                    MQSensor_UpdateThreshold(&MQ135Sensor, 128);
+
+                } else {
+                    if (TextMenu_CursorDec(&TextMenu)) {
+                        SelectioneBar_BindTextPage(
+                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                    }
                 }
             }
         }
 
         if (Key_Read(&KeyDown)) {
-            if (Menu.Page == MQ2Page) {
-                MQSensor_UpdateThreshold(&MQ2, -128);
+            if ((ImageMenu_t *)Menu == &ImageMenu) {
+                ImageMenu_CursorInc(&ImageMenu);
 
-            } else if (Menu.Page == MQ3Page) {
-                MQSensor_UpdateThreshold(&MQ3, -128);
+            } else if ((TextMenu_t *)Menu == &TextMenu) {
+                if (TextMenu.Page == MQ2TextPage) {
+                    MQSensor_UpdateThreshold(&MQ2Sensor, -128);
 
-            } else if (Menu.Page == MQ7Page) {
-                MQSensor_UpdateThreshold(&MQ7, -128);
+                } else if (TextMenu.Page == MQ3TextPage) {
+                    MQSensor_UpdateThreshold(&MQ3Sensor, -128);
 
-            } else if (Menu.Page == MQ135Page) {
-                MQSensor_UpdateThreshold(&MQ135, -128);
+                } else if (TextMenu.Page == MQ7TextPage) {
+                    MQSensor_UpdateThreshold(&MQ7Sensor, -128);
 
-            } else {
-                if (TextMenu_CursorInc(&Menu)) {
-                    SelectioneBar_BindTextPage(
-                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
+                } else if (TextMenu.Page == MQ135TextPage) {
+                    MQSensor_UpdateThreshold(&MQ135Sensor, -128);
+
+                } else {
+                    if (TextMenu_CursorInc(&TextMenu)) {
+                        SelectioneBar_BindTextPage(
+                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                    }
                 }
             }
         }
 
         if (Key_Read(&KeyConfirm)) {
-            if (Menu.Page == SettingPage) {
-                TextPage_ReverseSetting(Menu.Page);
+            if ((ImageMenu_t *)Menu == &ImageMenu) {
+                Menu = &TextMenu;
+                TextMenu.Page = ImageMenu.Page[ImageMenu.Cursor].TextPage;
 
-            } else {
-                if (TextMenu_EnterLowerPage(&Menu)) {
-                    SelectioneBar_BindTextPage(
-                        &Bar, &Menu.Page->LowerPages[Menu.Cursor]);
+            } else if ((TextMenu_t *)Menu == &TextMenu) {
+                if (TextMenu.Page == SettingTextPage) {
+                    TextPage_ReverseSetting(TextMenu.Page);
+
+                } else {
+                    if (TextMenu_EnterLowerPage(&TextMenu)) {
+                        SelectioneBar_BindTextPage(
+                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                    }
                 }
             }
         }
 
         if (Key_Read(&KeyCancel)) {
-            if (TextMenu_ReturnUpperPage(&Menu)) {
-                SelectioneBar_BindTextPage(&Bar,
-                                           &Menu.Page->LowerPages[Menu.Cursor]);
+            if ((ImageMenu_t *)Menu == &ImageMenu) {
+
+            } else if ((TextMenu_t *)Menu == &TextMenu) {
+                if (TextMenu.Page == HomeTextPage) {
+                    Menu = &ImageMenu;
+
+                } else if (TextMenu_ReturnUpperPage(&TextMenu)) {
+                    SelectioneBar_BindTextPage(
+                        &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                }
             }
         }
 

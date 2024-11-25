@@ -25,24 +25,25 @@ extern Key_t KeyCancel;
 
 extern OLED_t OLED;
 
-extern MQSensor_t MQ2;
-extern MQSensor_t MQ3;
-extern MQSensor_t MQ7;
-extern MQSensor_t MQ135;
+extern MQSensor_t MQ2Sensor;
+extern MQSensor_t MQ3Sensor;
+extern MQSensor_t MQ7Sensor;
+extern MQSensor_t MQ135Sensor;
 
 extern Sampler_t Sampler;
 
-extern TextMenu_t Menu;
-extern TextPage_t *HomePage;
-extern TextPage_t *MQ2Page;
-extern TextPage_t *MQ3Page;
-extern TextPage_t *MQ7Page;
-extern TextPage_t *MQ135Page;
-extern TextPage_t *SettingPage;
-
+extern TextMenu_t TextMenu;
 extern ImageMenu_t ImageMenu;
-
 extern SelectioneBar_t Bar;
+
+extern void *Menu;
+
+extern TextPage_t *HomeTextPage;
+extern TextPage_t *MQ2TextPage;
+extern TextPage_t *MQ3TextPage;
+extern TextPage_t *MQ7TextPage;
+extern TextPage_t *MQ135TextPage;
+extern TextPage_t *SettingTextPage;
 
 extern TextPage_t *StatusLEDSetting;
 extern TextPage_t *ReverseSetting;

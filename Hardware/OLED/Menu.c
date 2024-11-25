@@ -179,21 +179,22 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
 void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
     for (uint8_t i = 0; i < self->NumOfPages; i++) {
         if (i == 0) {
-            PositionUpdate(self->Page[0].X,
+            PositionUpdate(self->Page[0].ImageX,
                            OLED->Width / 2 - self->ImageWidth / 2);
 
         } else {
-            PositionUpdate(self->Page[i].X, self->Page[i - 1].X +
-                                                self->ImageWidth + self->Space);
+            PositionUpdate(self->Page[i].ImageX, self->Page[i - 1].ImageX +
+                                                     self->ImageWidth +
+                                                     self->Space);
         }
 
-        self->Page[i].Y = OLED->Height / 2 - self->ImageHeight / 2;
+        self->Page[i].ImageY = OLED->Height / 2 - self->ImageHeight / 2;
 
         if (IsChinese(self->Page[i].Title)) {
             OLEDFont Font = OLED->Font;
             OLED_SetFont(OLED, OLEDFont_Chinese12X12);
             self->Page[i].TitleY =
-                self->Page[i].Y + self->ImageHeight + OLED->FontHeight;
+                self->Page[i].ImageY + self->ImageHeight + OLED->FontHeight;
             self->Page[i].TitleWidth = strlen(self->Page[i].Title) /
                                        OLED_ChineseBytesCount * OLED->FontWidth;
             self->Page[i].TitleHeight = OLED->FontHeight;
@@ -201,7 +202,7 @@ void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
 
         } else {
             self->Page[i].TitleY =
-                self->Page[i].Y + self->ImageHeight + OLED->FontHeight;
+                self->Page[i].ImageY + self->ImageHeight + OLED->FontHeight;
             self->Page[i].TitleWidth =
                 strlen(self->Page[i].Title) * OLED->FontWidth;
             self->Page[i].TitleHeight = OLED->FontHeight;
@@ -214,17 +215,18 @@ void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
 }
 
 void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED) {
-    int16_t X = self->Page[0].X - (self->Page[self->Cursor].X +
-                                   self->ImageWidth / 2 - OLED->Width / 2);
-    PositionUpdate(self->Page[0].X, X);
-    self->Page[0].TitleX =
-        self->Page[0].X + self->ImageWidth / 2 - self->Page[0].TitleWidth / 2;
+    int16_t X = self->Page[0].ImageX - (self->Page[self->Cursor].ImageX +
+                                        self->ImageWidth / 2 - OLED->Width / 2);
+    PositionUpdate(self->Page[0].ImageX, X);
+    self->Page[0].TitleX = self->Page[0].ImageX + self->ImageWidth / 2 -
+                           self->Page[0].TitleWidth / 2;
 
     for (uint8_t i = 1; i < self->NumOfPages; i++) {
-        PositionUpdate(self->Page[i].X,
-                       self->Page[i - 1].X + self->ImageWidth + self->Space);
+        PositionUpdate(self->Page[i].ImageX, self->Page[i - 1].ImageX +
+                                                 self->ImageWidth +
+                                                 self->Space);
 
-        self->Page[i].TitleX = self->Page[i].X + self->ImageWidth / 2 -
+        self->Page[i].TitleX = self->Page[i].ImageX + self->ImageWidth / 2 -
                                self->Page[i].TitleWidth / 2;
     }
 }
