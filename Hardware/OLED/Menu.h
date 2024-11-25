@@ -102,7 +102,7 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);
 ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self);
 
-void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu);
+void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED);
 void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED);
 ErrorStatus ImageMenu_CursorInc(ImageMenu_t *self);
 ErrorStatus ImageMenu_CursorDec(ImageMenu_t *self);

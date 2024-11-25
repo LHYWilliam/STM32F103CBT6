@@ -12,37 +12,31 @@ int main() {
     Key_Init(&KeyConfirm);
     Key_Init(&KeyCancel);
 
-    MQSensor_Init(&MQ2Sensor);
-    MQSensor_Init(&MQ3Sensor);
-    MQSensor_Init(&MQ7Sensor);
-    MQSensor_Init(&MQ135Sensor);
+    for (uint8_t i = 0; i < sizeof(MQSensor) / sizeof(MQSensor[0]); i++) {
+        MQSensor_Init(&MQSensor[i]);
+    }
 
     Sampler_Init(&Sampler);
 
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
+    ImageMenu.Page[0].TextPage = &MonitorPage;
+    ImageMenu.Page[1].TextPage = &MQxChartPage;
+    ImageMenu.Page[2].TextPage = &SettingPage;
+
+    StatusLEDSetting = &SettingPage.LowerPages[0];
+    ReverseSetting = &SettingPage.LowerPages[1];
+    RestartSetting = &SettingPage.LowerPages[2];
+
+    TextPage_Init(&MonitorPage, &OLED, &TextMenu);
+    TextPage_Init(&MQxChartPage, &OLED, &TextMenu);
+    TextPage_Init(&SettingPage, &OLED, &TextMenu);
+
     TextMenu_Init(&TextMenu, &OLED);
-    ImageMenu_Init(&ImageMenu, &OLED, &TextMenu);
+    ImageMenu_Init(&ImageMenu, &OLED);
     SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[0]);
     // SelectioneBar_BindTextPage(&Bar, &TextMenu.Page->LowerPages[0]);
-
-    HomeTextPage = TextMenu.Page;
-    MQ2TextPage = &TextMenu.Page->LowerPages[0];
-    MQ3TextPage = &TextMenu.Page->LowerPages[1];
-    MQ7TextPage = &TextMenu.Page->LowerPages[2];
-    MQ135TextPage = &TextMenu.Page->LowerPages[3];
-    SettingTextPage = &TextMenu.Page->LowerPages[4];
-    StatusLEDSetting = &SettingTextPage->LowerPages[0];
-    ReverseSetting = &SettingTextPage->LowerPages[1];
-    RestartSetting = &SettingTextPage->LowerPages[2];
-
-    ImageMenu.Page[0].TextPage = HomeTextPage;
-    ImageMenu.Page[1].TextPage = MQ2TextPage;
-    ImageMenu.Page[2].TextPage = MQ3TextPage;
-    ImageMenu.Page[3].TextPage = MQ7TextPage;
-    ImageMenu.Page[4].TextPage = MQ135TextPage;
-    ImageMenu.Page[5].TextPage = SettingTextPage;
 
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);

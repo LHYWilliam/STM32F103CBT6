@@ -78,7 +78,9 @@ void TextPage_ReverseSetting(TextPage_t *self) {
 }
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
-    TextPage_Init(self->Page, OLED, self);
+    if (self->Page) {
+        TextPage_Init(self->Page, OLED, self);
+    }
 }
 
 void TextMenu_Update(TextMenu_t *self, OLED_t *OLED) {
@@ -153,7 +155,7 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
 }
 
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
-    if (self->Page->NumOfLowerPages) {
+    if (self->Page->LowerPages[self->Cursor].NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
         self->Cursor = 0;
         self->Page->Cursor = self->Cursor;
@@ -176,7 +178,7 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     return ERROR;
 }
 
-void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
+void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED) {
     for (uint8_t i = 0; i < self->NumOfPages; i++) {
         if (i == 0) {
             PositionUpdate(self->Page[0].ImageX,
@@ -206,10 +208,6 @@ void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED, TextMenu_t *Menu) {
             self->Page[i].TitleWidth =
                 strlen(self->Page[i].Title) * OLED->FontWidth;
             self->Page[i].TitleHeight = OLED->FontHeight;
-        }
-
-        if (self->Page[i].TextPage) {
-            TextPage_Init(self->Page[i].TextPage, OLED, Menu);
         }
     }
 }
