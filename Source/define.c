@@ -197,6 +197,8 @@ TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);
 
 TimerHandle_t vStateTimer;
+TimerHandle_t vUpdateTimer;
 TimerHandle_t vOLEDTimer;
 void vStateTimerCallback(TimerHandle_t pxTimer);
+void vUpdateTimerCallback(TimerHandle_t pxTimer);
 void vOLEDTimerCallback(TimerHandle_t pxTimer);

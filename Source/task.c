@@ -39,9 +39,7 @@ static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
         OLED_ShowMQxPage(OLED, MQ135TextPage, &MQ135Sensor);
 
     } else {
-        TextMenu_Update(Menu, OLED);
         OLED_ShowTextPage(OLED, Menu->Page);
-        SelectioneBar_Update(&Bar);
         OLED_ShowSelectioneBar(OLED, &Bar);
     }
 }
@@ -113,9 +111,6 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
 }
 
 static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
-    ImageMenu_Update(Menu, OLED);
-    SelectioneBar_Update(&Bar);
-
     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
         if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
             continue;
@@ -145,11 +140,32 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
     if (RestartSetting->Setting) {
         __NVIC_SystemReset();
     }
+}
+
+void vUpdateTimerCallback(TimerHandle_t pxTimer) {
+    static uint8_t Counter = 0;
+
+    if ((ImageMenu_t *)Menu == &ImageMenu) {
+        ImageMenu_Update(Menu, &OLED);
+        SelectioneBar_Update(&Bar);
+
+    } else if ((TextMenu_t *)Menu == &TextMenu && Counter % 2) {
+        if (((TextMenu_t *)Menu)->Page != MQ2TextPage &&
+            ((TextMenu_t *)Menu)->Page != MQ3TextPage &&
+            ((TextMenu_t *)Menu)->Page != MQ7TextPage &&
+            ((TextMenu_t *)Menu)->Page != MQ135TextPage) {
+            TextMenu_Update(Menu, &OLED);
+        }
+
+        SelectioneBar_Update(&Bar);
+    }
 
     MQSensor_UpdateState(&MQ2Sensor);
     MQSensor_UpdateState(&MQ3Sensor);
     MQSensor_UpdateState(&MQ7Sensor);
     MQSensor_UpdateState(&MQ135Sensor);
+
+    Counter++;
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {

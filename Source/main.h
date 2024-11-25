@@ -53,6 +53,8 @@ extern TaskHandle_t xMenuKeyTaskHandle;
 extern void vMenuKeyTaskCode(void *pvParameters);
 
 extern TimerHandle_t vStateTimer;
+extern TimerHandle_t vUpdateTimer;
 extern TimerHandle_t vOLEDTimer;
 extern void vStateTimerCallback(TimerHandle_t pxTimer);
+extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);

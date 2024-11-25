@@ -49,10 +49,13 @@ int main() {
 
     vStateTimer = xTimerCreate("vLEDTimer", pdMS_TO_TICKS(100), pdTRUE,
                                (void *)0, vStateTimerCallback);
+    vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(5), pdTRUE,
+                                (void *)1, vUpdateTimerCallback);
     vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(10), pdTRUE,
-                              (void *)1, vOLEDTimerCallback);
+                              (void *)2, vOLEDTimerCallback);
 
     xTimerStart(vStateTimer, 0);
+    xTimerStart(vUpdateTimer, 0);
     xTimerStart(vOLEDTimer, 0);
 
     vTaskStartScheduler();
