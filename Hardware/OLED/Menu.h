@@ -108,6 +108,7 @@ void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page);
+void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page);
 void SelectioneBar_Update(SelectioneBar_t *self);
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar);
 

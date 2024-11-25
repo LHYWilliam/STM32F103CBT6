@@ -12,10 +12,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     if ((ImageMenu_t *)Menu == &ImageMenu) {
-        OLED_ShowImageMenu(&OLED, &ImageMenu);
+        OLED_ShowImageMenu(&OLED, Menu);
 
     } else if ((TextMenu_t *)Menu == &TextMenu) {
-        OLED_ShowTextMenu(&OLED, &TextMenu);
+        OLED_ShowTextMenu(&OLED, Menu);
     }
 
     if (ReverseSetting->Setting) {
@@ -113,7 +113,8 @@ static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
 }
 
 static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
-    ImageMenu_Update(&ImageMenu, OLED);
+    ImageMenu_Update(Menu, OLED);
+    SelectioneBar_Update(&Bar);
 
     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
         if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
@@ -130,6 +131,8 @@ static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
         OLED_Printf(OLED, ImageMenu.Page[i].TitleX, ImageMenu.Page[i].TitleY,
                     "%s", ImageMenu.Page[i].Title);
     }
+
+    OLED_ShowSelectioneBar(OLED, &Bar);
 }
 
 void vStateTimerCallback(TimerHandle_t pxTimer) {
@@ -153,7 +156,9 @@ void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
         if (Key_Read(&KeyUp)) {
             if ((ImageMenu_t *)Menu == &ImageMenu) {
-                ImageMenu_CursorDec(&ImageMenu);
+                ImageMenu_CursorDec(Menu);
+                SelectioneBar_BindImagePage(
+                    &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
             } else if ((TextMenu_t *)Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
@@ -169,9 +174,12 @@ void vMenuKeyTaskCode(void *pvParameters) {
                     MQSensor_UpdateThreshold(&MQ135Sensor, 128);
 
                 } else {
-                    if (TextMenu_CursorDec(&TextMenu)) {
+                    if (TextMenu_CursorDec(Menu)) {
                         SelectioneBar_BindTextPage(
-                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                            &Bar,
+                            &((TextMenu_t *)Menu)
+                                 ->Page
+                                 ->LowerPages[((TextMenu_t *)Menu)->Cursor]);
                     }
                 }
             }
@@ -179,7 +187,9 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         if (Key_Read(&KeyDown)) {
             if ((ImageMenu_t *)Menu == &ImageMenu) {
-                ImageMenu_CursorInc(&ImageMenu);
+                ImageMenu_CursorInc(Menu);
+                SelectioneBar_BindImagePage(
+                    &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
             } else if ((TextMenu_t *)Menu == &TextMenu) {
                 if (TextMenu.Page == MQ2TextPage) {
@@ -195,9 +205,12 @@ void vMenuKeyTaskCode(void *pvParameters) {
                     MQSensor_UpdateThreshold(&MQ135Sensor, -128);
 
                 } else {
-                    if (TextMenu_CursorInc(&TextMenu)) {
+                    if (TextMenu_CursorInc(Menu)) {
                         SelectioneBar_BindTextPage(
-                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                            &Bar,
+                            &((TextMenu_t *)Menu)
+                                 ->Page
+                                 ->LowerPages[((TextMenu_t *)Menu)->Cursor]);
                     }
                 }
             }
@@ -207,15 +220,19 @@ void vMenuKeyTaskCode(void *pvParameters) {
             if ((ImageMenu_t *)Menu == &ImageMenu) {
                 Menu = &TextMenu;
                 TextMenu.Page = ImageMenu.Page[ImageMenu.Cursor].TextPage;
+                SelectioneBar_BindTextPage(
+                    &Bar,
+                    &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Cursor]);
 
             } else if ((TextMenu_t *)Menu == &TextMenu) {
                 if (TextMenu.Page == SettingTextPage) {
                     TextPage_ReverseSetting(TextMenu.Page);
 
                 } else {
-                    if (TextMenu_EnterLowerPage(&TextMenu)) {
+                    if (TextMenu_EnterLowerPage(Menu)) {
                         SelectioneBar_BindTextPage(
-                            &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                            &Bar, &((TextMenu_t *)Menu)
+                                       ->Page->LowerPages[TextMenu.Cursor]);
                     }
                 }
             }
@@ -227,10 +244,13 @@ void vMenuKeyTaskCode(void *pvParameters) {
             } else if ((TextMenu_t *)Menu == &TextMenu) {
                 if (TextMenu.Page == HomeTextPage) {
                     Menu = &ImageMenu;
+                    SelectioneBar_BindImagePage(
+                        &Bar, &((ImageMenu_t *)Menu)->Page[ImageMenu.Cursor]);
 
-                } else if (TextMenu_ReturnUpperPage(&TextMenu)) {
+                } else if (TextMenu_ReturnUpperPage(Menu)) {
                     SelectioneBar_BindTextPage(
-                        &Bar, &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+                        &Bar, &((TextMenu_t *)Menu)
+                                   ->Page->LowerPages[TextMenu.Cursor]);
                 }
             }
         }

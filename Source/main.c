@@ -24,7 +24,8 @@ int main() {
 
     TextMenu_Init(&TextMenu, &OLED);
     ImageMenu_Init(&ImageMenu, &OLED, &TextMenu);
-    SelectioneBar_BindTextPage(&Bar, &TextMenu.Page->LowerPages[0]);
+    SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[0]);
+    // SelectioneBar_BindTextPage(&Bar, &TextMenu.Page->LowerPages[0]);
 
     HomeTextPage = TextMenu.Page;
     MQ2TextPage = &TextMenu.Page->LowerPages[0];

@@ -246,6 +246,13 @@ void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page) {
     self->TextHeight = &Page->Height;
 }
 
+void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page) {
+    self->TextX = &Page->TitleX;
+    self->TextY = &Page->TitleY;
+    self->TextWidth = &Page->TitleWidth;
+    self->TextHeight = &Page->TitleHeight;
+}
+
 void SelectioneBar_Update(SelectioneBar_t *self) {
     PositionUpdate(self->X, *self->TextX - 1);
     PositionUpdate(self->Y, *self->TextY - 1);
