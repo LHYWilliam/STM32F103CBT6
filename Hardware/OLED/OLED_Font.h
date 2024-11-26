@@ -18,5 +18,6 @@ extern const uint8_t OLED_Font8x16[][16];
 extern const char OLED_FontChinese12x12_Index[];
 extern const uint8_t OLED_FontChinese12x12[][24];
 extern const uint8_t SettingImage[][8];
+extern const uint8_t MenuImage[][128];
 
 #endif

@@ -51,15 +51,6 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
             self->LowerPages[i].Height = OLED->FontHeight;
         }
 
-        if (i == 0) {
-            PositionUpdate(self->LowerPages[0].Y,
-                           self->TitleY + self->TitleHeight + 1);
-        } else {
-            PositionUpdate(self->LowerPages[i].Y,
-                           self->LowerPages[i - 1].Y +
-                               self->LowerPages[i - 1].Height + 2);
-        }
-
         self->LowerPages[i].UpperPage = self;
 
         TextPage_Init(&self->LowerPages[i], OLED, Menu);
@@ -180,16 +171,6 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
 
 void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED) {
     for (uint8_t i = 0; i < self->NumOfPages; i++) {
-        if (i == 0) {
-            PositionUpdate(self->Page[0].ImageX,
-                           OLED->Width / 2 - self->ImageWidth / 2);
-
-        } else {
-            PositionUpdate(self->Page[i].ImageX, self->Page[i - 1].ImageX +
-                                                     self->ImageWidth +
-                                                     self->Space);
-        }
-
         self->Page[i].ImageY = OLED->Height / 2 - self->ImageHeight / 2;
 
         if (IsChinese(self->Page[i].Title)) {

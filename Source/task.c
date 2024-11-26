@@ -218,8 +218,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
                     TextPage_ReverseSetting(TextMenu.Page);
 
                 } else {
-                    LastMenu = Menu;
                     if (TextMenu_EnterLowerPage(Menu)) {
+                        LastMenu = Menu;
                         SelectioneBar_BindTextPage(
                             &Bar, &((TextMenu_t *)Menu)
                                        ->Page->LowerPages[TextMenu.Cursor]);
