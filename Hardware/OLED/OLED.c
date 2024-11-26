@@ -444,6 +444,8 @@ void OLED_ShowChart(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
 
 void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, const uint8_t *Image) {
+    OLED_ClearArea(self, X, Y, Width, Height);
+
     for (uint8_t j = 0; j < (Height - 1) / 8 + 1; j++) {
         for (uint8_t i = 0; i < Width; i++) {
             if (X + i >= 0 && X + i < self->Width) {

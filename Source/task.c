@@ -127,13 +127,11 @@ void vStateTimerCallback(TimerHandle_t pxTimer) {
 }
 
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
-    static uint8_t Counter = 0;
-
     if (Menu == &ImageMenu) {
         ImageMenu_Update(Menu, &OLED);
         SelectioneBar_Update(&Bar);
 
-    } else if (Menu == &TextMenu && Counter % 2) {
+    } else if (Menu == &TextMenu) {
         if (((TextMenu_t *)Menu)->Page != &MQxChartPage) {
             TextMenu_Update(Menu, &OLED);
             SelectioneBar_Update(&Bar);
@@ -143,8 +141,6 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     for (uint8_t i = 0; i < sizeof(MQSensor) / sizeof(MQSensor[0]); i++) {
         MQSensor_UpdateState(&MQSensor[i]);
     }
-
-    Counter++;
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {
