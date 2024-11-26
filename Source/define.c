@@ -31,14 +31,6 @@ Key_t KeyCancel = {
     .Mode = KeyMode_Low,
 };
 
-OLED_t OLED = {
-    .SCL = B8,
-    .SDA = B9,
-    .I2C = ENABLE,
-    .Width = 128,
-    .Height = 64,
-};
-
 MQSensor_t MQSensor[4] = {
     (MQSensor_t){
         .LED = A5,
@@ -85,6 +77,14 @@ Sampler_t Sampler = {
     .TIMx = TIM3,
     .Hz = 10,
     .Priority = 14,
+};
+
+OLED_t OLED = {
+    .SCL = B8,
+    .SDA = B9,
+    .I2C = ENABLE,
+    .Width = 128,
+    .Height = 64,
 };
 
 TextPage_t MonitorPage = {
@@ -204,9 +204,7 @@ TextPage_t *RestartSetting;
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);
 
-TimerHandle_t vStateTimer;
 TimerHandle_t vUpdateTimer;
 TimerHandle_t vOLEDTimer;
-void vStateTimerCallback(TimerHandle_t pxTimer);
 void vUpdateTimerCallback(TimerHandle_t pxTimer);
 void vOLEDTimerCallback(TimerHandle_t pxTimer);

@@ -114,18 +114,6 @@ static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
     OLED_ShowSelectioneBar(OLED, &Bar);
 }
 
-void vStateTimerCallback(TimerHandle_t pxTimer) {
-    if (StatusLEDSetting->Setting) {
-        LED_Turn(&LED);
-    } else {
-        LED_Off(&LED);
-    }
-
-    if (RestartSetting->Setting) {
-        __NVIC_SystemReset();
-    }
-}
-
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     if (Menu == &ImageMenu) {
         ImageMenu_Update(Menu, &OLED);
@@ -140,6 +128,16 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
 
     for (uint8_t i = 0; i < sizeof(MQSensor) / sizeof(MQSensor[0]); i++) {
         MQSensor_UpdateState(&MQSensor[i]);
+    }
+
+    if (StatusLEDSetting->Setting) {
+        LED_On(&LED);
+    } else {
+        LED_Off(&LED);
+    }
+
+    if (RestartSetting->Setting) {
+        __NVIC_SystemReset();
     }
 }
 
