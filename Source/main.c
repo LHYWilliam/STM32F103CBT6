@@ -21,17 +21,13 @@ int main() {
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
-    ImageMenu.Page[0].TextPage = &MonitorPage;
-    ImageMenu.Page[1].TextPage = &MQxChartPage;
-    ImageMenu.Page[2].TextPage = &SettingPage;
-
     StatusLEDSetting = &SettingPage.LowerPages[0];
     ReverseSetting = &SettingPage.LowerPages[1];
     RestartSetting = &SettingPage.LowerPages[2];
 
-    TextPage_Init(&MonitorPage, &OLED, &TextMenu);
-    TextPage_Init(&MQxChartPage, &OLED, &TextMenu);
-    TextPage_Init(&SettingPage, &OLED, &TextMenu);
+    TextPage_Init(&MonitorPage, &OLED);
+    TextPage_Init(&MQxChartPage, &OLED);
+    TextPage_Init(&SettingPage, &OLED);
 
     TextMenu_Init(&TextMenu, &OLED);
     ImageMenu_Init(&ImageMenu, &OLED);

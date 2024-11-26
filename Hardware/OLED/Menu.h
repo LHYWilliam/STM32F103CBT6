@@ -59,6 +59,8 @@ typedef struct {
 
     int16_t ImageX;
     int16_t ImageY;
+    uint8_t ImageWidth;
+    uint8_t ImageHeight;
 
     int16_t TitleX;
     int16_t TitleY;
@@ -91,8 +93,8 @@ typedef struct {
     uint8_t *TextHeight;
 } SelectioneBar_t;
 
-void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu);
-void TextPage_SetY(TextPage_t *self, int16_t Y);
+void TextPage_Init(TextPage_t *self, OLED_t *OLED);
+void TextPage_ResetSetY(TextPage_t *self);
 void TextPage_ReverseSetting(TextPage_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
@@ -101,6 +103,8 @@ ErrorStatus TextMenu_CursorInc(TextMenu_t *self);
 ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);
 ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self);
+
+void ImagePage_Init(ImagePage_t *self, OLED_t *OLED);
 
 void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED);
 void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED);

@@ -3,39 +3,40 @@
 #include "Menu.h"
 #include "OLED.h"
 
-void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
-    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
-        if (IsChinese(self->Title)) {
-            OLEDFont Font = OLED->Font;
-            OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-            if (!self->TitleX) {
-                self->TitleX = OLED->Width / 2 - strlen(self->Title) /
-                                                     OLED_ChineseBytesCount *
-                                                     OLED->FontWidth / 2;
-            }
-            if (!self->TitleWidth) {
-                self->TitleWidth = strlen(self->Title) /
-                                   OLED_ChineseBytesCount * OLED->FontWidth;
-            }
-            if (!self->TitleHeight) {
-                self->TitleHeight = OLED->FontHeight * 2;
-            }
-            OLED_SetFont(OLED, Font);
-
-        } else {
-            if (!self->TitleX) {
-                self->TitleX =
-                    OLED->Width / 2 - strlen(self->Title) * OLED->FontWidth / 2;
-            }
-            if (!self->TitleWidth) {
-                self->TitleWidth = strlen(self->Title) * OLED->FontWidth;
-            }
-            if (!self->TitleHeight) {
-                self->TitleHeight = OLED->FontHeight * 2;
-            }
+void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
+    if (IsChinese(self->Title)) {
+        OLEDFont Font = OLED->Font;
+        OLED_SetFont(OLED, OLEDFont_Chinese12X12);
+        if (!self->TitleX) {
+            self->TitleX = OLED->Width / 2 - strlen(self->Title) /
+                                                 OLED_ChineseBytesCount *
+                                                 OLED->FontWidth / 2;
         }
+        if (!self->TitleWidth) {
+            self->TitleWidth =
+                strlen(self->Title) / OLED_ChineseBytesCount * OLED->FontWidth;
+        }
+        if (!self->TitleHeight) {
+            self->TitleHeight = OLED->FontHeight * 2;
+        }
+        OLED_SetFont(OLED, Font);
 
+    } else {
+        if (!self->TitleX) {
+            self->TitleX =
+                OLED->Width / 2 - strlen(self->Title) * OLED->FontWidth / 2;
+        }
+        if (!self->TitleWidth) {
+            self->TitleWidth = strlen(self->Title) * OLED->FontWidth;
+        }
+        if (!self->TitleHeight) {
+            self->TitleHeight = OLED->FontHeight * 2;
+        }
+    }
+
+    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
         self->LowerPages[i].X += 1;
+
         if (IsChinese(self->LowerPages[i].Title)) {
             OLEDFont Font = OLED->Font;
             OLED_SetFont(OLED, OLEDFont_Chinese12X12);
@@ -53,13 +54,17 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED, TextMenu_t *Menu) {
 
         self->LowerPages[i].UpperPage = self;
 
-        TextPage_Init(&self->LowerPages[i], OLED, Menu);
+        TextPage_Init(&self->LowerPages[i], OLED);
     }
 }
 
-void TextPage_SetY(TextPage_t *self, int16_t Y) {
-    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
-        self->LowerPages[i].Y = Y;
+void TextPage_ResetSetY(TextPage_t *self) {
+    for (uint8_t i = self->Cursor; i < self->NumOfLowerPages; i++) {
+        self->LowerPages[i].Y = 0;
+    }
+    for (int8_t i = self->Cursor - 1; i >= 0; i--) {
+        self->LowerPages[i].Y =
+            self->LowerPages[i + 1].Y - self->LowerPages[i].Height - 2;
     }
 }
 
@@ -70,7 +75,7 @@ void TextPage_ReverseSetting(TextPage_t *self) {
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
     if (self->Page) {
-        TextPage_Init(self->Page, OLED, self);
+        TextPage_Init(self->Page, OLED);
     }
 }
 
@@ -159,7 +164,7 @@ ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
 
 ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
-        TextPage_SetY(self->Page, 0);
+        TextPage_ResetSetY(self->Page);
         self->Page = self->Page->UpperPage;
         self->Cursor = self->Page->Cursor;
 
@@ -169,43 +174,55 @@ ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     return ERROR;
 }
 
+void ImagePage_Init(ImagePage_t *self, OLED_t *OLED) {
+    if (!self->ImageY) {
+        self->ImageY = OLED->Height / 2 - self->ImageHeight / 2;
+    }
+
+    if (IsChinese(self->Title)) {
+        OLEDFont Font = OLED->Font;
+        OLED_SetFont(OLED, OLEDFont_Chinese12X12);
+        self->TitleY = self->ImageY + self->ImageHeight + OLED->FontHeight;
+        self->TitleWidth =
+            strlen(self->Title) / OLED_ChineseBytesCount * OLED->FontWidth;
+        self->TitleHeight = OLED->FontHeight;
+        OLED_SetFont(OLED, Font);
+
+    } else {
+        self->TitleY = self->ImageY + self->ImageHeight + OLED->FontHeight;
+        self->TitleWidth = strlen(self->Title) * OLED->FontWidth;
+        self->TitleHeight = OLED->FontHeight;
+    }
+}
+
 void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED) {
     for (uint8_t i = 0; i < self->NumOfPages; i++) {
-        self->Page[i].ImageY = OLED->Height / 2 - self->ImageHeight / 2;
-
-        if (IsChinese(self->Page[i].Title)) {
-            OLEDFont Font = OLED->Font;
-            OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-            self->Page[i].TitleY =
-                self->Page[i].ImageY + self->ImageHeight + OLED->FontHeight;
-            self->Page[i].TitleWidth = strlen(self->Page[i].Title) /
-                                       OLED_ChineseBytesCount * OLED->FontWidth;
-            self->Page[i].TitleHeight = OLED->FontHeight;
-            OLED_SetFont(OLED, Font);
-
-        } else {
-            self->Page[i].TitleY =
-                self->Page[i].ImageY + self->ImageHeight + OLED->FontHeight;
-            self->Page[i].TitleWidth =
-                strlen(self->Page[i].Title) * OLED->FontWidth;
-            self->Page[i].TitleHeight = OLED->FontHeight;
+        if (!self->Page[i].ImageWidth) {
+            self->Page[i].ImageWidth = self->ImageWidth;
         }
+        if (!self->Page[i].ImageHeight) {
+            self->Page[i].ImageHeight = self->ImageHeight;
+        }
+
+        ImagePage_Init(&self->Page[i], OLED);
     }
 }
 
 void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED) {
-    int16_t X = self->Page[0].ImageX - (self->Page[self->Cursor].ImageX +
-                                        self->ImageWidth / 2 - OLED->Width / 2);
+    int16_t X =
+        self->Page[0].ImageX - (self->Page[self->Cursor].ImageX +
+                                self->Page[0].ImageWidth / 2 - OLED->Width / 2);
     PositionUpdate(self->Page[0].ImageX, X);
-    self->Page[0].TitleX = self->Page[0].ImageX + self->ImageWidth / 2 -
+    self->Page[0].TitleX = self->Page[0].ImageX + self->Page[0].ImageWidth / 2 -
                            self->Page[0].TitleWidth / 2;
 
     for (uint8_t i = 1; i < self->NumOfPages; i++) {
         PositionUpdate(self->Page[i].ImageX, self->Page[i - 1].ImageX +
-                                                 self->ImageWidth +
+                                                 self->Page[i].ImageWidth +
                                                  self->Space);
 
-        self->Page[i].TitleX = self->Page[i].ImageX + self->ImageWidth / 2 -
+        self->Page[i].TitleX = self->Page[i].ImageX +
+                               self->Page[i].ImageWidth / 2 -
                                self->Page[i].TitleWidth / 2;
     }
 }
@@ -231,7 +248,7 @@ ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
 }
 
 ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
-    TextPage_SetY(TextMenu->Page, 0);
+    TextPage_ResetSetY(TextMenu->Page);
 
     return SUCCESS;
 }

@@ -114,30 +114,30 @@ TextPage_t MQxChartPage = {
         (TextPage_t[]){
             (TextPage_t){
                 .Title = "MQ-2",
-                .TitleX = 0,
+                .TitleX = 1,
                 .TitleY = 64 / 4,
-                .TitleWidth = 128,
+                .TitleWidth = 128 - 1,
                 .TitleHeight = 64 / 2,
             },
             (TextPage_t){
                 .Title = "MQ-3",
-                .TitleX = 0,
+                .TitleX = 1,
                 .TitleY = 64 / 4,
-                .TitleWidth = 128,
+                .TitleWidth = 128 - 1,
                 .TitleHeight = 64 / 2,
             },
             (TextPage_t){
                 .Title = "MQ-7",
-                .TitleX = 0,
+                .TitleX = 1,
                 .TitleY = 64 / 4,
-                .TitleWidth = 128,
+                .TitleWidth = 128 - 1,
                 .TitleHeight = 64 / 2,
             },
             (TextPage_t){
                 .Title = "MQ-135",
-                .TitleX = 0,
+                .TitleX = 1,
                 .TitleY = 64 / 4,
-                .TitleWidth = 128,
+                .TitleWidth = 128 - 1,
                 .TitleHeight = 64 / 2,
             },
         },
@@ -161,6 +161,24 @@ TextPage_t SettingPage = {
         },
 };
 
+ImagePage_t HomePage[3] = {
+    (ImagePage_t){
+        .Title = "Montior",
+        .Image = MenuImage[0],
+        .TextPage = &MonitorPage,
+    },
+    (ImagePage_t){
+        .Title = "Chart",
+        .Image = MenuImage[1],
+        .TextPage = &MQxChartPage,
+    },
+    (ImagePage_t){
+        .Title = "Setting",
+        .Image = MenuImage[2],
+        .TextPage = &SettingPage,
+    },
+};
+
 TextMenu_t TextMenu = {
     .Update = TextMenuUpdate_OneByOne,
     .TextCountOfHomePage = 4,
@@ -168,25 +186,11 @@ TextMenu_t TextMenu = {
 };
 
 ImageMenu_t ImageMenu = {
-    .NumOfPages = 3,
+    .NumOfPages = sizeof(HomePage) / sizeof(HomePage[0]),
     .ImageWidth = 32,
     .ImageHeight = 32,
     .Space = 32,
-    .Page =
-        (ImagePage_t[]){
-            (ImagePage_t){
-                .Title = "Montior",
-                .Image = MenuImage[0],
-            },
-            (ImagePage_t){
-                .Title = "Chart",
-                .Image = MenuImage[1],
-            },
-            (ImagePage_t){
-                .Title = "Setting",
-                .Image = MenuImage[2],
-            },
-        },
+    .Page = HomePage,
 };
 
 SelectioneBar_t Bar;
