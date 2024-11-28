@@ -87,10 +87,10 @@ typedef struct {
     uint8_t Width;
     uint8_t Height;
 
-    int16_t *TextX;
-    int16_t *TextY;
-    uint8_t *TextWidth;
-    uint8_t *TextHeight;
+    int16_t *TargetX;
+    int16_t *TargetY;
+    uint8_t *TargetWidth;
+    uint8_t *TargetHeight;
 } SelectioneBar_t;
 
 void TextPage_Init(TextPage_t *self, OLED_t *OLED);

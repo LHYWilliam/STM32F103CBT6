@@ -38,9 +38,9 @@ int main() {
                 &xMenuKeyTaskHandle);
 
     vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(10), pdTRUE,
-                                (void *)1, vUpdateTimerCallback);
+                                (void *)0, vUpdateTimerCallback);
     vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(10), pdTRUE,
-                              (void *)2, vOLEDTimerCallback);
+                              (void *)1, vOLEDTimerCallback);
 
     xTimerStart(vUpdateTimer, 0);
     xTimerStart(vOLEDTimer, 0);

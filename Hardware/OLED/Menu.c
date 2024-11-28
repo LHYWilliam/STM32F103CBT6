@@ -254,24 +254,24 @@ ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
 }
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page) {
-    self->TextX = &Page->X;
-    self->TextY = &Page->Y;
-    self->TextWidth = &Page->Width;
-    self->TextHeight = &Page->Height;
+    self->TargetX = &Page->X;
+    self->TargetY = &Page->Y;
+    self->TargetWidth = &Page->Width;
+    self->TargetHeight = &Page->Height;
 }
 
 void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page) {
-    self->TextX = &Page->TitleX;
-    self->TextY = &Page->TitleY;
-    self->TextWidth = &Page->TitleWidth;
-    self->TextHeight = &Page->TitleHeight;
+    self->TargetX = &Page->TitleX;
+    self->TargetY = &Page->TitleY;
+    self->TargetWidth = &Page->TitleWidth;
+    self->TargetHeight = &Page->TitleHeight;
 }
 
 void SelectioneBar_Update(SelectioneBar_t *self) {
-    PositionUpdate(self->X, *self->TextX - 1);
-    PositionUpdate(self->Y, *self->TextY - 1);
-    PositionUpdate(self->Width, *self->TextWidth + 2);
-    PositionUpdate(self->Height, *self->TextHeight + 2);
+    PositionUpdate(self->X, *self->TargetX - 1);
+    PositionUpdate(self->Y, *self->TargetY - 1);
+    PositionUpdate(self->Width, *self->TargetWidth + 2);
+    PositionUpdate(self->Height, *self->TargetHeight + 2);
 }
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {
