@@ -26,15 +26,12 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 }
 
 static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
-    uint8_t i;
-    for (i = 0; i < sizeof(MQxChartPage) / sizeof(MQxChartPage[0]); i++) {
-        if (TextMenu.Page == &MQxChartPage[i]) {
-            OLED_ShowMQxPage(OLED, &MQxChartPage[i], &MQSensor[i]);
-            break;
-        }
-    }
 
-    if (i == sizeof(MQxChartPage) / sizeof(MQxChartPage[0])) {
+    if (TextMenu.Page->UpperPage == &MonitorPage) {
+        OLED_ShowMQxPage(OLED, &MQxChartPage[TextMenu.Page->UpperPage->Cursor],
+                         &MQSensor[TextMenu.Page->UpperPage->Cursor - 1]);
+
+    } else {
         OLED_ShowTextPage(OLED, Menu->Page);
     }
 
@@ -46,10 +43,7 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
         OLED_Printf(OLED, Page->TitleX, Page->TitleY, Page->Title);
     }
 
-    OLED_Printf(OLED, Page->LowerPages[0].X, Page->LowerPages[0].Y, "%s",
-                Page->LowerPages[0].Title);
-
-    for (uint8_t i = 1; i < Page->NumOfLowerPages; i++) {
+    for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
         if (Page->LowerPages[i].Y + Page->LowerPages[i].Height < 0) {
             continue;
         }
@@ -58,7 +52,7 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
             break;
         }
 
-        if (Page == &MonitorPage) {
+        if (Page == &MonitorPage && i != 0) {
             OLED_ShowMQxText(OLED, &MonitorPage.LowerPages[i],
                              &MQSensor[i - 1]);
 
@@ -129,14 +123,7 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
         ImageMenu_Update(Menu, &OLED);
 
     } else if (Menu == &TextMenu) {
-        uint8_t i;
-        for (i = 0; i < sizeof(MQxChartPage) / sizeof(MQxChartPage[0]); i++) {
-            if (TextMenu.Page == &MQxChartPage[i]) {
-                break;
-            }
-        }
-
-        if (i == sizeof(MQxChartPage) / sizeof(MQxChartPage[0])) {
+        if (TextMenu.Page->UpperPage != &MonitorPage) {
             TextMenu_Update(Menu, &OLED);
         }
     }
@@ -193,10 +180,25 @@ void vMenuKeyTaskCode(void *pvParameters) {
     }
 }
 
-void BackToHomeCallbck(void *pvParameters) {
+void BackHomePageCallbck(void *pvParameters) {
     Menu = &ImageMenu;
-    ImageMenu_ReturnUpperPage(&ImageMenu, &TextMenu);
-    SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[ImageMenu.Cursor]);
+    if (ImageMenu_ReturnUpperPage(&ImageMenu, &TextMenu)) {
+        SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[ImageMenu.Cursor]);
+    }
+}
+
+void EnterTextPageCallback(void *pvParameters) {
+    if (TextMenu_EnterLowerPage(&TextMenu)) {
+        SelectioneBar_BindTextPage(&Bar,
+                                   &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+    }
+}
+
+void BackTextPageCallback(void *pvParameters) {
+    if (TextMenu_ReturnUpperPage(&TextMenu)) {
+        SelectioneBar_BindTextPage(&Bar,
+                                   &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+    }
 }
 
 void SettingCallback(void *pvParameters) {
@@ -204,14 +206,8 @@ void SettingCallback(void *pvParameters) {
 }
 
 void ThresholdCallback(int16_t Encoder) {
-    uint8_t i;
-    for (i = 0; i < sizeof(MQxChartPage) / sizeof(MQxChartPage[0]); i++) {
-        if (TextMenu.Page == &MQxChartPage[i]) {
-            break;
-        }
-    }
-
-    MQSensor_UpdateThreshold(&MQSensor[i], Encoder > 0 ? -128 : +128);
+    MQSensor_UpdateThreshold(&MQSensor[TextMenu.Page->UpperPage->Cursor - 1],
+                             Encoder > 0 ? -128 : +128);
 }
 
 void TextMenuCursorCallback(int16_t Encoder) {

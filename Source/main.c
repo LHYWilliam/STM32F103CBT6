@@ -25,10 +25,6 @@ int main() {
 
     TextPage_Init(&MonitorPage, &OLED);
     TextPage_Init(&SettingPage, &OLED);
-    for (uint8_t i = 0; i < sizeof(MQxChartPage) / sizeof(MQxChartPage[0]);
-         i++) {
-        TextPage_Init(&MQxChartPage[i], &OLED);
-    }
 
     TextMenu_Init(&TextMenu, &OLED);
     ImageMenu_Init(&ImageMenu, &OLED);
@@ -38,7 +34,7 @@ int main() {
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);
 
-    vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(5), pdTRUE,
+    vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(10), pdTRUE,
                                 (void *)0, vUpdateTimerCallback);
     vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(10), pdTRUE,
                               (void *)1, vOLEDTimerCallback);

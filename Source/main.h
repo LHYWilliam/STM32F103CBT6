@@ -29,10 +29,10 @@ extern Sampler_t Sampler;
 extern OLED_t OLED;
 
 extern TextPage_t MonitorPage;
-extern TextPage_t MQxChartPage[4];
+extern TextPage_t MQxChartPage[5];
 extern TextPage_t SettingPage;
 
-extern ImagePage_t HomePage[6];
+extern ImagePage_t HomePage[2];
 
 extern void *Menu;
 extern TextMenu_t TextMenu;

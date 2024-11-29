@@ -76,7 +76,23 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-extern void BackToHomeCallbck(void *pvParameters);
+#define BackHomePage Title = "<", .ClickCallback = BackHomePageCallbck
+#define BackTextPage Title = "<", .ClickCallback = BackTextPageCallback
+
+#define ChartPage                                                              \
+    TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,                       \
+    .TitleHeight = 64 / 2, .ClickCallback = EnterTextPageCallback,             \
+    .RotationCallback = ThresholdCallback, .NumOfLowerPages = 1,               \
+    .LowerPages = (TextPage_t[]) {                                             \
+        (TextPage_t){                                                          \
+            .BackTextPage,                                                     \
+                                                                               \
+        },                                                                     \
+    }
+
+extern void BackHomePageCallbck(void *pvParameters);
+extern void EnterTextPageCallback(void *pvParameters);
+extern void BackTextPageCallback(void *pvParameters);
 extern void TextMenuCursorCallback(int16_t Encoder);
 extern void ThresholdCallback(int16_t Encoder);
 extern void SettingCallback(void *pvParameters);
@@ -84,96 +100,33 @@ extern void SettingCallback(void *pvParameters);
 extern void ImageMenuCursorCallback(int16_t Encoder);
 extern void ImagePageEnterTextPageCallback(void *pvParameters);
 
+TextPage_t MQxChartPage[5] = {
+    (TextPage_t){
+        .BackHomePage,
+    },
+    (TextPage_t){
+        .Title = "MQ2",
+        .ChartPage,
+    },
+    (TextPage_t){
+        .Title = "MQ3",
+        .ChartPage,
+    },
+    (TextPage_t){
+        .Title = "MQ7",
+        .ChartPage,
+    },
+    (TextPage_t){
+        .Title = "MQ135",
+        .ChartPage,
+    },
+};
+
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
     .RotationCallback = TextMenuCursorCallback,
     .NumOfLowerPages = 5,
-    .LowerPages =
-        (TextPage_t[]){
-            (TextPage_t){
-                .Title = "<",
-                .ClickCallback = BackToHomeCallbck,
-            },
-            (TextPage_t){
-                .Title = "MQ-2",
-            },
-            (TextPage_t){
-                .Title = "MQ-3",
-            },
-            (TextPage_t){
-                .Title = "MQ-7",
-            },
-            (TextPage_t){
-                .Title = "MQ-135",
-            },
-        },
-};
-
-TextPage_t MQxChartPage[4] = {
-    (TextPage_t){
-        .Title = "MQ2",
-        .TitleX = 1,
-        .TitleY = 64 / 4,
-        .TitleWidth = 128 - 1,
-        .TitleHeight = 64 / 2,
-        .RotationCallback = ThresholdCallback,
-        .NumOfLowerPages = 1,
-        .LowerPages =
-            (TextPage_t[]){
-                (TextPage_t){
-                    .Title = "<",
-                    .ClickCallback = BackToHomeCallbck,
-                },
-            },
-    },
-    (TextPage_t){
-        .Title = "MQ3",
-        .TitleX = 1,
-        .TitleY = 64 / 4,
-        .TitleWidth = 128 - 1,
-        .TitleHeight = 64 / 2,
-        .RotationCallback = ThresholdCallback,
-        .NumOfLowerPages = 1,
-        .LowerPages =
-            (TextPage_t[]){
-                (TextPage_t){
-                    .Title = "<",
-                    .ClickCallback = BackToHomeCallbck,
-                },
-            },
-    },
-    (TextPage_t){
-        .Title = "MQ7",
-        .TitleX = 1,
-        .TitleY = 64 / 4,
-        .TitleWidth = 128 - 1,
-        .TitleHeight = 64 / 2,
-        .RotationCallback = ThresholdCallback,
-        .NumOfLowerPages = 1,
-        .LowerPages =
-            (TextPage_t[]){
-                (TextPage_t){
-                    .Title = "<",
-                    .ClickCallback = BackToHomeCallbck,
-                },
-            },
-    },
-    (TextPage_t){
-        .Title = "MQ135",
-        .TitleX = 1,
-        .TitleY = 64 / 4,
-        .TitleWidth = 128 - 1,
-        .TitleHeight = 64 / 2,
-        .RotationCallback = ThresholdCallback,
-        .NumOfLowerPages = 1,
-        .LowerPages =
-            (TextPage_t[]){
-                (TextPage_t){
-                    .Title = "<",
-                    .ClickCallback = BackToHomeCallbck,
-                },
-            },
-    },
+    .LowerPages = MQxChartPage,
 };
 
 TextPage_t SettingPage = {
@@ -183,8 +136,7 @@ TextPage_t SettingPage = {
     .LowerPages =
         (TextPage_t[]){
             (TextPage_t){
-                .Title = "<",
-                .ClickCallback = BackToHomeCallbck,
+                .BackHomePage,
             },
             (TextPage_t){
                 .Title = "Status LED",
@@ -202,31 +154,11 @@ TextPage_t SettingPage = {
         },
 };
 
-ImagePage_t HomePage[6] = {
+ImagePage_t HomePage[2] = {
     (ImagePage_t){
         .Title = "Montior",
         .Image = MenuImage[0],
         .TextPage = &MonitorPage,
-    },
-    (ImagePage_t){
-        .Title = "MQ2",
-        .Image = MenuImage[1],
-        .TextPage = &MQxChartPage[0],
-    },
-    (ImagePage_t){
-        .Title = "MQ3",
-        .Image = MenuImage[1],
-        .TextPage = &MQxChartPage[1],
-    },
-    (ImagePage_t){
-        .Title = "MQ7",
-        .Image = MenuImage[1],
-        .TextPage = &MQxChartPage[2],
-    },
-    (ImagePage_t){
-        .Title = "MQ135",
-        .Image = MenuImage[1],
-        .TextPage = &MQxChartPage[3],
     },
     (ImagePage_t){
         .Title = "Setting",
