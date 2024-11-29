@@ -1,4 +1,3 @@
-#include "Menu.h"
 #include "main.h"
 
 LED_t LED = {
@@ -11,24 +10,14 @@ Key_t Key = {
     .Mode = KeyMode_High,
 };
 
-Key_t KeyUp = {
+Key_t KeyConfirm = {
     .GPIOxPiny = B15,
     .Mode = KeyMode_Low,
 };
 
-Key_t KeyDown = {
-    .GPIOxPiny = A9,
-    .Mode = KeyMode_Low,
-};
-
-Key_t KeyConfirm = {
-    .GPIOxPiny = A11,
-    .Mode = KeyMode_Low,
-};
-
-Key_t KeyCancel = {
-    .GPIOxPiny = B13,
-    .Mode = KeyMode_Low,
+Encoder_t Encoder = {
+    .GPIOxPiny = "A8 | A9",
+    .TIMx = TIM1,
 };
 
 MQSensor_t MQSensor[4] = {
@@ -87,11 +76,24 @@ OLED_t OLED = {
     .Height = 64,
 };
 
+extern void BackToHomeCallbck(void *pvParameters);
+extern void TextMenuCursorCallback(int16_t Encoder);
+extern void ThresholdCallback(int16_t Encoder);
+extern void SettingCallback(void *pvParameters);
+
+extern void ImageMenuCursorCallback(int16_t Encoder);
+extern void ImagePageEnterTextPageCallback(void *pvParameters);
+
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
-    .NumOfLowerPages = 4,
+    .RotationCallback = TextMenuCursorCallback,
+    .NumOfLowerPages = 5,
     .LowerPages =
         (TextPage_t[]){
+            (TextPage_t){
+                .Title = "<",
+                .ClickCallback = BackToHomeCallbck,
+            },
             (TextPage_t){
                 .Title = "MQ-2",
             },
@@ -107,70 +109,124 @@ TextPage_t MonitorPage = {
         },
 };
 
-TextPage_t MQxChartPage = {
-    .Title = "MQx Chart",
-    .NumOfLowerPages = 4,
-    .LowerPages =
-        (TextPage_t[]){
-            (TextPage_t){
-                .Title = "MQ-2",
-                .TitleX = 1,
-                .TitleY = 64 / 4,
-                .TitleWidth = 128 - 1,
-                .TitleHeight = 64 / 2,
+TextPage_t MQxChartPage[4] = {
+    (TextPage_t){
+        .Title = "MQ2",
+        .TitleX = 1,
+        .TitleY = 64 / 4,
+        .TitleWidth = 128 - 1,
+        .TitleHeight = 64 / 2,
+        .RotationCallback = ThresholdCallback,
+        .NumOfLowerPages = 1,
+        .LowerPages =
+            (TextPage_t[]){
+                (TextPage_t){
+                    .Title = "<",
+                    .ClickCallback = BackToHomeCallbck,
+                },
             },
-            (TextPage_t){
-                .Title = "MQ-3",
-                .TitleX = 1,
-                .TitleY = 64 / 4,
-                .TitleWidth = 128 - 1,
-                .TitleHeight = 64 / 2,
+    },
+    (TextPage_t){
+        .Title = "MQ3",
+        .TitleX = 1,
+        .TitleY = 64 / 4,
+        .TitleWidth = 128 - 1,
+        .TitleHeight = 64 / 2,
+        .RotationCallback = ThresholdCallback,
+        .NumOfLowerPages = 1,
+        .LowerPages =
+            (TextPage_t[]){
+                (TextPage_t){
+                    .Title = "<",
+                    .ClickCallback = BackToHomeCallbck,
+                },
             },
-            (TextPage_t){
-                .Title = "MQ-7",
-                .TitleX = 1,
-                .TitleY = 64 / 4,
-                .TitleWidth = 128 - 1,
-                .TitleHeight = 64 / 2,
+    },
+    (TextPage_t){
+        .Title = "MQ7",
+        .TitleX = 1,
+        .TitleY = 64 / 4,
+        .TitleWidth = 128 - 1,
+        .TitleHeight = 64 / 2,
+        .RotationCallback = ThresholdCallback,
+        .NumOfLowerPages = 1,
+        .LowerPages =
+            (TextPage_t[]){
+                (TextPage_t){
+                    .Title = "<",
+                    .ClickCallback = BackToHomeCallbck,
+                },
             },
-            (TextPage_t){
-                .Title = "MQ-135",
-                .TitleX = 1,
-                .TitleY = 64 / 4,
-                .TitleWidth = 128 - 1,
-                .TitleHeight = 64 / 2,
+    },
+    (TextPage_t){
+        .Title = "MQ135",
+        .TitleX = 1,
+        .TitleY = 64 / 4,
+        .TitleWidth = 128 - 1,
+        .TitleHeight = 64 / 2,
+        .RotationCallback = ThresholdCallback,
+        .NumOfLowerPages = 1,
+        .LowerPages =
+            (TextPage_t[]){
+                (TextPage_t){
+                    .Title = "<",
+                    .ClickCallback = BackToHomeCallbck,
+                },
             },
-        },
+    },
 };
 
 TextPage_t SettingPage = {
     .Title = "Setting",
-    .NumOfLowerPages = 3,
+    .RotationCallback = TextMenuCursorCallback,
+    .NumOfLowerPages = 4,
     .LowerPages =
         (TextPage_t[]){
             (TextPage_t){
+                .Title = "<",
+                .ClickCallback = BackToHomeCallbck,
+            },
+            (TextPage_t){
                 .Title = "Status LED",
                 .Setting = SET,
+                .ClickCallback = SettingCallback,
             },
             (TextPage_t){
                 .Title = "Reverse",
+                .ClickCallback = SettingCallback,
             },
             (TextPage_t){
                 .Title = "Restart",
+                .ClickCallback = SettingCallback,
             },
         },
 };
 
-ImagePage_t HomePage[3] = {
+ImagePage_t HomePage[6] = {
     (ImagePage_t){
         .Title = "Montior",
         .Image = MenuImage[0],
         .TextPage = &MonitorPage,
     },
     (ImagePage_t){
-        .Title = "Chart",
+        .Title = "MQ2",
         .Image = MenuImage[1],
-        .TextPage = &MQxChartPage,
+        .TextPage = &MQxChartPage[0],
+    },
+    (ImagePage_t){
+        .Title = "MQ3",
+        .Image = MenuImage[1],
+        .TextPage = &MQxChartPage[1],
+    },
+    (ImagePage_t){
+        .Title = "MQ7",
+        .Image = MenuImage[1],
+        .TextPage = &MQxChartPage[2],
+    },
+    (ImagePage_t){
+        .Title = "MQ135",
+        .Image = MenuImage[1],
+        .TextPage = &MQxChartPage[3],
     },
     (ImagePage_t){
         .Title = "Setting",
@@ -186,10 +242,12 @@ TextMenu_t TextMenu = {
 };
 
 ImageMenu_t ImageMenu = {
-    .NumOfPages = sizeof(HomePage) / sizeof(HomePage[0]),
+    .Space = 32,
     .ImageWidth = 32,
     .ImageHeight = 32,
-    .Space = 32,
+    .ClickCallback = ImagePageEnterTextPageCallback,
+    .RotationCallback = ImageMenuCursorCallback,
+    .NumOfPages = sizeof(HomePage) / sizeof(HomePage[0]),
     .Page = HomePage,
 };
 

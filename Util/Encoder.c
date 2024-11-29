@@ -38,7 +38,7 @@ void Encoder_Init(Encoder_t *self) {
     Capture_Init(&capture2);
 
     TIM_EncoderInterfaceConfig(self->TIMx, TIM_EncoderMode_TI12,
-                               self->invert ? TIM_ICPolarity_Falling
+                               self->Invert ? TIM_ICPolarity_Falling
                                             : TIM_ICPolarity_Rising,
                                TIM_ICPolarity_Rising);
 

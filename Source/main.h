@@ -1,6 +1,7 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include "Encoder.h"
 #include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
@@ -18,10 +19,8 @@
 extern LED_t LED;
 
 extern Key_t Key;
-extern Key_t KeyUp;
-extern Key_t KeyDown;
 extern Key_t KeyConfirm;
-extern Key_t KeyCancel;
+extern Encoder_t Encoder;
 
 extern MQSensor_t MQSensor[4];
 
@@ -30,10 +29,10 @@ extern Sampler_t Sampler;
 extern OLED_t OLED;
 
 extern TextPage_t MonitorPage;
-extern TextPage_t MQxChartPage;
+extern TextPage_t MQxChartPage[4];
 extern TextPage_t SettingPage;
 
-extern ImagePage_t HomePage[3];
+extern ImagePage_t HomePage[6];
 
 extern void *Menu;
 extern TextMenu_t TextMenu;

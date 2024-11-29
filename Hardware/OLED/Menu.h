@@ -7,9 +7,9 @@
 #include "OLED.h"
 
 #define TextMenu_PageNumber(Menu)                                              \
-    (Menu->Cursor < Menu->TextCountOfHomePage                                  \
+    ((Menu->Cursor - 1) < Menu->TextCountOfHomePage                            \
          ? 0                                                                   \
-         : (Menu->Cursor - Menu->TextCountOfHomePage) /                        \
+         : ((Menu->Cursor - 1) - Menu->TextCountOfHomePage) /                  \
                    Menu->TextCountOfOtherPage +                                \
                1)
 
@@ -35,6 +35,9 @@ typedef struct TextPage {
     struct TextPage *UpperPage;
 
     uint8_t Setting;
+
+    void (*ClickCallback)(void *);
+    void (*RotationCallback)(int16_t);
 } TextPage_t;
 
 typedef enum {
@@ -79,6 +82,9 @@ typedef struct {
     uint8_t ImageHeight;
 
     uint8_t Space;
+
+    void (*ClickCallback)(void *);
+    void (*RotationCallback)(int16_t);
 } ImageMenu_t;
 
 typedef struct {

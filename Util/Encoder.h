@@ -9,7 +9,7 @@ typedef struct {
 
     TIM_TypeDef *TIMx;
 
-    uint8_t invert;
+    uint8_t Invert;
 } Encoder_t;
 
 void Encoder_Init(Encoder_t *self);

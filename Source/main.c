@@ -6,11 +6,9 @@ int main() {
 
     LED_Init(&LED);
     Key_Init(&Key);
-
-    Key_Init(&KeyUp);
-    Key_Init(&KeyDown);
     Key_Init(&KeyConfirm);
-    Key_Init(&KeyCancel);
+
+    Encoder_Init(&Encoder);
 
     for (uint8_t i = 0; i < sizeof(MQSensor) / sizeof(MQSensor[0]); i++) {
         MQSensor_Init(&MQSensor[i]);
@@ -21,13 +19,16 @@ int main() {
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
-    StatusLEDSetting = &SettingPage.LowerPages[0];
-    ReverseSetting = &SettingPage.LowerPages[1];
-    RestartSetting = &SettingPage.LowerPages[2];
+    StatusLEDSetting = &SettingPage.LowerPages[1];
+    ReverseSetting = &SettingPage.LowerPages[2];
+    RestartSetting = &SettingPage.LowerPages[3];
 
     TextPage_Init(&MonitorPage, &OLED);
-    TextPage_Init(&MQxChartPage, &OLED);
     TextPage_Init(&SettingPage, &OLED);
+    for (uint8_t i = 0; i < sizeof(MQxChartPage) / sizeof(MQxChartPage[0]);
+         i++) {
+        TextPage_Init(&MQxChartPage[i], &OLED);
+    }
 
     TextMenu_Init(&TextMenu, &OLED);
     ImageMenu_Init(&ImageMenu, &OLED);
@@ -37,7 +38,7 @@ int main() {
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);
 
-    vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(10), pdTRUE,
+    vUpdateTimer = xTimerCreate("vUpdateTimer", pdMS_TO_TICKS(5), pdTRUE,
                                 (void *)0, vUpdateTimerCallback);
     vOLEDTimer = xTimerCreate("vMenuTimer", pdMS_TO_TICKS(10), pdTRUE,
                               (void *)1, vOLEDTimerCallback);
