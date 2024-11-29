@@ -20,33 +20,32 @@ Encoder_t Encoder = {
     .TIMx = TIM1,
 };
 
+#define Threshold                                                              \
+    Threshold = VoltageToADC(2.048), .Relaxation = VoltageToADC(0.128)
+
 MQSensor_t MQSensor[4] = {
     (MQSensor_t){
         .LED = A5,
         .Mode = LEDMode_Low,
-        .Threshold = VoltageToADC(2.048),
-        .Relaxation = VoltageToADC(0.128),
+        .Threshold,
     },
 
     (MQSensor_t){
         .LED = A7,
         .Mode = LEDMode_Low,
-        .Threshold = VoltageToADC(2.048),
-        .Relaxation = VoltageToADC(0.128),
+        .Threshold,
     },
 
     (MQSensor_t){
         .LED = B1,
         .Mode = LEDMode_Low,
-        .Threshold = VoltageToADC(2.048),
-        .Relaxation = VoltageToADC(0.128),
+        .Threshold,
     },
 
     (MQSensor_t){
         .LED = B11,
         .Mode = LEDMode_Low,
-        .Threshold = VoltageToADC(2.048),
-        .Relaxation = VoltageToADC(0.128),
+        .Threshold,
     },
 };
 
@@ -57,8 +56,8 @@ Sampler_t Sampler = {
     .Length = Samper_DataLength,
 
     .ADCx = ADC1,
-    .ADC_Channel = "1 | 2 | 3 | 4",
-    .GPIOxPiny = "A1 | A2 | A3 | A4",
+    .ADC_Channel = "1 | 2 | 3 | 8",
+    .GPIOxPiny = "A1 | A2 | A3 | B0",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
