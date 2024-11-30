@@ -44,7 +44,7 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
     }
 
     for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
-        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height < 0) {
+        if (Page->LowerPages[i].Y < 0) {
             continue;
         }
         if (Page->LowerPages[i].Y + Page->LowerPages[i].Height >=
@@ -187,6 +187,13 @@ void BackHomePageCallbck(void *pvParameters) {
     }
 }
 
+void ImagePageEnterTextPageCallback(void *pvParameters) {
+    Menu = &TextMenu;
+    ImageMenu_EnterLowerPage(&ImageMenu, &TextMenu);
+    SelectioneBar_BindTextPage(&Bar,
+                               &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+}
+
 void EnterTextPageCallback(void *pvParameters) {
     if (TextMenu_EnterLowerPage(&TextMenu)) {
         SelectioneBar_BindTextPage(&Bar,
@@ -240,11 +247,4 @@ void ImageMenuCursorCallback(int16_t Encoder) {
                                         &ImageMenu.Page[ImageMenu.Cursor]);
         }
     }
-}
-
-void ImagePageEnterTextPageCallback(void *pvParameters) {
-    Menu = &TextMenu;
-    ImageMenu_EnterLowerPage(&ImageMenu, &TextMenu);
-    SelectioneBar_BindTextPage(&Bar,
-                               &TextMenu.Page->LowerPages[TextMenu.Cursor]);
 }
