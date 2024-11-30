@@ -59,9 +59,12 @@ static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
         } else if (Page == &SettingPage) {
             OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
                         "%s", Page->LowerPages[i].Title);
-            OLED_ShowImage(OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
-                           Page->LowerPages[i].Y, 8, 8,
-                           SettingImage[SettingPage.LowerPages[i].Setting]);
+
+            if (Page->LowerPages[i].ClickCallback == SettingReverseCallback) {
+                OLED_ShowImage(OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
+                               Page->LowerPages[i].Y, 8, 8,
+                               SettingImage[SettingPage.LowerPages[i].Setting]);
+            }
 
         } else {
             OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
@@ -139,10 +142,6 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     } else {
         LED_Off(&LED);
     }
-
-    if (RestartSetting->Setting) {
-        __NVIC_SystemReset();
-    }
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {
@@ -208,10 +207,6 @@ void BackTextPageCallback(void *pvParameters) {
     }
 }
 
-void SettingCallback(void *pvParameters) {
-    TextPage_ReverseSetting(TextMenu.Page);
-}
-
 void ThresholdCallback(int16_t Encoder) {
     MQSensor_UpdateThreshold(&MQSensor[TextMenu.Page->UpperPage->Cursor - 1],
                              Encoder > 0 ? -128 : +128);
@@ -246,5 +241,30 @@ void ImageMenuCursorCallback(int16_t Encoder) {
             SelectioneBar_BindImagePage(&Bar,
                                         &ImageMenu.Page[ImageMenu.Cursor]);
         }
+    }
+}
+
+void RestartSettingCallback(void *pvParameters) { __NVIC_SystemReset(); }
+
+void SettingReverseCallback(void *pvParameters) {
+    TextPage_ReverseSetting(TextMenu.Page);
+}
+
+void SettingSaveCallback(void *pvParameters) {
+    uint8_t Setting[32];
+    for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
+        Setting[i - 1] = SettingPage.LowerPages[i].Setting;
+    }
+
+    W25Q64_SectorErase(&W25Q64, 0);
+    W25Q64_PageProgram(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
+}
+
+void SettingLoad(W25Q64_t *W25Q64) {
+    uint8_t Setting[32];
+    W25Q64_ReadData(W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
+
+    for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
+        SettingPage.LowerPages[i].Setting = Setting[i - 1];
     }
 }

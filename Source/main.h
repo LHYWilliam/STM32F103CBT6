@@ -52,3 +52,18 @@ extern TimerHandle_t vUpdateTimer;
 extern TimerHandle_t vOLEDTimer;
 extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
+
+extern void SettingLoad(W25Q64_t *W25Q64);
+
+extern void BackHomePageCallbck(void *pvParameters);
+extern void EnterTextPageCallback(void *pvParameters);
+extern void BackTextPageCallback(void *pvParameters);
+extern void TextMenuCursorCallback(int16_t Encoder);
+extern void ThresholdCallback(int16_t Encoder);
+
+extern void ImageMenuCursorCallback(int16_t Encoder);
+extern void ImagePageEnterTextPageCallback(void *pvParameters);
+
+extern void RestartSettingCallback(void *pvParameters);
+extern void SettingReverseCallback(void *pvParameters);
+extern void SettingSaveCallback(void *pvParameters);

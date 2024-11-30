@@ -22,7 +22,8 @@ int main() {
 
     StatusLEDSetting = &SettingPage.LowerPages[1];
     ReverseSetting = &SettingPage.LowerPages[2];
-    RestartSetting = &SettingPage.LowerPages[3];
+    RestartSetting = &SettingPage.LowerPages[4];
+    SettingLoad(&W25Q64);
 
     TextPage_Init(&MonitorPage, &OLED);
     TextPage_Init(&SettingPage, &OLED);

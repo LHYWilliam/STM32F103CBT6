@@ -96,16 +96,6 @@ OLED_t OLED = {
         },                                                                     \
     }
 
-extern void BackHomePageCallbck(void *pvParameters);
-extern void EnterTextPageCallback(void *pvParameters);
-extern void BackTextPageCallback(void *pvParameters);
-extern void TextMenuCursorCallback(int16_t Encoder);
-extern void ThresholdCallback(int16_t Encoder);
-extern void SettingCallback(void *pvParameters);
-
-extern void ImageMenuCursorCallback(int16_t Encoder);
-extern void ImagePageEnterTextPageCallback(void *pvParameters);
-
 TextPage_t MQxChartPage[5] = {
     (TextPage_t){
         .BackHomePage,
@@ -138,7 +128,7 @@ TextPage_t MonitorPage = {
 TextPage_t SettingPage = {
     .Title = "Setting",
     .RotationCallback = TextMenuCursorCallback,
-    .NumOfLowerPages = 4,
+    .NumOfLowerPages = 5,
     .LowerPages =
         (TextPage_t[]){
             (TextPage_t){
@@ -147,15 +137,19 @@ TextPage_t SettingPage = {
             (TextPage_t){
                 .Title = "Status LED",
                 .Setting = SET,
-                .ClickCallback = SettingCallback,
+                .ClickCallback = SettingReverseCallback,
             },
             (TextPage_t){
                 .Title = "Reverse",
-                .ClickCallback = SettingCallback,
+                .ClickCallback = SettingReverseCallback,
+            },
+            (TextPage_t){
+                .Title = "Setting Save",
+                .ClickCallback = SettingSaveCallback,
             },
             (TextPage_t){
                 .Title = "Restart",
-                .ClickCallback = SettingCallback,
+                .ClickCallback = RestartSettingCallback,
             },
         },
 };
