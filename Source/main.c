@@ -6,8 +6,9 @@ int main() {
 
     LED_Init(&LED);
     Key_Init(&Key);
-    Key_Init(&KeyConfirm);
+    W25Q64_Init(&W25Q64);
 
+    Key_Init(&KeyConfirm);
     Encoder_Init(&Encoder);
 
     for (uint8_t i = 0; i < sizeof(MQSensor) / sizeof(MQSensor[0]); i++) {
