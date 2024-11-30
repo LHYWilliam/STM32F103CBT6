@@ -10,6 +10,13 @@ Key_t Key = {
     .Mode = KeyMode_High,
 };
 
+W25Q64_t W25Q64 = {
+    .MOSI = A7,
+    .MISO = A6,
+    .SCK = A5,
+    .CS = A4,
+};
+
 Key_t KeyConfirm = {
     .GPIOxPiny = B15,
     .Mode = KeyMode_Low,
@@ -25,13 +32,13 @@ Encoder_t Encoder = {
 
 MQSensor_t MQSensor[4] = {
     (MQSensor_t){
-        .LED = A5,
+        .LED = B11,
         .Mode = LEDMode_Low,
         .Threshold,
     },
 
     (MQSensor_t){
-        .LED = A7,
+        .LED = B10,
         .Mode = LEDMode_Low,
         .Threshold,
     },
@@ -43,7 +50,7 @@ MQSensor_t MQSensor[4] = {
     },
 
     (MQSensor_t){
-        .LED = B11,
+        .LED = B1,
         .Mode = LEDMode_Low,
         .Threshold,
     },

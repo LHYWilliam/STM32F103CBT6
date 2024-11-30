@@ -9,6 +9,7 @@
 #include "Menu.h"
 #include "OLED.h"
 #include "Sampler.h"
+#include "W25Q64.h"
 
 #define MAX(a, b)             ((a) > (b) ? (a) : (b))
 #define MIN(a, b)             ((a) < (b) ? (a) : (b))
@@ -17,8 +18,9 @@
 #define VoltageToADC(Voltage) (uint32_t)((Voltage) / 3.3 * 4095.0)
 
 extern LED_t LED;
-
 extern Key_t Key;
+extern W25Q64_t W25Q64;
+
 extern Key_t KeyConfirm;
 extern Encoder_t Encoder;
 

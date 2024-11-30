@@ -121,6 +121,8 @@ project:
         - file: Hardware/OLED/Menu.h
         - file: Hardware/MQSensor.c
         - file: Hardware/MQSensor.h
+        - file: Hardware/W25Q64.c
+        - file: Hardware/W25Q64.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick
