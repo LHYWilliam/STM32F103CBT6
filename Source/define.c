@@ -128,7 +128,7 @@ TextPage_t MonitorPage = {
 TextPage_t SettingPage = {
     .Title = "Setting",
     .RotationCallback = TextMenuCursorCallback,
-    .NumOfLowerPages = 5,
+    .NumOfLowerPages = 6,
     .LowerPages =
         (TextPage_t[]){
             (TextPage_t){
@@ -144,8 +144,12 @@ TextPage_t SettingPage = {
                 .ClickCallback = SettingReverseCallback,
             },
             (TextPage_t){
-                .Title = "Setting Save",
+                .Title = "Save",
                 .ClickCallback = SettingSaveCallback,
+            },
+            (TextPage_t){
+                .Title = "Load",
+                .ClickCallback = SettingLoadCallback,
             },
             (TextPage_t){
                 .Title = "Restart",
@@ -189,7 +193,6 @@ void *Menu = &ImageMenu;
 
 TextPage_t *StatusLEDSetting;
 TextPage_t *ReverseSetting;
-TextPage_t *RestartSetting;
 
 TaskHandle_t xMenuKeyTaskHandle;
 void vMenuKeyTaskCode(void *pvParameters);

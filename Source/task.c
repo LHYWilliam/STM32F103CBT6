@@ -260,9 +260,9 @@ void SettingSaveCallback(void *pvParameters) {
     W25Q64_PageProgram(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
 }
 
-void SettingLoad(W25Q64_t *W25Q64) {
+void SettingLoadCallback(void *pvParameters) {
     uint8_t Setting[32];
-    W25Q64_ReadData(W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
+    W25Q64_ReadData(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
 
     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
         SettingPage.LowerPages[i].Setting = Setting[i - 1];
