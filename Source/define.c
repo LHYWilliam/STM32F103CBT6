@@ -36,19 +36,16 @@ MQSensor_t MQSensor[4] = {
         .Mode = LEDMode_Low,
         .Threshold,
     },
-
     (MQSensor_t){
         .LED = B10,
         .Mode = LEDMode_Low,
         .Threshold,
     },
-
     (MQSensor_t){
         .LED = B1,
         .Mode = LEDMode_Low,
         .Threshold,
     },
-
     (MQSensor_t){
         .LED = B1,
         .Mode = LEDMode_Low,
@@ -82,40 +79,25 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-#define BackHomePage Title = "<", .ClickCallback = BackHomePageCallbck
-#define BackTextPage Title = "<", .ClickCallback = BackTextPageCallback
+#define BackHomePage                                                           \
+    (TextPage_t) { .Title = "<", .ClickCallback = BackHomePageCallbck, }
 
-#define ChartPage                                                              \
-    TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,                       \
-    .TitleHeight = 64 / 2, .ClickCallback = EnterTextPageCallback,             \
-    .RotationCallback = ThresholdCallback, .NumOfLowerPages = 1,               \
-    .LowerPages = (TextPage_t[]) {                                             \
-        (TextPage_t){                                                          \
-            .BackTextPage,                                                     \
-                                                                               \
-        },                                                                     \
+#define BackTextPage                                                           \
+    (TextPage_t) { .Title = "<", .ClickCallback = BackTextPageCallback, }
+
+#define ChartPage(title)                                                       \
+    (TextPage_t) {                                                             \
+        .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
+        .TitleHeight = 64 / 2, .ClickCallback = EnterTextPageCallback,         \
+        .RotationCallback = ThresholdCallback, .NumOfLowerPages = 1,           \
+        .LowerPages = (TextPage_t[]) {                                         \
+            BackTextPage,                                                      \
+        }                                                                      \
     }
 
 TextPage_t MQxChartPage[5] = {
-    (TextPage_t){
-        .BackHomePage,
-    },
-    (TextPage_t){
-        .Title = "MQ2",
-        .ChartPage,
-    },
-    (TextPage_t){
-        .Title = "MQ3",
-        .ChartPage,
-    },
-    (TextPage_t){
-        .Title = "MQ7",
-        .ChartPage,
-    },
-    (TextPage_t){
-        .Title = "MQ135",
-        .ChartPage,
-    },
+    BackHomePage,     ChartPage("MQ2"),   ChartPage("MQ3"),
+    ChartPage("MQ7"), ChartPage("MQ135"),
 };
 
 TextPage_t MonitorPage = {
@@ -131,12 +113,9 @@ TextPage_t SettingPage = {
     .NumOfLowerPages = 6,
     .LowerPages =
         (TextPage_t[]){
+            BackHomePage,
             (TextPage_t){
-                .BackHomePage,
-            },
-            (TextPage_t){
-                .Title = "Status LED",
-                .Setting = SET,
+                .Title = "LED",
                 .ClickCallback = SettingReverseCallback,
             },
             (TextPage_t){

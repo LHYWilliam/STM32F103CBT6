@@ -11,11 +11,11 @@ static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
-    if (Menu == &ImageMenu) {
-        OLED_ShowImageMenu(&OLED, Menu);
-
-    } else if (Menu == &TextMenu) {
+    if (Menu == &TextMenu) {
         OLED_ShowTextMenu(&OLED, Menu);
+
+    } else if (Menu == &ImageMenu) {
+        OLED_ShowImageMenu(&OLED, Menu);
     }
 
     if (ReverseSetting->Setting) {

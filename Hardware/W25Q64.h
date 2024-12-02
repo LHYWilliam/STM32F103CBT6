@@ -13,11 +13,6 @@
 
 #define W25Q64_DummyByte             0xFF
 
-typedef enum {
-    W25Q64_Command,
-    W25Q64_Data,
-} W25Q64_ByteType;
-
 typedef struct {
     char MOSI[4];
     char MISO[4];
