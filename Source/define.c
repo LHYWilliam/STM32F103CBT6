@@ -88,7 +88,8 @@ OLED_t OLED = {
 #define ChartPage(title)                                                       \
     (TextPage_t) {                                                             \
         .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
-        .TitleHeight = 64 / 2, .ClickCallback = EnterTextPageCallback,         \
+        .TitleHeight = 64 / 2, .ShowCallback = ShowMQxPageCallback,            \
+        .ClickCallback = EnterTextPageCallback,                                \
         .RotationCallback = ThresholdCallback, .NumOfLowerPages = 1,           \
         .LowerPages = (TextPage_t[]) {                                         \
             BackTextPage,                                                      \
@@ -102,6 +103,7 @@ TextPage_t MQxChartPage[5] = {
 
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
+    .ShowCallback = ShowMonitorPageCallback,
     .RotationCallback = TextMenuCursorCallback,
     .NumOfLowerPages = 5,
     .LowerPages = MQxChartPage,
@@ -109,6 +111,7 @@ TextPage_t MonitorPage = {
 
 TextPage_t SettingPage = {
     .Title = "Setting",
+    .ShowCallback = ShowSettingPageCallback,
     .RotationCallback = TextMenuCursorCallback,
     .NumOfLowerPages = 6,
     .LowerPages =
@@ -137,6 +140,12 @@ TextPage_t SettingPage = {
         },
 };
 
+TextMenu_t TextMenu = {
+    .Update = TextMenuUpdate_OneByOne,
+    .TextCountOfHomePage = 4,
+    .TextCountOfOtherPage = 6,
+};
+
 ImagePage_t HomePage[2] = {
     (ImagePage_t){
         .Title = "Montior",
@@ -150,16 +159,11 @@ ImagePage_t HomePage[2] = {
     },
 };
 
-TextMenu_t TextMenu = {
-    .Update = TextMenuUpdate_OneByOne,
-    .TextCountOfHomePage = 4,
-    .TextCountOfOtherPage = 6,
-};
-
 ImageMenu_t ImageMenu = {
     .Space = 32,
     .ImageWidth = 32,
     .ImageHeight = 32,
+    .ShowCallback = ShowImageMenuCallback,
     .ClickCallback = ImagePageEnterTextPageCallback,
     .RotationCallback = ImageMenuCursorCallback,
     .NumOfPages = sizeof(HomePage) / sizeof(HomePage[0]),

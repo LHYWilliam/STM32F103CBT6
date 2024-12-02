@@ -36,6 +36,7 @@ typedef struct TextPage {
 
     uint8_t Setting;
 
+    void (*ShowCallback)(void *);
     void (*ClickCallback)(void *);
     void (*RotationCallback)(int16_t);
 } TextPage_t;
@@ -83,6 +84,7 @@ typedef struct {
 
     uint8_t Space;
 
+    void (*ShowCallback)(void *);
     void (*ClickCallback)(void *);
     void (*RotationCallback)(int16_t);
 } ImageMenu_t;

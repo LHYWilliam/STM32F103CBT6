@@ -52,6 +52,11 @@ extern TimerHandle_t vOLEDTimer;
 extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
+extern void ShowMonitorPageCallback(void *pvParameters);
+extern void ShowMQxPageCallback(void *pvParameters);
+extern void ShowSettingPageCallback(void *pvParameters);
+extern void ShowImageMenuCallback(void *pvParameters);
+
 extern void BackHomePageCallbck(void *pvParameters);
 extern void EnterTextPageCallback(void *pvParameters);
 extern void BackTextPageCallback(void *pvParameters);

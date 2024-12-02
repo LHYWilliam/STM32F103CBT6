@@ -1,22 +1,19 @@
 #include "main.h"
 
-static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu);
-static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page);
 static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
                              MQSensor_t *MQSensor);
-static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
-                             MQSensor_t *MQSensor);
-static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu);
 
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
     if (Menu == &TextMenu) {
-        OLED_ShowTextMenu(&OLED, Menu);
+        TextMenu.Page->ShowCallback(NULL);
 
     } else if (Menu == &ImageMenu) {
-        OLED_ShowImageMenu(&OLED, Menu);
+        ImageMenu.ShowCallback(NULL);
     }
+
+    OLED_ShowSelectioneBar(&OLED, &Bar);
 
     if (ReverseSetting->Setting) {
         OLED_Reverse(&OLED);
@@ -25,110 +22,14 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_SendBuffer(&OLED);
 }
 
-static void OLED_ShowTextMenu(OLED_t *OLED, TextMenu_t *Menu) {
-
-    if (TextMenu.Page->UpperPage == &MonitorPage) {
-        OLED_ShowMQxPage(OLED, &MQxChartPage[TextMenu.Page->UpperPage->Cursor],
-                         &MQSensor[TextMenu.Page->UpperPage->Cursor - 1]);
-
-    } else {
-        OLED_ShowTextPage(OLED, Menu->Page);
-    }
-
-    OLED_ShowSelectioneBar(OLED, &Bar);
-}
-
-static void OLED_ShowTextPage(OLED_t *OLED, TextPage_t *Page) {
-    if (Page->TitleY + Page->TitleHeight >= 0) {
-        OLED_Printf(OLED, Page->TitleX, Page->TitleY, Page->Title);
-    }
-
-    for (uint8_t i = 0; i < Page->NumOfLowerPages; i++) {
-        if (Page->LowerPages[i].Y < 0) {
-            continue;
-        }
-        if (Page->LowerPages[i].Y + Page->LowerPages[i].Height >=
-            OLED->Height) {
-            break;
-        }
-
-        if (Page == &MonitorPage && i != 0) {
-            OLED_ShowMQxText(OLED, &MonitorPage.LowerPages[i],
-                             &MQSensor[i - 1]);
-
-        } else if (Page == &SettingPage) {
-            OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
-                        "%s", Page->LowerPages[i].Title);
-
-            if (Page->LowerPages[i].ClickCallback == SettingReverseCallback) {
-                OLED_ShowImage(OLED, OLED->Width - 1 - OLED->FontWidth * 6 - 8,
-                               Page->LowerPages[i].Y, 8, 8,
-                               SettingImage[SettingPage.LowerPages[i].Setting]);
-            }
-
-        } else {
-            OLED_Printf(OLED, Page->LowerPages[i].X, Page->LowerPages[i].Y,
-                        "%s", Page->LowerPages[i].Title);
-        }
-    }
-}
-
-static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
-                             MQSensor_t *MQSensor) {
-    OLED_Printf(OLED, MQxPage->X, MQxPage->Y, "%-6s", MQxPage->Title);
-    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, MQxPage->Y,
-                "%.3f %6s", ADCToVoltage(MQSensor->Data[MQSensor->Index]),
-                MQSensor->State ? "Danger" : "Safe");
-}
-
-static void OLED_ShowMQxPage(OLED_t *OLED, TextPage_t *MQxPage,
-                             MQSensor_t *MQSensor) {
-    OLED_Printf(OLED, MQxPage->LowerPages[0].X, MQxPage->LowerPages[0].Y + 1,
-                "%s", MQxPage->LowerPages[0].Title);
-
-    OLED_Printf(OLED, 16, 1, "%s %s", MQxPage->Title,
-                MQSensor->State ? "Danger" : "Safe");
-
-    OLED_Printf(OLED, 0, OLED->Height - OLED->FontHeight - 1, "%.3f V",
-                ADCToVoltage(MQSensor->Data[MQSensor->Index]));
-
-    OLED_ShowChart(OLED, MQxPage->TitleX, MQxPage->TitleY, MQxPage->TitleWidth,
-                   MQxPage->TitleHeight, MQSensor->Data, MQSensor->Length,
-                   MQSensor->Index);
-    OLED_DrawHLine(
-        OLED, MQxPage->TitleX,
-        OLED_ADCToY(MQSensor->Threshold, MQxPage->TitleY, MQxPage->TitleHeight),
-        MQxPage->TitleWidth, 2);
-}
-
-static void OLED_ShowImageMenu(OLED_t *OLED, ImageMenu_t *Menu) {
-    for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
-        if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
-            continue;
-        }
-        if (ImageMenu.Page[i].ImageX >= OLED->Width) {
-            break;
-        }
-
-        OLED_ShowImage(OLED, ImageMenu.Page[i].ImageX, ImageMenu.Page[i].ImageY,
-                       ImageMenu.ImageWidth, ImageMenu.ImageHeight,
-                       ImageMenu.Page[i].Image);
-
-        OLED_Printf(OLED, ImageMenu.Page[i].TitleX, ImageMenu.Page[i].TitleY,
-                    "%s", ImageMenu.Page[i].Title);
-    }
-
-    OLED_ShowSelectioneBar(OLED, &Bar);
-}
-
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
-    if (Menu == &ImageMenu) {
-        ImageMenu_Update(Menu, &OLED);
-
-    } else if (Menu == &TextMenu) {
+    if (Menu == &TextMenu) {
         if (TextMenu.Page->UpperPage != &MonitorPage) {
             TextMenu_Update(Menu, &OLED);
         }
+
+    } else if (Menu == &ImageMenu) {
+        ImageMenu_Update(Menu, &OLED);
     }
 
     SelectioneBar_Update(&Bar);
@@ -150,32 +51,121 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         if (Encode <= -3 || Encode >= 3) {
             if (Menu == &ImageMenu) {
-                if (ImageMenu.RotationCallback) {
-                    ImageMenu.RotationCallback(Encode);
-                }
+                ImageMenu.RotationCallback(Encode);
 
             } else if (Menu == &TextMenu) {
-                if (TextMenu.Page->RotationCallback) {
-                    TextMenu.Page->RotationCallback(Encode);
-                }
+                TextMenu.Page->RotationCallback(Encode);
             }
         }
 
         if (Key_Read(&KeyConfirm)) {
             if (Menu == &ImageMenu) {
-                if (ImageMenu.ClickCallback) {
-                    ImageMenu.ClickCallback(NULL);
-                }
+                ImageMenu.ClickCallback(NULL);
 
             } else if (Menu == &TextMenu) {
-                if (TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback) {
-                    TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback(
-                        NULL);
-                }
+                TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback(NULL);
             }
         }
 
         vTaskDelay(pdMS_TO_TICKS(200));
+    }
+}
+
+static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
+                             MQSensor_t *MQSensor) {
+    OLED_Printf(OLED, MQxPage->X, MQxPage->Y, "%-6s", MQxPage->Title);
+    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, MQxPage->Y,
+                "%.3f %6s", ADCToVoltage(MQSensor->Data[MQSensor->Index]),
+                MQSensor->State ? "Danger" : "Safe");
+}
+
+#define ShowTitleAndTexts(...)                                                 \
+    if (TextMenu.Page->TitleY + TextMenu.Page->TitleHeight >= 0) {             \
+        OLED_Printf(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,       \
+                    TextMenu.Page->Title);                                     \
+    }                                                                          \
+                                                                               \
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {             \
+        if (TextMenu.Page->LowerPages[i].Y < 0) {                              \
+            continue;                                                          \
+        }                                                                      \
+        if (TextMenu.Page->LowerPages[i].Y +                                   \
+                TextMenu.Page->LowerPages[i].Height >=                         \
+            OLED.Height) {                                                     \
+            break;                                                             \
+        }                                                                      \
+                                                                               \
+        __VA_ARGS__                                                            \
+    }
+
+void ShowMonitorPageCallback(void *pvParameters) {
+    ShowTitleAndTexts(
+        if (i == 0) {
+            OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                        TextMenu.Page->LowerPages[i].Y, "%s",
+                        TextMenu.Page->LowerPages[i].Title);
+        } else {
+            OLED_ShowMQxText(&OLED, &MonitorPage.LowerPages[i],
+                             &MQSensor[i - 1]);
+        });
+}
+
+void ShowMQxPageCallback(void *pvParameters) {
+    OLED_Printf(&OLED, TextMenu.Page->LowerPages[0].X,
+                TextMenu.Page->LowerPages[0].Y + 1, "%s",
+                TextMenu.Page->LowerPages[0].Title);
+
+    OLED_Printf(&OLED, 16, 1, "%s %s", TextMenu.Page->Title,
+                MQSensor[TextMenu.Page->UpperPage->Cursor - 1].State ? "Danger"
+                                                                     : "Safe");
+
+    OLED_Printf(
+        &OLED, 0, OLED.Height - OLED.FontHeight - 1, "%.3f V",
+        ADCToVoltage(
+            MQSensor[TextMenu.Page->UpperPage->Cursor - 1]
+                .Data[MQSensor[TextMenu.Page->UpperPage->Cursor - 1].Index]));
+
+    OLED_ShowChart(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,
+                   TextMenu.Page->TitleWidth, TextMenu.Page->TitleHeight,
+                   MQSensor[TextMenu.Page->UpperPage->Cursor - 1].Data,
+                   MQSensor[TextMenu.Page->UpperPage->Cursor - 1].Length,
+                   MQSensor[TextMenu.Page->UpperPage->Cursor - 1].Index);
+    OLED_DrawHLine(
+        &OLED, TextMenu.Page->TitleX,
+        OLED_ADCToY(MQSensor[TextMenu.Page->UpperPage->Cursor - 1].Threshold,
+                    TextMenu.Page->TitleY, TextMenu.Page->TitleHeight),
+        TextMenu.Page->TitleWidth, 2);
+}
+
+void ShowSettingPageCallback(void *pvParameters) {
+    ShowTitleAndTexts(OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                                  TextMenu.Page->LowerPages[i].Y, "%s",
+                                  TextMenu.Page->LowerPages[i].Title);
+
+                      if (TextMenu.Page->LowerPages[i].ClickCallback ==
+                          SettingReverseCallback) {
+                          OLED_ShowImage(
+                              &OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
+                              TextMenu.Page->LowerPages[i].Y, 8, 8,
+                              SettingImage[SettingPage.LowerPages[i].Setting]);
+                      });
+}
+
+void ShowImageMenuCallback(void *pvParameters) {
+    for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
+        if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
+            continue;
+        }
+        if (ImageMenu.Page[i].ImageX >= OLED.Width) {
+            break;
+        }
+
+        OLED_ShowImage(&OLED, ImageMenu.Page[i].ImageX,
+                       ImageMenu.Page[i].ImageY, ImageMenu.ImageWidth,
+                       ImageMenu.ImageHeight, ImageMenu.Page[i].Image);
+
+        OLED_Printf(&OLED, ImageMenu.Page[i].TitleX, ImageMenu.Page[i].TitleY,
+                    "%s", ImageMenu.Page[i].Title);
     }
 }
 

@@ -3,6 +3,9 @@
 #include "Menu.h"
 #include "OLED.h"
 
+void EmptyCallbackPtr(void *pvParameters) {}
+void EmptyCallbackInt(int16_t pvParameter) {}
+
 void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
     if (IsChinese(self->Title)) {
         OLEDFont Font = OLED->Font;
@@ -57,6 +60,16 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
 
         } else {
             self->LowerPages[i].UpperPage = self;
+        }
+
+        if (!self->LowerPages[i].ShowCallback) {
+            self->LowerPages[i].ShowCallback = EmptyCallbackPtr;
+        }
+        if (!self->LowerPages[i].ClickCallback) {
+            self->LowerPages[i].ClickCallback = EmptyCallbackPtr;
+        }
+        if (!self->LowerPages[i].RotationCallback) {
+            self->LowerPages[i].RotationCallback = EmptyCallbackInt;
         }
 
         TextPage_Init(&self->LowerPages[i], OLED);
@@ -216,6 +229,16 @@ void ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED) {
         }
 
         ImagePage_Init(&self->Page[i], OLED);
+    }
+
+    if (!self->ShowCallback) {
+        self->ShowCallback = EmptyCallbackPtr;
+    }
+    if (!self->ClickCallback) {
+        self->ShowCallback = EmptyCallbackPtr;
+    }
+    if (!self->RotationCallback) {
+        self->RotationCallback = EmptyCallbackInt;
     }
 }
 
