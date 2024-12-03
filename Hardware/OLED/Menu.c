@@ -135,19 +135,18 @@ void TextMenu_Update(TextMenu_t *self, OLED_t *OLED) {
 
     for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
         if (i == 0) {
-            PositionUpdate(self->Page->LowerPages[0].Y,
-                           Y + self->Page->TitleHeight / 4 -
-                               self->Page->LowerPages[0].Height / 2 + 1);
+            Y = Y + self->Page->TitleHeight / 4 -
+                self->Page->LowerPages[0].Height / 2 + 1;
 
         } else if (i == 1) {
-            PositionUpdate(self->Page->LowerPages[1].Y,
-                           self->Page->TitleY + self->Page->TitleHeight + 1);
+            Y = self->Page->TitleY + self->Page->TitleHeight + 1;
 
         } else {
-            PositionUpdate(self->Page->LowerPages[i].Y,
-                           self->Page->LowerPages[i - 1].Y +
-                               self->Page->LowerPages[i - 1].Height + 2);
+            Y = self->Page->LowerPages[i - 1].Y +
+                self->Page->LowerPages[i - 1].Height + 2;
         }
+
+        PositionUpdate(self->Page->LowerPages[i].Y, Y);
     }
 }
 

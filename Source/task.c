@@ -65,7 +65,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
@@ -143,20 +143,30 @@ void ShowSettingPageCallback(void *pvParameters) {
             SettingReverseCallback) {
             OLED_ShowImage(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                            TextMenu.Page->LowerPages[i].Y, 8, 8,
-                           SettingImage[SettingPage.LowerPages[i].Setting]);
+                           SettingImage[TextMenu.Page->LowerPages[i].Setting]);
         }
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
             SettingCursorToIncDecCallback) {
             OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                         TextMenu.Page->LowerPages[i].Y, "%d",
-                        SettingPage.LowerPages[i].Setting);
+                        TextMenu.Page->LowerPages[i].Setting);
 
             if (TextMenu.Page->LowerPages[i].RotationCallback ==
                 SettingIncDecCallback) {
+                uint8_t number;
+                if (TextMenu.Page->LowerPages[i].Setting == 0) {
+                    number = 1;
+                } else {
+                    number = (uint8_t)log10(
+                                 abs(TextMenu.Page->LowerPages[i].Setting)) +
+                             1;
+                }
+                number += TextMenu.Page->LowerPages[i].Setting < 0 ? 1 : 0;
+
                 OLED_DrawHLine(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                                TextMenu.Page->LowerPages[i].Y + OLED.FontHeight,
-                               OLED.FontWidth * 3, 1);
+                               OLED.FontWidth * number, 1);
             }
         });
 }

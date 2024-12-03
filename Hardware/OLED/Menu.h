@@ -34,7 +34,7 @@ typedef struct TextPage {
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
 
-    uint8_t Setting;
+    int16_t Setting;
 
     void (*ShowCallback)(void *);
     void (*ClickCallback)(void *);

@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "FreeRTOS.h"
 #include "timers.h"
 
