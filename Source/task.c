@@ -1,8 +1,5 @@
 #include "main.h"
 
-static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
-                             MQSensor_t *MQSensor);
-
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
@@ -47,7 +44,7 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
 
 void vMenuKeyTaskCode(void *pvParameters) {
     for (;;) {
-        int16_t Encode = Encoder_Get(&Encoder);
+        int16_t Encode = Encoder_GetCount(&Encoder);
 
         if (Encode <= -3 || Encode >= 3) {
             if (Menu == &ImageMenu) {
@@ -69,14 +66,6 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         vTaskDelay(pdMS_TO_TICKS(200));
     }
-}
-
-static void OLED_ShowMQxText(OLED_t *OLED, TextPage_t *MQxPage,
-                             MQSensor_t *MQSensor) {
-    OLED_Printf(OLED, MQxPage->X, MQxPage->Y, "%-6s", MQxPage->Title);
-    OLED_Printf(OLED, OLED->Width - 1 - OLED->FontWidth * 12, MQxPage->Y,
-                "%.3f %6s", ADCToVoltage(MQSensor->Data[MQSensor->Index]),
-                MQSensor->State ? "Danger" : "Safe");
 }
 
 #define ShowTitleAndTexts(...)                                                 \
@@ -105,8 +94,14 @@ void ShowMonitorPageCallback(void *pvParameters) {
                         TextMenu.Page->LowerPages[i].Y, "%s",
                         TextMenu.Page->LowerPages[i].Title);
         } else {
-            OLED_ShowMQxText(&OLED, &MonitorPage.LowerPages[i],
-                             &MQSensor[i - 1]);
+            OLED_Printf(&OLED, MonitorPage.LowerPages[i].X,
+                        MonitorPage.LowerPages[i].Y, "%-6s",
+                        MonitorPage.LowerPages[i].Title);
+            OLED_Printf(
+                &OLED, OLED.Width - 1 - OLED.FontWidth * 12,
+                MonitorPage.LowerPages[i].Y, "%.3f %6s",
+                ADCToVoltage(MQSensor[i - 1].Data[MQSensor[i - 1].Index]),
+                MQSensor[i - 1].State ? "Danger" : "Safe");
         });
 }
 
