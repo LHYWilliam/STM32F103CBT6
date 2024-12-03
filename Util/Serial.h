@@ -29,28 +29,12 @@ typedef struct {
 
     uint8_t DMA;
 
-    uint8_t Count;
-    FlagStatus RecieveFlag;
-
-    PackType type;
-
-    uint8_t ByteData;
-    uint8_t HexData[32];
-    char StringData[32];
-
     uint8_t PrintfBuffer[128];
 } Serial_t;
 
 void Serial_Init(Serial_t *self);
-
-void Serial_SendByte(Serial_t *self, uint8_t byte);
+void Serial_SendByte(Serial_t *self, uint8_t Byte);
 void Serial_SendBytes(Serial_t *self, uint8_t *Bytes, uint16_t Length);
 void Serial_Printf(Serial_t *self, const char *format, ...);
-
-void Serial_SendStringPack(Serial_t *self, const char *string);
-
-void Serial_Parse(Serial_t *self);
-
-void Serial_Clear(Serial_t *self);
 
 #endif

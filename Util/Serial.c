@@ -3,7 +3,7 @@
 #include "GPIO.h"
 #include "Interrupt.h"
 #include "Serial.h"
-#include "Usart.h"
+#include "USART.h"
 
 void Serial_Init(Serial_t *self) {
     GPIO_t GPIO;
@@ -29,7 +29,7 @@ void Serial_Init(Serial_t *self) {
     if (self->Interrupt) {
         USARTInterrupt_t Interrupt = {
             .USARTx = self->USARTx,
-            .USART_IT = USART_IT_RXNE,
+            .USART_IT = self->Interrupt,
             .NVIC_IRQChannel = USARTx_IRQn(self->USARTx),
             .NVIC_PriorityGroup = NVIC_PriorityGroup_4,
             .NVIC_IRQChannelPreemptionPriority = self->Priority,
@@ -38,7 +38,7 @@ void Serial_Init(Serial_t *self) {
     }
 
     if (self->DMA) {
-        USART_DMACmd(self->USARTx, USART_DMAReq_Rx, ENABLE);
+        USART_DMACmd(self->USARTx, self->DMA, ENABLE);
     }
 }
 
@@ -63,58 +63,4 @@ void Serial_Printf(Serial_t *self, const char *format, ...) {
     for (uint8_t i = 0; self->PrintfBuffer[i]; i++) {
         Serial_SendByte(self, self->PrintfBuffer[i]);
     }
-}
-
-void Serial_SendStringPack(Serial_t *self, const char *String) {
-    Serial_Printf(self, ">%s\r\n", String);
-}
-
-void Serial_Parse(Serial_t *self) {
-    self->ByteData = USART_ReceiveData(self->USARTx);
-
-    switch (self->type) {
-    case None:
-
-        if (self->ByteData == 0xFF) {
-            self->type = HexPack;
-        } else if (self->ByteData == '>') {
-            self->type = StringPack;
-        } else {
-            self->type = Byte;
-            self->RecieveFlag = SET;
-        }
-        break;
-
-    case HexPack:
-        if (self->ByteData == 0xFE) {
-            self->RecieveFlag = SET;
-        } else {
-            self->HexData[self->Count++] = self->ByteData;
-        }
-        break;
-
-    case StringPack:
-        // if (serial->count >= 1 &&
-        //     serial->StringData[serial->count - 1] == '\r' &&
-        //     serial->ByteData == '\n') {
-        //     serial->StringData[serial->count - 1] = '\0';
-        if (self->Count >= 1 && self->ByteData == '\r') {
-            self->StringData[self->Count] = '\0';
-            self->RecieveFlag = SET;
-        } else if (self->ByteData == 0x08) {
-            self->Count--;
-        } else {
-            self->StringData[self->Count++] = self->ByteData;
-        }
-        break;
-
-    default:
-        break;
-    }
-}
-
-void Serial_Clear(Serial_t *self) {
-    self->Count = 0;
-    self->type = None;
-    self->RecieveFlag = RESET;
 }
