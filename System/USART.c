@@ -1,19 +1,14 @@
+#include <stdlib.h>
+
 #include "USART.h"
 
 void USART_Init_(USART_t *self) {
-    if (self->RCC_APBPeriph == RCC_APB2Periph_USART1) {
-        RCC_APB2PeriphClockCmd(self->RCC_APBPeriph, ENABLE);
-    } else {
-        RCC_APB1PeriphClockCmd(self->RCC_APBPeriph, ENABLE);
-    }
+    RCC_APBxPeriphClockCmd(self->USARTx)(RCC_APBPeriphx_USARTx(self->USARTx),
+                                         ENABLE);
 
     USART_InitTypeDef USART_InitStruct = {
-        9600,
-        USART_WordLength_8b,
-        USART_StopBits_1,
-        USART_Parity_No,
-        self->USART_Mode,
-        USART_HardwareFlowControl_None,
+        .USART_Mode = self->Mode,
+        .USART_BaudRate = self->BaudRate,
     };
     USART_Init(self->USARTx, &USART_InitStruct);
 

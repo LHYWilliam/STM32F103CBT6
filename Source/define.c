@@ -5,16 +5,18 @@ LED_t LED = {
     .Mode = LEDMode_High,
 };
 
-Key_t Key = {
-    .GPIOxPiny = A0,
-    .Mode = KeyMode_High,
-};
-
 W25Q64_t W25Q64 = {
     .MOSI = A7,
     .MISO = A6,
     .SCK = A5,
     .CS = A4,
+};
+
+Serial_t Serial = {
+    .TX = A2,
+    .RX = A3,
+    .USARTx = USART2,
+    .BaudRate = 115200,
 };
 
 Key_t KeyConfirm = {
@@ -60,8 +62,8 @@ Sampler_t Sampler = {
     .Length = Samper_DataLength,
 
     .ADCx = ADC1,
-    .ADC_Channel = "1 | 2 | 3 | 8",
-    .GPIOxPiny = "A1 | A2 | A3 | B0",
+    .ADC_Channel = "0 | 1 | 8 | 9",
+    .GPIOxPiny = "A0 | A1 | B0 | B1",
 
     .DMAx = DMA1,
     .DMA_Channel = 1,

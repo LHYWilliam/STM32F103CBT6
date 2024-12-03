@@ -4,6 +4,9 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#define RCC_APBxPeriphClockCmd(x)                                              \
+    ((x) == USART1 ? RCC_APB2PeriphClockCmd : RCC_APB1PeriphClockCmd)
+
 #define RCC_APBPeriphx_USARTx(x)                                               \
     ((x) == USART1   ? RCC_APB2Periph_USART1                                   \
      : (x) == USART2 ? RCC_APB1Periph_USART2                                   \
@@ -11,10 +14,9 @@
                      : NULL)
 
 typedef struct {
-    uint32_t RCC_APBPeriph;
     USART_TypeDef *USARTx;
-    uint16_t USART_Mode;
-
+    uint32_t Mode;
+    uint32_t BaudRate;
 } USART_t;
 
 void USART_Init_(USART_t *self);

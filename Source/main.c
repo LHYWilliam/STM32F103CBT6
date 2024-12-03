@@ -5,7 +5,7 @@ int main() {
     SysTick_Config(SystemCoreClock / 1000);
 
     LED_Init(&LED);
-    Key_Init(&Key);
+    Serial_Init(&Serial);
     W25Q64_Init(&W25Q64);
 
     Key_Init(&KeyConfirm);

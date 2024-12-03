@@ -7,6 +7,7 @@
 
 void Serial_Init(Serial_t *self) {
     GPIO_t GPIO;
+
     if (self->TX[0]) {
         GPIO.Mode = GPIO_Mode_AF_PP;
         GPIO_InitPin(&GPIO, self->TX);
@@ -17,65 +18,55 @@ void Serial_Init(Serial_t *self) {
         GPIO_InitPin(&GPIO, self->RX);
     }
 
-    USART_t usart = {
-        .RCC_APBPeriph = RCC_APBPeriphx_USARTx(self->USARTx),
+    USART_t USART = {
         .USARTx = self->USARTx,
-        .USART_Mode = (self->TX[0] ? USART_Mode_Tx : 0) |
-                      (self->RX[0] ? USART_Mode_Rx : 0),
+        .BaudRate = self->BaudRate,
+        .Mode = (self->TX[0] ? USART_Mode_Tx : 0) |
+                (self->RX[0] ? USART_Mode_Rx : 0),
     };
-    USART_Init_(&usart);
+    USART_Init_(&USART);
 
     if (self->Interrupt) {
-        USARTInterrupt_t interrupt = {
+        USARTInterrupt_t Interrupt = {
             .USARTx = self->USARTx,
             .USART_IT = USART_IT_RXNE,
             .NVIC_IRQChannel = USARTx_IRQn(self->USARTx),
             .NVIC_PriorityGroup = NVIC_PriorityGroup_4,
-            .NVIC_IRQChannelPreemptionPriority = 2,
+            .NVIC_IRQChannelPreemptionPriority = self->Priority,
         };
-        USART_Interrupt_Init(&interrupt);
+        USART_Interrupt_Init(&Interrupt);
     }
 
     if (self->DMA) {
         USART_DMACmd(self->USARTx, USART_DMAReq_Rx, ENABLE);
     }
-
-    self->count = 0;
-    self->RecieveFlag = RESET;
-    self->type = None;
 }
 
-void Serial_SendByte(Serial_t *self, uint8_t byte) {
+void Serial_SendByte(Serial_t *self, uint8_t Byte) {
     while (USART_GetFlagStatus(self->USARTx, USART_FLAG_TXE) == RESET)
         ;
-    USART_SendData(self->USARTx, byte);
+    USART_SendData(self->USARTx, Byte);
 }
 
-void Serial_SendHex(Serial_t *self, uint8_t byte) {
-    Serial_SendByte(self, byte);
+void Serial_SendBytes(Serial_t *self, uint8_t *Bytes, uint16_t Length) {
+    for (uint8_t i = 0; i < Length; i++) {
+        Serial_SendByte(self, Bytes[i]);
+    }
 }
 
-void Serial_SendString(Serial_t *self, const char *format, ...) {
-    char string[100];
+void Serial_Printf(Serial_t *self, const char *format, ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf(string, format, arg);
+    vsprintf((char *)self->PrintfBuffer, format, arg);
     va_end(arg);
-    for (uint8_t i = 0; string[i] != '\0'; i++) {
-        Serial_SendByte(self, string[i]);
+
+    for (uint8_t i = 0; self->PrintfBuffer[i]; i++) {
+        Serial_SendByte(self, self->PrintfBuffer[i]);
     }
 }
 
-void Serial_SendHexPack(Serial_t *self, uint8_t *array, uint16_t length) {
-    Serial_SendByte(self, 0xFF);
-    for (uint8_t i = 0; i < length; i++) {
-        Serial_SendByte(self, array[i]);
-    }
-    Serial_SendByte(self, 0xFE);
-}
-
-void Serial_SendStringPack(Serial_t *self, const char *string) {
-    Serial_SendString(self, ">%s\r\n", string);
+void Serial_SendStringPack(Serial_t *self, const char *String) {
+    Serial_Printf(self, ">%s\r\n", String);
 }
 
 void Serial_Parse(Serial_t *self) {
@@ -98,7 +89,7 @@ void Serial_Parse(Serial_t *self) {
         if (self->ByteData == 0xFE) {
             self->RecieveFlag = SET;
         } else {
-            self->HexData[self->count++] = self->ByteData;
+            self->HexData[self->Count++] = self->ByteData;
         }
         break;
 
@@ -107,13 +98,13 @@ void Serial_Parse(Serial_t *self) {
         //     serial->StringData[serial->count - 1] == '\r' &&
         //     serial->ByteData == '\n') {
         //     serial->StringData[serial->count - 1] = '\0';
-        if (self->count >= 1 && self->ByteData == '\r') {
-            self->StringData[self->count] = '\0';
+        if (self->Count >= 1 && self->ByteData == '\r') {
+            self->StringData[self->Count] = '\0';
             self->RecieveFlag = SET;
         } else if (self->ByteData == 0x08) {
-            self->count--;
+            self->Count--;
         } else {
-            self->StringData[self->count++] = self->ByteData;
+            self->StringData[self->Count++] = self->ByteData;
         }
         break;
 
@@ -123,7 +114,7 @@ void Serial_Parse(Serial_t *self) {
 }
 
 void Serial_Clear(Serial_t *self) {
-    self->count = 0;
+    self->Count = 0;
     self->type = None;
     self->RecieveFlag = RESET;
 }
