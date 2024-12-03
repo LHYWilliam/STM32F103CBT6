@@ -82,17 +82,23 @@ OLED_t OLED = {
 };
 
 #define BackHomePage                                                           \
-    (TextPage_t) { .Title = "<", .ClickCallback = BackHomePageCallbck, }
+    (TextPage_t) {                                                             \
+        .Title = "<", .ClickCallback = BackHomePageCallbck,                    \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
 
 #define BackTextPage                                                           \
-    (TextPage_t) { .Title = "<", .ClickCallback = BackTextPageCallback, }
+    (TextPage_t) {                                                             \
+        .Title = "<", .ClickCallback = BackTextPageCallback,                   \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
 
 #define ChartPage(title)                                                       \
     (TextPage_t) {                                                             \
         .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
         .TitleHeight = 64 / 2, .ShowCallback = ShowMQxPageCallback,            \
         .ClickCallback = EnterTextPageCallback,                                \
-        .RotationCallback = ThresholdCallback, .NumOfLowerPages = 1,           \
+        .RotationCallback = TextMenuCursorCallback, .NumOfLowerPages = 1,      \
         .LowerPages = (TextPage_t[]) {                                         \
             BackTextPage,                                                      \
         }                                                                      \
@@ -106,7 +112,6 @@ TextPage_t MQxChartPage[5] = {
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
     .ShowCallback = ShowMonitorPageCallback,
-    .RotationCallback = TextMenuCursorCallback,
     .NumOfLowerPages = 5,
     .LowerPages = MQxChartPage,
 };
@@ -114,30 +119,39 @@ TextPage_t MonitorPage = {
 TextPage_t SettingPage = {
     .Title = "Setting",
     .ShowCallback = ShowSettingPageCallback,
-    .RotationCallback = TextMenuCursorCallback,
-    .NumOfLowerPages = 6,
+    .NumOfLowerPages = 7,
     .LowerPages =
         (TextPage_t[]){
             BackHomePage,
             (TextPage_t){
                 .Title = "LED",
                 .ClickCallback = SettingReverseCallback,
+                .RotationCallback = TextMenuCursorCallback,
             },
             (TextPage_t){
                 .Title = "Reverse",
                 .ClickCallback = SettingReverseCallback,
+                .RotationCallback = TextMenuCursorCallback,
+            },
+            (TextPage_t){
+                .Title = "Test",
+                .ClickCallback = SettingCursorToIncDecCallback,
+                .RotationCallback = TextMenuCursorCallback,
             },
             (TextPage_t){
                 .Title = "Save",
                 .ClickCallback = SettingSaveCallback,
+                .RotationCallback = TextMenuCursorCallback,
             },
             (TextPage_t){
                 .Title = "Load",
                 .ClickCallback = SettingLoadCallback,
+                .RotationCallback = TextMenuCursorCallback,
             },
             (TextPage_t){
                 .Title = "Restart",
                 .ClickCallback = RestartSettingCallback,
+                .RotationCallback = TextMenuCursorCallback,
             },
         },
 };
@@ -176,7 +190,7 @@ SelectioneBar_t Bar;
 
 void *Menu = &ImageMenu;
 
-TextPage_t *StatusLEDSetting;
+TextPage_t *LEDSetting;
 TextPage_t *ReverseSetting;
 
 TaskHandle_t xMenuKeyTaskHandle;

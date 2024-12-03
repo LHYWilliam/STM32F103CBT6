@@ -42,7 +42,7 @@ extern TextMenu_t TextMenu;
 extern ImageMenu_t ImageMenu;
 extern SelectioneBar_t Bar;
 
-extern TextPage_t *StatusLEDSetting;
+extern TextPage_t *LEDSetting;
 extern TextPage_t *ReverseSetting;
 
 extern TaskHandle_t xMenuKeyTaskHandle;
@@ -69,5 +69,7 @@ extern void ImagePageEnterTextPageCallback(void *pvParameters);
 
 extern void RestartSettingCallback(void *pvParameters);
 extern void SettingReverseCallback(void *pvParameters);
+extern void SettingIncDecCallback(int16_t Encoder);
+extern void SettingCursorToIncDecCallback(void *pvParameters);
 extern void SettingSaveCallback(void *pvParameters);
 extern void SettingLoadCallback(void *pvParameters);

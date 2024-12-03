@@ -20,7 +20,7 @@ int main() {
     OLED_Init(&OLED);
     OLED_SetFont(&OLED, OLEDFont_6X8);
 
-    StatusLEDSetting = &SettingPage.LowerPages[1];
+    LEDSetting = &SettingPage.LowerPages[1];
     ReverseSetting = &SettingPage.LowerPages[2];
     SettingLoadCallback(NULL);
 

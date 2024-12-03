@@ -35,7 +35,7 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
         MQSensor_UpdateState(&MQSensor[i]);
     }
 
-    if (StatusLEDSetting->Setting) {
+    if (LEDSetting->Setting) {
         LED_On(&LED);
     } else {
         LED_Off(&LED);
@@ -51,7 +51,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
                 ImageMenu.RotationCallback(Encode);
 
             } else if (Menu == &TextMenu) {
-                TextMenu.Page->RotationCallback(Encode);
+                TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback(
+                    Encode);
             }
         }
 
@@ -133,17 +134,31 @@ void ShowMQxPageCallback(void *pvParameters) {
 }
 
 void ShowSettingPageCallback(void *pvParameters) {
-    ShowTitleAndTexts(OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-                                  TextMenu.Page->LowerPages[i].Y, "%s",
-                                  TextMenu.Page->LowerPages[i].Title);
+    ShowTitleAndTexts(
+        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                    TextMenu.Page->LowerPages[i].Y, "%s",
+                    TextMenu.Page->LowerPages[i].Title);
 
-                      if (TextMenu.Page->LowerPages[i].ClickCallback ==
-                          SettingReverseCallback) {
-                          OLED_ShowImage(
-                              &OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
-                              TextMenu.Page->LowerPages[i].Y, 8, 8,
-                              SettingImage[SettingPage.LowerPages[i].Setting]);
-                      });
+        if (TextMenu.Page->LowerPages[i].ClickCallback ==
+            SettingReverseCallback) {
+            OLED_ShowImage(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
+                           TextMenu.Page->LowerPages[i].Y, 8, 8,
+                           SettingImage[SettingPage.LowerPages[i].Setting]);
+        }
+
+        if (TextMenu.Page->LowerPages[i].ClickCallback ==
+            SettingCursorToIncDecCallback) {
+            OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
+                        TextMenu.Page->LowerPages[i].Y, "%d",
+                        SettingPage.LowerPages[i].Setting);
+
+            if (TextMenu.Page->LowerPages[i].RotationCallback ==
+                SettingIncDecCallback) {
+                OLED_DrawHLine(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
+                               TextMenu.Page->LowerPages[i].Y + OLED.FontHeight,
+                               OLED.FontWidth * 3, 1);
+            }
+        });
 }
 
 void ShowImageMenuCallback(void *pvParameters) {
@@ -233,6 +248,28 @@ void RestartSettingCallback(void *pvParameters) { __NVIC_SystemReset(); }
 
 void SettingReverseCallback(void *pvParameters) {
     TextPage_ReverseSetting(TextMenu.Page);
+}
+
+void SettingIncDecCallback(int16_t Encoder) {
+    if (Encoder >= 3) {
+        TextMenu.Page->LowerPages[TextMenu.Cursor].Setting++;
+
+    } else if (Encoder <= -3) {
+        TextMenu.Page->LowerPages[TextMenu.Cursor].Setting--;
+    }
+}
+
+void SettingCursorToIncDecCallback(void *pvParameters) {
+    if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
+        TextMenuCursorCallback) {
+        TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
+            SettingIncDecCallback;
+
+    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
+               SettingIncDecCallback) {
+        TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
+            TextMenuCursorCallback;
+    }
 }
 
 void SettingSaveCallback(void *pvParameters) {
