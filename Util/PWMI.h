@@ -1,6 +1,9 @@
 #ifndef PWMI_H
 #define PWMI_H
 
+#include "RTE_Components.h"
+#include CMSIS_device_header
+
 #include "Capture.h"
 #include "GPIO.h"
 #include "TIM.h"

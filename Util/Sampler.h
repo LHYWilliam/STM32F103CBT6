@@ -26,7 +26,6 @@ typedef struct {
 } Sampler_t;
 
 void Sampler_Init(Sampler_t *self);
-
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel);
 
 #endif

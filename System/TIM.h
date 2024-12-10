@@ -40,7 +40,6 @@ typedef struct {
 } TIM_t;
 
 void TIM_Init(TIM_t *self, ClockSourceConfig_t *config);
-
 void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
 void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
 

@@ -18,7 +18,6 @@ typedef struct {
 } Key_t;
 
 void Key_Init(Key_t *self);
-
 uint8_t Key_Read(Key_t *self);
 
 #endif

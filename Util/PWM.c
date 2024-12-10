@@ -21,7 +21,7 @@ void PWM_Init(PWM_t *self) {
     do {
         Compare_t compare = {
             .TIMx = self->TIMx,
-            .TIM_Pulse = 0,
+            .Pulse = 0,
             .TIM_OCInit = TIM_OCxInit(temp[0] - '0'),
             .TIM_SetCompare = TIM_SetComparex(temp[0] - '0'),
         };

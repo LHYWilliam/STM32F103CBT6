@@ -1,5 +1,43 @@
 #include "main.h"
 
+#define Threshold                                                              \
+    Threshold = VoltageToADC(2.048), .Relaxation = VoltageToADC(0.128)
+
+#define BackHomePage                                                           \
+    (TextPage_t) {                                                             \
+        .Title = "<", .ClickCallback = BackHomePageCallbck,                    \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
+
+#define BackTextPage                                                           \
+    (TextPage_t) {                                                             \
+        .Title = "<", .ClickCallback = BackTextPageCallback,                   \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
+
+#define ChartPage(title)                                                       \
+    (TextPage_t) {                                                             \
+        .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
+        .TitleHeight = 64 / 2, .ShowCallback = ShowMQxPageCallback,            \
+        .ClickCallback = EnterTextPageCallback,                                \
+        .RotationCallback = TextMenuCursorCallback, .NumOfLowerPages = 1,      \
+        .LowerPages = (TextPage_t[]) {                                         \
+            BackTextPage,                                                      \
+        }                                                                      \
+    }
+
+#define SettingReversePage(title)                                              \
+    (TextPage_t) {                                                             \
+        .Title = title, .ClickCallback = SettingReverseCallback,               \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
+
+#define SettingIncDecPage(title)                                               \
+    (TextPage_t) {                                                             \
+        .Title = title, .ClickCallback = SettingCursorToIncDecCallback,        \
+        .RotationCallback = TextMenuCursorCallback,                            \
+    }
+
 LED_t LED = {
     .GPIOxPiny = B2,
     .Mode = LEDMode_High,
@@ -29,9 +67,6 @@ Encoder_t Encoder = {
     .TIMx = TIM1,
 };
 
-#define Threshold                                                              \
-    Threshold = VoltageToADC(2.048), .Relaxation = VoltageToADC(0.128)
-
 MQSensor_t MQSensor[4] = {
     (MQSensor_t){
         .LED = B11,
@@ -39,17 +74,17 @@ MQSensor_t MQSensor[4] = {
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B10,
+        .LED = B11,
         .Mode = LEDMode_Low,
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B1,
+        .LED = B11,
         .Mode = LEDMode_Low,
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B1,
+        .LED = B11,
         .Mode = LEDMode_Low,
         .Threshold,
     },
@@ -81,39 +116,18 @@ OLED_t OLED = {
     .Height = 64,
 };
 
-#define BackHomePage                                                           \
-    (TextPage_t) {                                                             \
-        .Title = "<", .ClickCallback = BackHomePageCallbck,                    \
-        .RotationCallback = TextMenuCursorCallback,                            \
-    }
-
-#define BackTextPage                                                           \
-    (TextPage_t) {                                                             \
-        .Title = "<", .ClickCallback = BackTextPageCallback,                   \
-        .RotationCallback = TextMenuCursorCallback,                            \
-    }
-
-#define ChartPage(title)                                                       \
-    (TextPage_t) {                                                             \
-        .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
-        .TitleHeight = 64 / 2, .ShowCallback = ShowMQxPageCallback,            \
-        .ClickCallback = EnterTextPageCallback,                                \
-        .RotationCallback = TextMenuCursorCallback, .NumOfLowerPages = 1,      \
-        .LowerPages = (TextPage_t[]) {                                         \
-            BackTextPage,                                                      \
-        }                                                                      \
-    }
-
-TextPage_t MQxChartPage[5] = {
-    BackHomePage,     ChartPage("MQ2"),   ChartPage("MQ3"),
-    ChartPage("MQ7"), ChartPage("MQ135"),
-};
-
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
     .ShowCallback = ShowMonitorPageCallback,
     .NumOfLowerPages = 5,
-    .LowerPages = MQxChartPage,
+    .LowerPages =
+        (TextPage_t[]){
+            BackHomePage,
+            ChartPage("MQ2"),
+            ChartPage("MQ3"),
+            ChartPage("MQ7"),
+            ChartPage("MQ135"),
+        },
 };
 
 TextPage_t SettingPage = {
@@ -123,21 +137,9 @@ TextPage_t SettingPage = {
     .LowerPages =
         (TextPage_t[]){
             BackHomePage,
-            (TextPage_t){
-                .Title = "LED",
-                .ClickCallback = SettingReverseCallback,
-                .RotationCallback = TextMenuCursorCallback,
-            },
-            (TextPage_t){
-                .Title = "Reverse",
-                .ClickCallback = SettingReverseCallback,
-                .RotationCallback = TextMenuCursorCallback,
-            },
-            (TextPage_t){
-                .Title = "Test",
-                .ClickCallback = SettingCursorToIncDecCallback,
-                .RotationCallback = TextMenuCursorCallback,
-            },
+            SettingReversePage("LED"),
+            SettingReversePage("Reverse"),
+            SettingIncDecPage("Test"),
             (TextPage_t){
                 .Title = "Save",
                 .ClickCallback = SettingSaveCallback,

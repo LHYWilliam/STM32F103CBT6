@@ -24,7 +24,6 @@ typedef struct {
 } Motor_t;
 
 void Motor_Init(Motor_t *self);
-
 void Motor_Set(Motor_t *self, int16_t speed);
 
 #endif

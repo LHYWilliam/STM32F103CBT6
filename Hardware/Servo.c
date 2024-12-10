@@ -13,7 +13,7 @@ void Servo_Init(Servo_t *self) {
         .Period = 20000 - 1,
         .TIM_Init = self->TIM_Init,
     };
-    strcpy(PWM.Channel, self->channel);
+    strcpy(PWM.Channel, self->Channel);
     PWM_Init(&PWM);
 
     self->TIM_SetCompare[0] = PWM.TIM_SetCompare[0];

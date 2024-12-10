@@ -1,7 +1,8 @@
 #ifndef OLED_FONT_H
 #define OLED_FONT_H
 
-#include <stdint.h>
+#include "RTE_Components.h"
+#include CMSIS_device_header
 
 #define OLED_ChineseBytesCount 3
 

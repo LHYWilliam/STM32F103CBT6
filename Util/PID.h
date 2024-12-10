@@ -1,7 +1,8 @@
 #ifndef PID_H
 #define PID_H
 
-#include <stdint.h>
+#include "RTE_Components.h"
+#include CMSIS_device_header
 
 #define LIMIT(data, low, high)                                                 \
     do {                                                                       \
@@ -23,7 +24,6 @@ typedef struct {
 } PID_t;
 
 void PID_Init(PID_t *self);
-
 int16_t PID_Caculate(PID_t *self, float error);
 
 #endif

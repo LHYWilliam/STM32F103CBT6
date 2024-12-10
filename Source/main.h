@@ -14,9 +14,6 @@
 #include "Serial.h"
 #include "W25Q64.h"
 
-#define MAX(a, b)             ((a) > (b) ? (a) : (b))
-#define MIN(a, b)             ((a) < (b) ? (a) : (b))
-
 #define ADCToVoltage(ADC)     ((ADC) / 4095.0 * 3.3)
 #define VoltageToADC(Voltage) (uint32_t)((Voltage) / 3.3 * 4095.0)
 
@@ -34,10 +31,7 @@ extern Sampler_t Sampler;
 extern OLED_t OLED;
 
 extern TextPage_t MonitorPage;
-extern TextPage_t MQxChartPage[5];
 extern TextPage_t SettingPage;
-
-extern ImagePage_t HomePage[2];
 
 extern void *Menu;
 extern TextMenu_t TextMenu;

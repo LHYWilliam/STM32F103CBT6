@@ -26,7 +26,6 @@ typedef struct {
 } W25Q64_t;
 
 void W25Q64_Init(W25Q64_t *self);
-
 void W25Q64_ReadID(W25Q64_t *self, uint8_t *MID, uint16_t *DID);
 void W25Q64_ReadData(W25Q64_t *self, uint32_t Address, uint8_t *DataArray,
                      uint32_t Count);
