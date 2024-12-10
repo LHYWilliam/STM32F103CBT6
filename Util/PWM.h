@@ -5,7 +5,8 @@
 #include CMSIS_device_header
 
 typedef struct {
-    char Channel[16];
+    uint8_t *Channel;
+    uint8_t NbrOfChannel;
 
     TIM_TypeDef *TIMx;
     uint16_t Prescaler;
@@ -16,7 +17,6 @@ typedef struct {
 } PWM_t;
 
 void PWM_Init(PWM_t *self);
-
 void PWM_SetPrescaler(PWM_t *self, uint16_t val);
 void PWM_SetPulse(PWM_t *self, uint8_t channel, uint16_t pulse);
 

@@ -4,10 +4,12 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 typedef struct {
-    char PWM[4];
-    char IN1[4];
-    char IN2[4];
+    GPIOxPiny_t PWM;
+    GPIOxPiny_t IN1;
+    GPIOxPiny_t IN2;
 
     TIM_TypeDef *TIMx;
     uint8_t Channel;

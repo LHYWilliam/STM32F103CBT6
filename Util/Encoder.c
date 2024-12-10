@@ -8,27 +8,23 @@ void Encoder_Init(Encoder_t *self) {
     GPIO_InitPin(&GPIO, self->GPIOxPiny[0]);
     GPIO_InitPin(&GPIO, self->GPIOxPiny[1]);
 
-    TIM_t tim = {
+    TIM_t TIM = {
         .TIMx = self->TIMx,
         .Prescaler = 1 - 1,
         .Period = 65536 - 1,
     };
-    TIM_Init(&tim, NULL);
+    TIM_Init(&TIM, NULL);
 
-    Capture_t capture = {
+    Capture_t Capture = {
         .TIMx = self->TIMx,
         .TIM_ICPolarity = TIM_ICPolarity_Rising,
-        .TIM_ICSelection = TIM_ICSelection_DirectTI,
-        .TIM_ICFilter = 0xF,
     };
 
-    capture.TIM_Channel = TIM_Channel_1;
-    capture.TIM_GetCapture = TIM_GetCapture1;
-    Capture_Init(&capture);
+    Capture.TIM_Channel = TIM_Channel_1;
+    Capture_Init(&Capture);
 
-    capture.TIM_Channel = TIM_Channel_2;
-    capture.TIM_GetCapture = TIM_GetCapture2;
-    Capture_Init(&capture);
+    Capture.TIM_Channel = TIM_Channel_2;
+    Capture_Init(&Capture);
 
     TIM_EncoderInterfaceConfig(self->TIMx, TIM_EncoderMode_TI12,
                                self->Invert ? TIM_ICPolarity_Falling

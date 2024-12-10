@@ -16,25 +16,22 @@ void PWM_Init(PWM_t *self) {
         TIM_Init(&tim, NULL);
     }
 
-    uint8_t count = 0;
-    char *temp = self->Channel;
-    do {
+    for (uint8_t channel = 1; channel <= self->NbrOfChannel; channel++) {
         Compare_t compare = {
             .TIMx = self->TIMx,
-            .Pulse = 0,
-            .TIM_OCInit = TIM_OCxInit(temp[0] - '0'),
-            .TIM_SetCompare = TIM_SetComparex(temp[0] - '0'),
+            .TIM_OCInit = TIM_OCxInit(self->Channel[channel - 1]),
+            .TIM_SetCompare = TIM_SetComparex(self->Channel[channel - 1]),
         };
         Compare_Init(&compare);
-        self->TIM_SetCompare[count] = compare.TIM_SetCompare;
-    } while ((temp = strchr(temp, '|'), temp) && (temp = temp + 2) &&
-             (count = count + 1));
+
+        self->TIM_SetCompare[channel - 1] = compare.TIM_SetCompare;
+    }
 }
 
-void PWM_SetPrescaler(PWM_t *self, uint16_t prescaler) {
-    TIM_PrescalerConfig(self->TIMx, prescaler, TIM_PSCReloadMode_Immediate);
+void PWM_SetPrescaler(PWM_t *self, uint16_t Prescaler) {
+    TIM_PrescalerConfig(self->TIMx, Prescaler, TIM_PSCReloadMode_Immediate);
 }
 
-void PWM_SetPulse(PWM_t *self, uint8_t channel, uint16_t pulse) {
-    self->TIM_SetCompare[channel - 1](self->TIMx, pulse);
+void PWM_SetPulse(PWM_t *self, uint8_t Channel, uint16_t Pulse) {
+    self->TIM_SetCompare[Channel - 1](self->TIMx, Pulse);
 }

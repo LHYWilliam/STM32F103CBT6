@@ -17,14 +17,13 @@
 typedef struct {
     ADC_TypeDef *ADCx;
     uint8_t *Channel;
+    uint16_t NbrOfChannel;
 
     uint8_t Cmd;
     uint8_t DMA;
     uint8_t Continuous;
 
     uint32_t TRGO;
-
-    uint16_t NbrOfChannel;
 } ADC_t;
 
 void ADC_Init_(ADC_t *self);

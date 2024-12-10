@@ -1,5 +1,4 @@
 #include "Motor.h"
-#include "GPIO.h"
 #include "PWM.h"
 
 void Motor_Init(Motor_t *self) {
@@ -16,15 +15,15 @@ void Motor_Init(Motor_t *self) {
     self->IN2_GPIOx = GPIO.GPIOx;
     self->IN2_GPIO_Pin = GPIO.GPIO_Pin;
 
+    uint8_t Channel[1] = {self->Channel};
     PWM_t PWM = {
         .TIMx = self->TIMx,
         .Prescaler = 100 - 1,
         .Period = 7200 - 1,
+        .Channel = Channel,
+        .NbrOfChannel = 1,
         .TIM_Init = self->TIM_Init,
     };
-    char Channel[4];
-    sprintf(Channel, "%d", self->Channel);
-    strcpy(PWM.Channel, Channel);
     PWM_Init(&PWM);
 
     self->TIM_SetCompare = PWM.TIM_SetCompare[0];
