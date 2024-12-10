@@ -4,6 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
 #include "LED.h"
 
 #define MQSensor_DataLength 128
@@ -14,7 +15,7 @@ typedef enum {
 } MQSensorState;
 
 typedef struct {
-    char LED[4];
+    GPIOxPiny_t LED;
     LEDMode Mode;
     uint32_t ODR;
 

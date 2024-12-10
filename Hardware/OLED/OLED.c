@@ -1,7 +1,6 @@
 #include <stdarg.h>
 
 #include "Delay.h"
-#include "GPIO.h"
 #include "OLED.h"
 
 #if U8G2

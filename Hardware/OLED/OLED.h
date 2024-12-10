@@ -4,6 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
 #include "OLED_Font.h"
 
 #define OLED_IndexToX(Index, Length, X, Width)                                 \
@@ -21,18 +22,18 @@
 typedef struct OLED_t {
     uint8_t I2C;
     I2C_TypeDef *I2Cx;
-    char SCL[4];
-    char SDA[4];
+    GPIOxPiny_t SCL;
+    GPIOxPiny_t SDA;
     uint32_t SCL_ODR;
     uint32_t SDA_ODR;
 
     uint8_t SPI;
     SPI_TypeDef *SPIx;
-    char D0[4];
-    char D1[4];
-    char RES[4];
-    char DC[4];
-    char CS[4];
+    GPIOxPiny_t D0;
+    GPIOxPiny_t D1;
+    GPIOxPiny_t RES;
+    GPIOxPiny_t DC;
+    GPIOxPiny_t CS;
     uint32_t D0_ODR;
     uint32_t D1_ODR;
     uint32_t RES_ODR;

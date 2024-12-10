@@ -6,16 +6,12 @@ void ADC_Init_(ADC_t *self) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADCx(self->ADCx), ENABLE);
     RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
-    self->NbrOfChannel = 1;
-    char *temp = self->Channel;
-    do {
-        if ((self->DMA == NULL && self->NbrOfChannel == 1) || (self->DMA)) {
-            ADC_RegularChannelConfig(self->ADCx, ADC_Channel_x(temp),
-                                     self->NbrOfChannel,
-                                     ADC_SampleTime_55Cycles5);
+    for (uint8_t channel = 1; channel <= self->NbrOfChannel; channel++) {
+        if ((self->DMA == NULL && channel == 1) || (self->DMA)) {
+            ADC_RegularChannelConfig(self->ADCx, self->Channel[channel - 1],
+                                     channel, ADC_SampleTime_55Cycles5);
         }
-    } while ((temp = strchr(temp, '|'), temp) && (temp = temp + 2) &&
-             (self->NbrOfChannel = self->NbrOfChannel + 1));
+    }
 
     if (self->TRGO) {
         ADC_ExternalTrigConvCmd(self->ADCx, ENABLE);

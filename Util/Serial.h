@@ -4,6 +4,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 #define USARTx_IRQn(x)                                                         \
     ((x) == USART1   ? USART1_IRQn                                             \
      : (x) == USART2 ? USART2_IRQn                                             \
@@ -18,8 +20,8 @@ typedef enum {
 } PackType;
 
 typedef struct {
-    char TX[4];
-    char RX[4];
+    GPIOxPiny_t TX;
+    GPIOxPiny_t RX;
 
     USART_TypeDef *USARTx;
     uint32_t BaudRate;

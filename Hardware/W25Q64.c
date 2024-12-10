@@ -1,5 +1,4 @@
 #include "W25Q64.h"
-#include "GPIO.h"
 
 void W25Q64_Init(W25Q64_t *self) {
     GPIO_t GPIO;

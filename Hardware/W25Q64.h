@@ -13,11 +13,13 @@
 
 #define W25Q64_DummyByte             0xFF
 
+#include "GPIO.h"
+
 typedef struct {
-    char MOSI[4];
-    char MISO[4];
-    char SCK[4];
-    char CS[4];
+    GPIOxPiny_t MOSI;
+    GPIOxPiny_t MISO;
+    GPIOxPiny_t SCK;
+    GPIOxPiny_t CS;
 
     uint32_t MOSI_ODR;
     uint32_t MISO_IDR;

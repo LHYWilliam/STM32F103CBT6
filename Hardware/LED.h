@@ -4,13 +4,15 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 typedef enum {
     LEDMode_Low,
     LEDMode_High,
 } LEDMode;
 
 typedef struct {
-    char GPIOxPiny[32];
+    GPIOxPiny_t GPIOxPiny;
     LEDMode Mode;
 
     uint32_t ODR;

@@ -4,16 +4,18 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 typedef struct {
     uint16_t *Data;
     uint16_t Index;
     uint16_t Length;
 
-    char GPIOxPiny[32];
+    GPIOxPiny_t GPIOxPiny[10];
 
     ADC_TypeDef *ADCx;
     uint8_t Continuous;
-    char ADC_Channel[32];
+    uint8_t ADC_Channel[10];
     uint16_t NbrOfChannel;
 
     DMA_TypeDef *DMAx;

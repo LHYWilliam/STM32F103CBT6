@@ -1,26 +1,19 @@
 #include "GPIO.h"
 
-void GPIO_Init_(GPIO_t *self) {
+void GPIO_InitPin(GPIO_t *self, const char *Pin) {
+    strcpy(self->GPIOxPiny, Pin);
+
     GPIO_InitTypeDef GPIO_InitStruct = {
         .GPIO_Speed = GPIO_Speed_50MHz,
         .GPIO_Mode = self->Mode,
     };
 
-    char *temp = self->GPIOxPiny;
-    do {
-        self->GPIOx = GPIOx(temp);
-        self->GPIO_Pin = GPIO_Pinx(temp);
+    self->GPIOx = GPIOx(self->GPIOxPiny);
+    self->GPIO_Pin = GPIO_Pinx(self->GPIOxPiny);
 
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(temp), ENABLE);
-        GPIO_InitStruct.GPIO_Pin = self->GPIO_Pin,
-        GPIO_Init(self->GPIOx, &GPIO_InitStruct);
-
-    } while ((temp = strchr(temp, '|'), temp) && (temp = temp + 2));
-}
-
-void GPIO_InitPin(GPIO_t *GPIO, const char *Pin) {
-    strcpy(GPIO->GPIOxPiny, Pin);
-    GPIO_Init_(GPIO);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(self->GPIOxPiny), ENABLE);
+    GPIO_InitStruct.GPIO_Pin = self->GPIO_Pin,
+    GPIO_Init(self->GPIOx, &GPIO_InitStruct);
 }
 
 uint32_t GPIO_CR(const char *x) {

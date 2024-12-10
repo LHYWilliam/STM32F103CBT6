@@ -1,6 +1,5 @@
 #include "Key.h"
 #include "Delay.h"
-#include "GPIO.h"
 
 void Key_Init(Key_t *self) {
     GPIO_t GPIO;

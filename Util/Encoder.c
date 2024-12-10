@@ -1,12 +1,12 @@
 #include "Encoder.h"
 #include "Capture.h"
-#include "GPIO.h"
 #include "TIM.h"
 
 void Encoder_Init(Encoder_t *self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_IPU;
-    GPIO_InitPin(&GPIO, self->GPIOxPiny);
+    GPIO_InitPin(&GPIO, self->GPIOxPiny[0]);
+    GPIO_InitPin(&GPIO, self->GPIOxPiny[1]);
 
     TIM_t tim = {
         .TIMx = self->TIMx,

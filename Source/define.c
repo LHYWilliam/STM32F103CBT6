@@ -63,7 +63,7 @@ Key_t KeyConfirm = {
 };
 
 Encoder_t Encoder = {
-    .GPIOxPiny = "A8 | A9",
+    .GPIOxPiny = {A8, A9},
     .TIMx = TIM1,
 };
 
@@ -97,8 +97,8 @@ Sampler_t Sampler = {
     .Length = Samper_DataLength,
 
     .ADCx = ADC1,
-    .ADC_Channel = "0 | 1 | 8 | 9",
-    .GPIOxPiny = "A0 | A1 | B0 | B1",
+    .ADC_Channel = {0, 1, 8, 9},
+    .GPIOxPiny = {A0, A1, B0, B1},
 
     .DMAx = DMA1,
     .DMA_Channel = 1,

@@ -117,6 +117,8 @@
 #define GPIO_ReadInput(x)  MEM_ADDR((x))
 #define GPIO_ReadOutput(x) MEM_ADDR((x))
 
+typedef char GPIOxPiny_t[3];
+
 typedef struct {
     char GPIOxPiny[32];
     GPIOMode_TypeDef Mode;

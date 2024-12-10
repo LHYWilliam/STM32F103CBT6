@@ -4,8 +4,10 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 typedef struct {
-    char GPIOxPiny[12];
+    GPIOxPiny_t GPIOxPiny[2];
 
     TIM_TypeDef *TIMx;
 

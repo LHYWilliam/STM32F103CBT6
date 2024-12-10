@@ -1,22 +1,28 @@
 #include "Sampler.h"
 #include "ADC.h"
 #include "DMA.h"
-#include "GPIO.h"
 #include "Timer.h"
 
 void Sampler_Init(Sampler_t *self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_AIN;
-    GPIO_InitPin(&GPIO, self->GPIOxPiny);
+
+    for (uint8_t i = 0; i < 10; i++) {
+        if (*self->GPIOxPiny[i]) {
+            GPIO_InitPin(&GPIO, self->GPIOxPiny[i]);
+            self->NbrOfChannel++;
+        }
+    }
 
     ADC_t ADC = {
         .ADCx = self->ADCx,
         .Cmd = DISABLE,
+        .Channel = self->ADC_Channel,
+        .NbrOfChannel = self->NbrOfChannel,
         .Continuous = self->Continuous,
         .DMA = self->DMAx ? ENABLE : DISABLE,
         .TRGO = ADC_ExternalTrigConv_Tx_TRGO(self->TIMx),
     };
-    strcpy(ADC.Channel, self->ADC_Channel);
     ADC_Init_(&ADC);
 
     if (self->DMAx) {
@@ -51,7 +57,6 @@ void Sampler_Init(Sampler_t *self) {
     }
 
     self->Index = self->Length - 1;
-    self->NbrOfChannel = ADC.NbrOfChannel;
 }
 
 uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {

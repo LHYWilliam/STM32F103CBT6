@@ -1,5 +1,4 @@
 #include "MQSensor.h"
-#include "GPIO.h"
 
 void MQSensor_Init(MQSensor_t *self) {
     GPIO_t GPIO;

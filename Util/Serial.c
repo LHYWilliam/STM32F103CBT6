@@ -1,6 +1,5 @@
 #include <stdarg.h>
 
-#include "GPIO.h"
 #include "Interrupt.h"
 #include "Serial.h"
 #include "USART.h"
