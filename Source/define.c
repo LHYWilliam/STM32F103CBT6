@@ -164,19 +164,6 @@ TextMenu_t TextMenu = {
     .TextCountOfOtherPage = 6,
 };
 
-ImagePage_t HomePage[2] = {
-    (ImagePage_t){
-        .Title = "Montior",
-        .Image = MenuImage[0],
-        .TextPage = &MonitorPage,
-    },
-    (ImagePage_t){
-        .Title = "Setting",
-        .Image = MenuImage[2],
-        .TextPage = &SettingPage,
-    },
-};
-
 ImageMenu_t ImageMenu = {
     .Space = 32,
     .ImageWidth = 32,
@@ -184,8 +171,20 @@ ImageMenu_t ImageMenu = {
     .ShowCallback = ShowImageMenuCallback,
     .ClickCallback = ImagePageEnterTextPageCallback,
     .RotationCallback = ImageMenuCursorCallback,
-    .NumOfPages = sizeof(HomePage) / sizeof(HomePage[0]),
-    .Page = HomePage,
+    .NumOfPages = 2,
+    .Page =
+        (ImagePage_t[]){
+            (ImagePage_t){
+                .Title = "Montior",
+                .Image = MenuImage[0],
+                .TextPage = &MonitorPage,
+            },
+            (ImagePage_t){
+                .Title = "Setting",
+                .Image = MenuImage[2],
+                .TextPage = &SettingPage,
+            },
+        },
 };
 
 SelectioneBar_t Bar;
