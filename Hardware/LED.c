@@ -3,9 +3,7 @@
 void LED_Init(LED_t *self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_Out_PP;
-    GPIO_InitPin(&GPIO, self->GPIOxPiny);
-
-    self->ODR = GPIO_ODR(self->GPIOxPiny);
+    self->ODR = GPIO_InitPin(&GPIO, self->GPIOxPiny);
 
     LED_Off(self);
 }

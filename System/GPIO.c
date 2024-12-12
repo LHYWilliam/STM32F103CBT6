@@ -1,6 +1,6 @@
 #include "GPIO.h"
 
-void GPIO_InitPin(GPIO_t *self, const char *Pin) {
+uint32_t GPIO_InitPin(GPIO_t *self, const char *Pin) {
     strcpy(self->GPIOxPiny, Pin);
 
     GPIO_InitTypeDef GPIO_InitStruct = {
@@ -14,6 +14,14 @@ void GPIO_InitPin(GPIO_t *self, const char *Pin) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(self->GPIOxPiny), ENABLE);
     GPIO_InitStruct.GPIO_Pin = self->GPIO_Pin,
     GPIO_Init(self->GPIOx, &GPIO_InitStruct);
+
+    if (self->Mode == GPIO_Mode_AIN || self->Mode == GPIO_Mode_IN_FLOATING ||
+        self->Mode == GPIO_Mode_IPD || self->Mode == GPIO_Mode_IPU) {
+        return GPIO_IDR(self->GPIOxPiny);
+
+    } else {
+        return GPIO_ODR(self->GPIOxPiny);
+    }
 }
 
 uint32_t GPIO_CR(const char *x) {

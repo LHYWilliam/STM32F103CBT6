@@ -3,9 +3,7 @@
 void MQSensor_Init(MQSensor_t *self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_Out_PP;
-    GPIO_InitPin(&GPIO, self->LED);
-
-    self->ODR = GPIO_ODR(self->LED);
+    self->ODR = GPIO_InitPin(&GPIO, self->LED);
 
     GPIO_Write(self->ODR, !self->Mode);
 

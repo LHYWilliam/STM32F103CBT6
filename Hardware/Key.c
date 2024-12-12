@@ -4,16 +4,13 @@
 void Key_Init(Key_t *self) {
     GPIO_t GPIO;
     GPIO.Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU;
-    GPIO_InitPin(&GPIO, self->GPIOxPiny);
-
-    self->GPIOx = GPIO.GPIOx;
-    self->GPIO_Pin = GPIO.GPIO_Pin;
+    self->IDR = GPIO_InitPin(&GPIO, self->GPIOxPiny);
 }
 
 uint8_t Key_Read(Key_t *self) {
-    if (GPIO_ReadInputDataBit(self->GPIOx, self->GPIO_Pin) == self->Mode) {
+    if (GPIO_ReadInput(self->IDR) == self->Mode) {
         Delay_ms(10);
-        while (GPIO_ReadInputDataBit(self->GPIOx, self->GPIO_Pin) == self->Mode)
+        while (GPIO_ReadInput(self->IDR) == self->Mode)
             ;
         Delay_ms(10);
         return 1;

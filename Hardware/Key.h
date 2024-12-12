@@ -15,8 +15,7 @@ typedef struct {
     GPIOxPiny_t GPIOxPiny;
     KeyMode Mode;
 
-    GPIO_TypeDef *GPIOx;
-    uint16_t GPIO_Pin;
+    uint32_t IDR;
 } Key_t;
 
 void Key_Init(Key_t *self);

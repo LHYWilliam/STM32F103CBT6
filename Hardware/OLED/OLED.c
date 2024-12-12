@@ -34,8 +34,8 @@ void OLED_Init(OLED_t *self) {
     if (self->I2C || self->I2Cx) {
         GPIO_t GPIO;
         GPIO.Mode = self->I2Cx ? GPIO_Mode_AF_OD : GPIO_Mode_Out_OD;
-        GPIO_InitPin(&GPIO, self->SCL);
-        GPIO_InitPin(&GPIO, self->SDA);
+        self->SCL_ODR = GPIO_InitPin(&GPIO, self->SCL);
+        self->SDA_ODR = GPIO_InitPin(&GPIO, self->SDA);
 
         if (self->I2C) {
 #if U8G2
@@ -48,9 +48,6 @@ void OLED_Init(OLED_t *self) {
 
             } else {
 #endif
-                self->SCL_ODR = GPIO_ODR(self->SCL);
-                self->SDA_ODR = GPIO_ODR(self->SDA);
-
                 GPIO_Write(self->SCL_ODR, 1);
                 GPIO_Write(self->SDA_ODR, 1);
 
@@ -97,12 +94,12 @@ void OLED_Init(OLED_t *self) {
     } else if (self->SPI || self->SPIx) {
         GPIO_t GPIO;
         GPIO.Mode = self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
-        GPIO_InitPin(&GPIO, self->D0);
-        GPIO_InitPin(&GPIO, self->D1);
+        self->D0_ODR = GPIO_InitPin(&GPIO, self->D0);
+        self->D1_ODR = GPIO_InitPin(&GPIO, self->D1);
         GPIO.Mode = GPIO_Mode_Out_PP;
-        GPIO_InitPin(&GPIO, self->RES);
-        GPIO_InitPin(&GPIO, self->DC);
-        GPIO_InitPin(&GPIO, self->CS);
+        self->RES_ODR = GPIO_InitPin(&GPIO, self->RES);
+        self->DC_ODR = GPIO_InitPin(&GPIO, self->DC);
+        self->CS_ODR = GPIO_InitPin(&GPIO, self->CS);
 
         if (self->SPI) {
 #if U8G2
@@ -119,12 +116,6 @@ void OLED_Init(OLED_t *self) {
 
             } else {
 #endif
-                self->D0_ODR = GPIO_ODR(self->D0);
-                self->D1_ODR = GPIO_ODR(self->D1);
-                self->RES_ODR = GPIO_ODR(self->RES);
-                self->DC_ODR = GPIO_ODR(self->DC);
-                self->CS_ODR = GPIO_ODR(self->CS);
-
                 GPIO_Write(self->D0, 1);
                 GPIO_Write(self->D1, 1);
                 GPIO_Write(self->RES_ODR, 1);
@@ -150,10 +141,6 @@ void OLED_Init(OLED_t *self) {
                 GPIO_Write(CS_ODR, 1);
             } else {
 #endif
-                self->RES_ODR = GPIO_ODR(self->RES);
-                self->DC_ODR = GPIO_ODR(self->DC);
-                self->CS_ODR = GPIO_ODR(self->CS);
-
                 GPIO_Write(self->RES_ODR, 1);
                 GPIO_Write(self->DC_ODR, 1);
                 GPIO_Write(self->CS_ODR, 1);

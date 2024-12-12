@@ -2,7 +2,7 @@
 ```
 LED_t LED = {
     .GPIOxPiny = B2,
-    .Mode = HIGH,
+    .Mode = LEDMode_High,
 };
 
 LED_Init(&LED);
@@ -13,10 +13,36 @@ LED_Init(&LED);
 ```
 Key_t Key = {
     .GPIOxPiny = A0,
-    .Mode = HIGH,
+    .Mode = KeyMode_Low,
 };
 
 Key_Init(&Key);
+```
+
+
+# W25Q64
+```
+W25Q64_t W25Q64 = {
+    .MOSI = A7,
+    .MISO = A6,
+    .SCK = A5,
+    .CS = A4,
+};
+
+W25Q64_Init(&W25Q64);
+```
+
+
+# Serial
+```
+Serial_t Serial = {
+    .TX = A2,
+    .RX = A3,
+    .USARTx = USART2,
+    .BaudRate = 115200,
+};
+
+Serial_Init(&Serial);
 ```
 
 
@@ -126,6 +152,17 @@ OLED_t OLED = {
 ```
 
 
+# Encoder
+```
+Encoder_t Encoder = {
+    .GPIOxPiny = {A8, A9},
+    .TIMx = TIM1,
+};
+
+Encoder_Init(&Encoder);
+```
+
+
 # Motor
 ```
 Motor_t Motor = {
@@ -134,6 +171,7 @@ Motor_t Motor = {
     .IN2 = A10,
     .TIMx = TIM1,
     .Channel = 1,
+    .Range = 100,
     .TIM_Init = ENABLE,
 };
 

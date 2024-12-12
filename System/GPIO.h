@@ -127,7 +127,7 @@ typedef struct {
     uint16_t GPIO_Pin;
 } GPIO_t;
 
-void GPIO_InitPin(GPIO_t *GPIO, const char *Pin);
+uint32_t GPIO_InitPin(GPIO_t *GPIO, const char *Pin);
 
 uint32_t GPIO_CR(const char *x);
 uint32_t GPIO_IDR(const char *x);

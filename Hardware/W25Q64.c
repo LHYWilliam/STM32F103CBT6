@@ -4,17 +4,12 @@ void W25Q64_Init(W25Q64_t *self) {
     GPIO_t GPIO;
 
     GPIO.Mode = GPIO_Mode_Out_PP;
-    GPIO_InitPin(&GPIO, self->MOSI);
-    GPIO_InitPin(&GPIO, self->SCK);
-    GPIO_InitPin(&GPIO, self->CS);
+    self->MOSI_ODR = GPIO_InitPin(&GPIO, self->MOSI);
+    self->SCK_ODR = GPIO_InitPin(&GPIO, self->SCK);
+    self->CS_ODR = GPIO_InitPin(&GPIO, self->CS);
 
     GPIO.Mode = GPIO_Mode_IPU;
-    GPIO_InitPin(&GPIO, self->MISO);
-
-    self->MOSI_ODR = GPIO_ODR(self->MOSI);
-    self->MISO_IDR = GPIO_IDR(self->MISO);
-    self->SCK_ODR = GPIO_ODR(self->SCK);
-    self->CS_ODR = GPIO_ODR(self->CS);
+    self->MISO_IDR = GPIO_InitPin(&GPIO, self->MISO);
 
     GPIO_Write(self->SCK_ODR, 0);
     GPIO_Write(self->CS_ODR, 1);

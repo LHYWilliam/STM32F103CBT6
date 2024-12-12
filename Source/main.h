@@ -4,7 +4,6 @@
 #include "timers.h"
 
 #include "Encoder.h"
-#include "GPIO.h"
 #include "Key.h"
 #include "LED.h"
 #include "MQSensor.h"

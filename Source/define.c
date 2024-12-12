@@ -74,17 +74,17 @@ MQSensor_t MQSensor[4] = {
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B11,
+        .LED = B10,
         .Mode = LEDMode_Low,
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B11,
+        .LED = C14,
         .Mode = LEDMode_Low,
         .Threshold,
     },
     (MQSensor_t){
-        .LED = B11,
+        .LED = C13,
         .Mode = LEDMode_Low,
         .Threshold,
     },
@@ -97,8 +97,8 @@ Sampler_t Sampler = {
     .Length = Samper_DataLength,
 
     .ADCx = ADC1,
-    .ADC_Channel = {0, 1, 8, 9},
-    .GPIOxPiny = {A0, A1, B0, B1},
+    .ADC_Channel = {9, 8, 1, 0},
+    .GPIOxPiny = {B1, B0, A1, A0},
 
     .DMAx = DMA1,
     .DMA_Channel = 1,
