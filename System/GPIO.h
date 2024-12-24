@@ -120,11 +120,8 @@
 typedef char GPIOxPiny_t[3];
 
 typedef struct {
-    char GPIOxPiny[32];
+    char GPIOxPiny[4];
     GPIOMode_TypeDef Mode;
-
-    GPIO_TypeDef *GPIOx;
-    uint16_t GPIO_Pin;
 } GPIO_t;
 
 uint32_t GPIO_InitPin(GPIO_t *GPIO, const char *Pin);

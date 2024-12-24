@@ -8,12 +8,9 @@ uint32_t GPIO_InitPin(GPIO_t *self, const char *Pin) {
         .GPIO_Mode = self->Mode,
     };
 
-    self->GPIOx = GPIOx(self->GPIOxPiny);
-    self->GPIO_Pin = GPIO_Pinx(self->GPIOxPiny);
-
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(self->GPIOxPiny), ENABLE);
-    GPIO_InitStruct.GPIO_Pin = self->GPIO_Pin,
-    GPIO_Init(self->GPIOx, &GPIO_InitStruct);
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pinx(self->GPIOxPiny),
+    GPIO_Init(GPIOx(self->GPIOxPiny), &GPIO_InitStruct);
 
     if (self->Mode == GPIO_Mode_AIN || self->Mode == GPIO_Mode_IN_FLOATING ||
         self->Mode == GPIO_Mode_IPD || self->Mode == GPIO_Mode_IPU) {

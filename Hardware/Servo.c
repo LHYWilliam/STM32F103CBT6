@@ -1,5 +1,4 @@
 #include "Servo.h"
-#include "GPIO.h"
 #include "PWM.h"
 
 void Servo_Init(Servo_t *self) {
