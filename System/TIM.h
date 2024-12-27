@@ -4,6 +4,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include <stdlib.h>
+
 #define RCC_APBxPeriphClockCmd(x)                                              \
     ((x) == TIM1 ? RCC_APB2PeriphClockCmd : RCC_APB1PeriphClockCmd)
 
@@ -20,6 +22,10 @@
      : (x) == TIM3 ? TIM3_IRQn                                                 \
      : (x) == TIM4 ? TIM4_IRQn                                                 \
                    : NULL)
+
+static uint16_t TIM_Channel_x[] = {
+    NULL, TIM_Channel_1, TIM_Channel_2, TIM_Channel_3, TIM_Channel_4,
+};
 
 typedef struct {
     uint16_t TIM_ExtTRGPrescaler;

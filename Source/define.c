@@ -58,13 +58,14 @@ Serial_t Serial = {
 };
 
 Key_t KeyConfirm = {
-    .GPIOxPiny = B15,
+    .GPIOxPiny = B5,
     .Mode = KeyMode_Low,
 };
 
 Encoder_t Encoder = {
-    .GPIOxPiny = {A8, A9},
-    .TIMx = TIM1,
+    .GPIOxPiny = {B6, B7},
+    .TIMx = TIM4,
+    .Channel = {0, 1},
 };
 
 MQSensor_t MQSensor[4] = {
@@ -109,8 +110,8 @@ Sampler_t Sampler = {
 };
 
 OLED_t OLED = {
-    .SCL = B8,
-    .SDA = B9,
+    .SCL = B12,
+    .SDA = B13,
     .I2C = ENABLE,
     .Width = 128,
     .Height = 64,

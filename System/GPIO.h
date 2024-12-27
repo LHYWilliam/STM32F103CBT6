@@ -117,17 +117,17 @@
 #define GPIO_ReadInput(x)  MEM_ADDR((x))
 #define GPIO_ReadOutput(x) MEM_ADDR((x))
 
-typedef char GPIOxPiny_t[3];
+typedef char GPIOxPiny_t[4];
 
 typedef struct {
     char GPIOxPiny[4];
     GPIOMode_TypeDef Mode;
 } GPIO_t;
 
-uint32_t GPIO_InitPin(GPIO_t *GPIO, const char *Pin);
+uint32_t GPIO_InitPin(GPIO_t *GPIO, const GPIOxPiny_t Pin);
 
-uint32_t GPIO_CR(const char *x);
-uint32_t GPIO_IDR(const char *x);
-uint32_t GPIO_ODR(const char *x);
+uint32_t GPIO_CR(const GPIOxPiny_t Pin);
+uint32_t GPIO_IDR(const GPIOxPiny_t Pin);
+uint32_t GPIO_ODR(const GPIOxPiny_t Pin);
 
 #endif

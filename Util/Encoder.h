@@ -10,6 +10,7 @@ typedef struct {
     GPIOxPiny_t GPIOxPiny[2];
 
     TIM_TypeDef *TIMx;
+    uint8_t Channel[2];
 
     uint8_t Invert;
 } Encoder_t;

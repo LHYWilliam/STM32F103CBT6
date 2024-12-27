@@ -20,10 +20,10 @@ void Encoder_Init(Encoder_t *self) {
         .TIM_ICPolarity = TIM_ICPolarity_Rising,
     };
 
-    Capture.TIM_Channel = TIM_Channel_1;
+    Capture.TIM_Channel = TIM_Channel_x[self->Channel[0]];
     Capture_Init(&Capture);
 
-    Capture.TIM_Channel = TIM_Channel_2;
+    Capture.TIM_Channel = TIM_Channel_x[self->Channel[1]];
     Capture_Init(&Capture);
 
     TIM_EncoderInterfaceConfig(self->TIMx, TIM_EncoderMode_TI12,

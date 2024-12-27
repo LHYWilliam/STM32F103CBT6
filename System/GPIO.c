@@ -1,6 +1,6 @@
 #include "GPIO.h"
 
-uint32_t GPIO_InitPin(GPIO_t *self, const char *Pin) {
+uint32_t GPIO_InitPin(GPIO_t *self, const GPIOxPiny_t Pin) {
     strcpy(self->GPIOxPiny, Pin);
 
     GPIO_InitTypeDef GPIO_InitStruct = {
@@ -21,29 +21,29 @@ uint32_t GPIO_InitPin(GPIO_t *self, const char *Pin) {
     }
 }
 
-uint32_t GPIO_CR(const char *x) {
-    return (x[0] == 'A'   ? ((x[2] || x[1] >= 8) ? GPIOA_CRH : GPIOA_CRL)
-            : x[0] == 'B' ? ((x[2] || x[1] >= 8) ? GPIOB_CRH : GPIOB_CRL)
-            : x[0] == 'C' ? ((x[2] || x[1] >= 8) ? GPIOC_CRH : GPIOC_CRL)
-                          : NULL);
+uint32_t GPIO_CR(const GPIOxPiny_t Pin) {
+    return (Pin[0] == 'A'   ? ((Pin[2] || Pin[1] >= 8) ? GPIOA_CRH : GPIOA_CRL)
+            : Pin[0] == 'B' ? ((Pin[2] || Pin[1] >= 8) ? GPIOB_CRH : GPIOB_CRL)
+            : Pin[0] == 'C' ? ((Pin[2] || Pin[1] >= 8) ? GPIOC_CRH : GPIOC_CRL)
+                            : NULL);
 }
 
-uint32_t GPIO_IDR(const char *x) {
-    return (x[0] == 'A'   ? (x[2] ? BITBAND(GPIOA_IDR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOA_IDR, x[1] - '0'))
-            : x[0] == 'B' ? (x[2] ? BITBAND(GPIOB_IDR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOB_IDR, x[1] - '0'))
-            : x[0] == 'C' ? (x[2] ? BITBAND(GPIOC_IDR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOC_IDR, x[1] - '0'))
-                          : NULL);
+uint32_t GPIO_IDR(const GPIOxPiny_t Pin) {
+    return (Pin[0] == 'A'   ? (Pin[2] ? BITBAND(GPIOA_IDR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOA_IDR, Pin[1] - '0'))
+            : Pin[0] == 'B' ? (Pin[2] ? BITBAND(GPIOB_IDR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOB_IDR, Pin[1] - '0'))
+            : Pin[0] == 'C' ? (Pin[2] ? BITBAND(GPIOC_IDR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOC_IDR, Pin[1] - '0'))
+                            : NULL);
 }
 
-uint32_t GPIO_ODR(const char *x) {
-    return (x[0] == 'A'   ? (x[2] ? BITBAND(GPIOA_ODR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOA_ODR, x[1] - '0'))
-            : x[0] == 'B' ? (x[2] ? BITBAND(GPIOB_ODR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOB_ODR, x[1] - '0'))
-            : x[0] == 'C' ? (x[2] ? BITBAND(GPIOC_ODR, 10 + x[2] - '0')
-                                  : BITBAND(GPIOC_ODR, x[1] - '0'))
-                          : NULL);
+uint32_t GPIO_ODR(const GPIOxPiny_t Pin) {
+    return (Pin[0] == 'A'   ? (Pin[2] ? BITBAND(GPIOA_ODR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOA_ODR, Pin[1] - '0'))
+            : Pin[0] == 'B' ? (Pin[2] ? BITBAND(GPIOB_ODR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOB_ODR, Pin[1] - '0'))
+            : Pin[0] == 'C' ? (Pin[2] ? BITBAND(GPIOC_ODR, 10 + Pin[2] - '0')
+                                      : BITBAND(GPIOC_ODR, Pin[1] - '0'))
+                            : NULL);
 }
