@@ -8,12 +8,10 @@ typedef enum {
     SPI_Data,
 } OLED_SPI_ByteType;
 
-void OLED_SWSPI_WriteData(OLED_t *self, uint8_t Data, uint16_t Length);
 void OLED_SWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length);
 void OLED_SWSPI_WriteCommand(OLED_t *self, uint8_t Command);
 void OLED_SWSPI_WriteCommands(OLED_t *self, uint8_t *Commands, uint16_t Length);
 
-void OLED_HWSPI_WriteData(OLED_t *self, uint8_t Data, uint16_t Length);
 void OLED_HWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length);
 void OLED_HWSPI_WriteCommand(OLED_t *self, uint8_t Command);
 void OLED_HWSPI_WriteCommands(OLED_t *self, uint8_t *Commands, uint16_t Length);

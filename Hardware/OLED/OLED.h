@@ -43,7 +43,6 @@ typedef struct OLED_t {
     uint8_t Width;
     uint8_t Height;
 
-    void (*OLED_WriteData)(struct OLED_t *self, uint8_t Data, uint16_t Length);
     void (*OLED_WriteDatas)(struct OLED_t *self, uint8_t *Datas,
                             uint16_t Length);
     void (*OLED_WriteCommand)(struct OLED_t *self, uint8_t Command);

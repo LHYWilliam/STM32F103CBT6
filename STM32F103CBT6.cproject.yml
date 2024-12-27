@@ -10,6 +10,7 @@ project:
         - System
         - Hardware
         - Hardware/OLED
+        - Hardware/LCD
         - U8g2
       debug: "on"
       misc:
@@ -117,12 +118,18 @@ project:
         - file: Hardware/OLED/OLED_I2C.h
         - file: Hardware/OLED/OLED_SPI.c
         - file: Hardware/OLED/OLED_SPI.h
+        - file: Hardware/LCD/LCD.c
+        - file: Hardware/LCD/LCD.h
+        - file: Hardware/LCD/LCD_Font.c
+        - file: Hardware/LCD/LCD_Font.h
+        - file: Hardware/LCD/LCD_SPI.c
+        - file: Hardware/LCD/LCD_SPI.h
         - file: Hardware/OLED/Menu.c
         - file: Hardware/OLED/Menu.h
-        - file: Hardware/MQSensor.c
-        - file: Hardware/MQSensor.h
         - file: Hardware/W25Q64.c
         - file: Hardware/W25Q64.h
+        - file: Hardware/MQSensor.c
+        - file: Hardware/MQSensor.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

@@ -22,14 +22,6 @@ void OLED_SWSPI_WriteByte(OLED_t *self, uint8_t Byte) {
     }
 }
 
-void OLED_SWSPI_WriteData(OLED_t *self, uint8_t Data, uint16_t Length) {
-    OLED_SWSPI_Start(self, SPI_Data);
-    for (uint16_t i = 0; i < Length; i++) {
-        OLED_SWSPI_WriteByte(self, Data);
-    }
-    OLED_SWSPI_Stop(self);
-}
-
 void OLED_SWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length) {
     OLED_SWSPI_Start(self, SPI_Data);
     for (uint16_t i = 0; i < Length; i++) {
@@ -59,14 +51,6 @@ void OLED_HWSPI_WriteByte(OLED_t *self, uint8_t Byte) {
     while (SPI_I2S_GetFlagStatus(self->SPIx, SPI_I2S_FLAG_TXE) != SET)
         ;
     SPI_I2S_SendData(self->SPIx, Byte);
-}
-
-void OLED_HWSPI_WriteData(OLED_t *self, uint8_t Data, uint16_t Length) {
-    OLED_SWSPI_Start(self, SPI_Data);
-    for (uint16_t i = 0; i < Length; i++) {
-        OLED_HWSPI_WriteByte(self, Data);
-    }
-    OLED_SWSPI_Stop(self);
 }
 
 void OLED_HWSPI_WriteDatas(OLED_t *self, uint8_t *Datas, uint16_t Length) {

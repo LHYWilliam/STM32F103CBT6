@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\OLED;.\U8g2</IncludePath>
+              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\OLED;.\Hardware\LCD;.\U8g2</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -675,6 +675,36 @@
               <FilePath>.\Hardware\OLED\OLED_SPI.h</FilePath>
             </File>
             <File>
+              <FileName>LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LCD\LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\LCD.h</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_Font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LCD\LCD_Font.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_Font.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\LCD_Font.h</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LCD\LCD_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_SPI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\LCD_SPI.h</FilePath>
+            </File>
+            <File>
               <FileName>Menu.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\OLED\Menu.c</FilePath>
@@ -685,16 +715,6 @@
               <FilePath>.\Hardware\OLED\Menu.h</FilePath>
             </File>
             <File>
-              <FileName>MQSensor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\MQSensor.c</FilePath>
-            </File>
-            <File>
-              <FileName>MQSensor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\MQSensor.h</FilePath>
-            </File>
-            <File>
               <FileName>W25Q64.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\W25Q64.c</FilePath>
@@ -703,6 +723,16 @@
               <FileName>W25Q64.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\W25Q64.h</FilePath>
+            </File>
+            <File>
+              <FileName>MQSensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\MQSensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQSensor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\MQSensor.h</FilePath>
             </File>
           </Files>
         </Group>
