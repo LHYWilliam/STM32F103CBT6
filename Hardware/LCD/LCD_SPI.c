@@ -25,7 +25,19 @@ void LCD_SWSPI_Write2Byte(LCD_t *self, uint16_t Byte) {
     LCD_SWSPI_WriteByte(self, Byte);
 }
 
-void LCD_SWSPI_WriteData(LCD_t *self, uint16_t Data, uint16_t Length) {
+void LCD_SWSPI_WriteData8(LCD_t *self, uint8_t Data) {
+    LCD_SWSPI_Start(self, LCD_Data);
+    LCD_SWSPI_WriteByte(self, Data);
+    LCD_SWSPI_Stop(self);
+}
+
+void LCD_SWSPI_WriteData16(LCD_t *self, uint16_t Data) {
+    LCD_SWSPI_Start(self, LCD_Data);
+    LCD_SWSPI_Write2Byte(self, Data);
+    LCD_SWSPI_Stop(self);
+}
+
+void LCD_SWSPI_WriteData16s(LCD_t *self, uint16_t Data, uint16_t Length) {
     LCD_SWSPI_Start(self, LCD_Data);
     for (uint16_t i = 0; i < Length; i++) {
         LCD_SWSPI_Write2Byte(self, Data);
@@ -33,7 +45,7 @@ void LCD_SWSPI_WriteData(LCD_t *self, uint16_t Data, uint16_t Length) {
     LCD_SWSPI_Stop(self);
 }
 
-void LCD_SWSPI_WriteDatas(LCD_t *self, uint16_t *Datas, uint16_t Length) {
+void LCD_SWSPI_WriteDatas16(LCD_t *self, uint16_t *Datas, uint16_t Length) {
     LCD_SWSPI_Start(self, LCD_Data);
     for (uint16_t i = 0; i < Length; i++) {
         LCD_SWSPI_Write2Byte(self, Datas[i]);
