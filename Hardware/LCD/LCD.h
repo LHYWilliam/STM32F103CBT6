@@ -2,7 +2,6 @@
 #define LCD_H
 
 #include "RTE_Components.h"
-#include <stdint.h>
 #include CMSIS_device_header
 
 #include "GPIO.h"
@@ -24,10 +23,15 @@ typedef struct LCD {
     uint8_t Width;
     uint8_t Height;
 
+    uint8_t FontWidth;
+    uint8_t FontHeight;
+
     uint8_t Direction;
 
     uint16_t PenColor;
     uint16_t BackColor;
+
+    uint8_t PrintfBuffer[128];
 
     void (*WriteData8)(struct LCD *, uint8_t);
     void (*WriteData16)(struct LCD *, uint16_t);
@@ -47,6 +51,10 @@ void LCD_Clear(LCD_t *self);
 void LCD_DrawPoint(LCD_t *self, uint16_t X, uint16_t Y);
 void LCD_DrawHLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length);
 void LCD_DrawVLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length);
+
+void LCD_ShowChar(LCD_t *self, uint16_t X, uint16_t Y, uint8_t Char);
+void LCD_ShowString(LCD_t *self, uint16_t X, uint16_t Y, char *String);
+void LCD_Printf(LCD_t *self, int16_t X, int16_t Y, const char *Format, ...);
 
 void LCD_ShowImage(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
                    uint16_t Height, const uint8_t *Image);

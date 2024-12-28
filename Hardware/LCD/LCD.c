@@ -1,5 +1,8 @@
-#include "LCD.h"
+#include <stdarg.h>
+
 #include "Delay.h"
+#include "LCD.h"
+#include "LCD_Font.h"
 #include "LCD_SPI.h"
 
 void LCD_SetWindow(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t Width,
@@ -35,6 +38,40 @@ void LCD_DrawVLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length) {
     self->WriteData16s(self, self->PenColor, Length);
 }
 
+void LCD_ShowChar(LCD_t *self, uint16_t X, uint16_t Y, uint8_t Char) {
+    LCD_SetWindow(self, X, Y, self->FontWidth, self->FontHeight);
+
+    uint8_t bytePerLine = self->FontWidth / 8 + (self->FontWidth % 8) ? 1 : 0;
+
+    for (uint16_t Line = 0; Line < self->FontHeight; Line++) {
+        for (uint16_t Column = 0; Column < self->FontWidth; Column++) {
+            if (LCD_Font8x16[Char - ' '][Line * bytePerLine + Column / 8] &
+                (0b10000000 >> (Column % 8))) {
+                self->WriteData16(self, self->PenColor);
+
+            } else {
+                self->WriteData16(self, self->BackColor);
+            }
+        }
+    }
+}
+
+void LCD_ShowString(LCD_t *self, uint16_t X, uint16_t Y, char *String) {
+    for (uint8_t i = 0; String[i]; i++) {
+        LCD_ShowChar(self, X, Y, String[i]);
+        X += self->FontWidth;
+    }
+}
+
+void LCD_Printf(LCD_t *self, int16_t X, int16_t Y, const char *Format, ...) {
+    va_list arg;
+    va_start(arg, Format);
+    vsprintf((char *)self->PrintfBuffer, Format, arg);
+    va_end(arg);
+
+    LCD_ShowString(self, X, Y, (char *)self->PrintfBuffer);
+}
+
 void LCD_ShowImage(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
                    uint16_t Height, const uint8_t *Image) {
     LCD_SetWindow(self, X, Y, Width, Height);
@@ -67,11 +104,12 @@ void LCD_Init(LCD_t *self) {
     self->WriteCommand = LCD_SWSPI_WriteCommand;
 
     GPIO_Write(self->RES_ODR, 0);
-    Delay_ms(10);
+    Delay_ms(100);
     GPIO_Write(self->RES_ODR, 1);
-    Delay_ms(10);
+    Delay_ms(100);
 
     self->WriteCommand(self, 0x11);
+    Delay_ms(120);
 
     self->WriteCommand(self, 0xB1);
     self->WriteData8(self, 0x05);
@@ -166,6 +204,7 @@ void LCD_Init(LCD_t *self) {
     LCD_Clear(self);
 
     GPIO_Write(self->BL_ODR, 1);
+    Delay_ms(100);
 }
 
 void LCD_SetWindow(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t Width,
