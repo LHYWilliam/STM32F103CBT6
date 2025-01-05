@@ -2,7 +2,6 @@
 
 #include "Delay.h"
 #include "LCD.h"
-#include "LCD_Font.h"
 #include "LCD_SPI.h"
 
 void LCD_SetWindow(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t Width,
@@ -13,14 +12,25 @@ void LCD_SetPenColor(LCD_t *self, uint16_t Color) { self->PenColor = Color; }
 
 void LCD_SetBackColor(LCD_t *self, uint16_t Color) { self->BackColor = Color; }
 
-void LCD_Fill(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2,
-              uint16_t Color) {
-    LCD_SetWindow(self, X1, Y1, X2 - X1 + 1, Y2 - Y1 + 1);
-    self->WriteData16s(self, Color, (X2 - X1 + 1) * (Y2 - Y1 + 1));
+void LCD_SetFont(LCD_t *self, uint32_t Font) {
+    self->Font = Font;
+    for (uint8_t i = 0; i < sizeof(LCDFonts) / sizeof(LCDFonts[0]); i++) {
+        if (LCDFonts[i].Font == self->Font) {
+            self->FontWidth = LCDFonts[i].FontWidth;
+            self->FontHeight = LCDFonts[i].FontHeight;
+            break;
+        }
+    }
+}
+
+void LCD_Fill(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
+              uint16_t Height, uint16_t Color) {
+    LCD_SetWindow(self, X, Y, Width, Height);
+    self->WriteData16s(self, Color, Width * Height);
 }
 
 void LCD_Clear(LCD_t *self) {
-    LCD_Fill(self, 0, 0, self->Width - 1, self->Height - 1, self->BackColor);
+    LCD_Fill(self, 0, 0, self->Width, self->Height, self->BackColor);
 }
 
 void LCD_DrawPoint(LCD_t *self, uint16_t X, uint16_t Y) {
@@ -41,16 +51,18 @@ void LCD_DrawVLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length) {
 void LCD_ShowChar(LCD_t *self, uint16_t X, uint16_t Y, uint8_t Char) {
     LCD_SetWindow(self, X, Y, self->FontWidth, self->FontHeight);
 
-    uint8_t bytePerLine = self->FontWidth / 8 + (self->FontWidth % 8) ? 1 : 0;
-
+    uint8_t bytePerLine = (self->FontWidth + 7) / 8;
     for (uint16_t Line = 0; Line < self->FontHeight; Line++) {
         for (uint16_t Column = 0; Column < self->FontWidth; Column++) {
-            if (LCD_Font8x16[Char - ' '][Line * bytePerLine + Column / 8] &
-                (0b10000000 >> (Column % 8))) {
-                self->WriteData16(self, self->PenColor);
 
-            } else {
-                self->WriteData16(self, self->BackColor);
+            if (self->Font == (uint32_t)LCD_Font8x16) {
+                if (LCD_Font8x16[Char - ' '][Line * bytePerLine + Column / 8] &
+                    (0b10000000 >> (Column % 8))) {
+                    self->WriteData16(self, self->PenColor);
+
+                } else {
+                    self->WriteData16(self, self->BackColor);
+                }
             }
         }
     }
@@ -106,6 +118,9 @@ void LCD_Init(LCD_t *self) {
     GPIO_Write(self->RES_ODR, 0);
     Delay_ms(100);
     GPIO_Write(self->RES_ODR, 1);
+    Delay_ms(100);
+
+    GPIO_Write(self->BL_ODR, 1);
     Delay_ms(100);
 
     self->WriteCommand(self, 0x11);
@@ -201,10 +216,9 @@ void LCD_Init(LCD_t *self) {
     self->WriteData8(self, 0x05);
     self->WriteCommand(self, 0x29);
 
-    LCD_Clear(self);
-
-    GPIO_Write(self->BL_ODR, 1);
     Delay_ms(100);
+
+    LCD_Clear(self);
 }
 
 void LCD_SetWindow(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t Width,

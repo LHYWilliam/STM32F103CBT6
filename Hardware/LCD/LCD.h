@@ -5,6 +5,7 @@
 #include CMSIS_device_header
 
 #include "GPIO.h"
+#include "LCD_Font.h"
 
 typedef struct LCD {
     GPIOxPiny_t SCL;
@@ -23,6 +24,7 @@ typedef struct LCD {
     uint8_t Width;
     uint8_t Height;
 
+    uint32_t Font;
     uint8_t FontWidth;
     uint8_t FontHeight;
 
@@ -43,9 +45,10 @@ typedef struct LCD {
 void LCD_Init(LCD_t *self);
 void LCD_SetPenColor(LCD_t *self, uint16_t Color);
 void LCD_SetBackColor(LCD_t *self, uint16_t Color);
+void LCD_SetFont(LCD_t *self, uint32_t Font);
 
-void LCD_Fill(LCD_t *self, uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2,
-              uint16_t Color);
+void LCD_Fill(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
+              uint16_t Height, uint16_t Color);
 void LCD_Clear(LCD_t *self);
 
 void LCD_DrawPoint(LCD_t *self, uint16_t X, uint16_t Y);
