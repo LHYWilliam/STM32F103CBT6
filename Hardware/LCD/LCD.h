@@ -23,12 +23,11 @@ typedef struct LCD {
 
     uint8_t Width;
     uint8_t Height;
+    uint8_t Direction;
 
     uint32_t Font;
     uint8_t FontWidth;
     uint8_t FontHeight;
-
-    uint8_t Direction;
 
     uint16_t PenColor;
     uint16_t BackColor;

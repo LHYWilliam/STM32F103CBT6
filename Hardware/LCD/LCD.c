@@ -54,7 +54,6 @@ void LCD_ShowChar(LCD_t *self, uint16_t X, uint16_t Y, uint8_t Char) {
     uint8_t bytePerLine = (self->FontWidth + 7) / 8;
     for (uint16_t Line = 0; Line < self->FontHeight; Line++) {
         for (uint16_t Column = 0; Column < self->FontWidth; Column++) {
-
             if (self->Font == (uint32_t)LCD_Font8x16) {
                 if (LCD_Font8x16[Char - ' '][Line * bytePerLine + Column / 8] &
                     (0b10000000 >> (Column % 8))) {
