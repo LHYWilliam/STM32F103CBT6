@@ -7,9 +7,9 @@
 		}
 	],
 	"requires": {
-		"arm:tools/kitware/cmake": "^3.25.2",
-		"arm:tools/ninja-build/ninja": "^1.10.2",
-		"arm:compilers/arm/armclang": "^6.19.0",
+		"arm:tools/kitware/cmake": "*",
+		"arm:tools/ninja-build/ninja": "*",
+		"arm:compilers/arm/armclang": "*",
 		"arm:tools/open-cmsis-pack/cmsis-toolbox": "2.4.0",
 		"arm:debuggers/arm/armdbg": "*"
 	}

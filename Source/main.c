@@ -43,5 +43,14 @@ int main() {
     xTimerStart(vUpdateTimer, 0);
     xTimerStart(vOLEDTimer, 0);
 
+    // LCD_Init(&LCD);
+    // LCD_SetFont(&LCD, (uint32_t)LCD_Font8x16);
+
+    // LCD_Printf(&LCD, 0, 0, "Hello %s ", "William");
+
+    // for (;;) {
+    //     // LED_Toggle(&LED);
+    // }
+
     vTaskStartScheduler();
 }

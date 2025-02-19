@@ -5,6 +5,7 @@
 
 #include "Encoder.h"
 #include "Key.h"
+#include "LCD.h"
 #include "LED.h"
 #include "MQSensor.h"
 #include "Menu.h"
@@ -28,6 +29,7 @@ extern MQSensor_t MQSensor[4];
 extern Sampler_t Sampler;
 
 extern OLED_t OLED;
+extern LCD_t LCD;
 
 extern TextPage_t MonitorPage;
 extern TextPage_t SettingPage;

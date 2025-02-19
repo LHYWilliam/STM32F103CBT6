@@ -117,6 +117,19 @@ OLED_t OLED = {
     .Height = 64,
 };
 
+LCD_t LCD = {
+    .SCL = B12,
+    .SDA = B13,
+    .RES = B14,
+    .DC = B15,
+    .CS = B10,
+    .BL = B11,
+    .Width = 160,
+    .Height = 128,
+    .Direction = 2,
+    .BackColor = 0xFFFF,
+};
+
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
     .ShowCallback = ShowMonitorPageCallback,

@@ -1,6 +1,6 @@
 {
     "clangd.arguments": [
-        "--compile-commands-dir=c:\\code\\STM32F103CBT6\\out\\STM32F103CBT6\\STM32F103CBT6"
+        "--compile-commands-dir=c:\\code\\CMSIS\\STM32F103CBT6\\out\\STM32F103CBT6\\STM32F103CBT6"
     ],
     "cmsis-csolution.actions": [
         {
