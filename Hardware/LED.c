@@ -12,6 +12,4 @@ void LED_On(LED_t *self) { GPIO_Write(self->ODR, self->Mode); }
 
 void LED_Off(LED_t *self) { GPIO_Write(self->ODR, !self->Mode); }
 
-void LED_Toggle(LED_t *self) {
-    GPIO_Write(self->ODR, !GPIO_ReadOutput(self->ODR));
-}
+void LED_Toggle(LED_t *self) { GPIO_Toggle(self->ODR); }
