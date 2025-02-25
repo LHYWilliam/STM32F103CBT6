@@ -50,6 +50,9 @@ extern TimerHandle_t vOLEDTimer;
 extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
+extern void TextPageUpdateOneByOneCallback(void *pvParameters);
+extern void TextPageUpdatePageByPageCallback(void *pvParameters);
+
 extern void ShowMonitorPageCallback(void *pvParameters);
 extern void ShowMQxPageCallback(void *pvParameters);
 extern void ShowSettingPageCallback(void *pvParameters);

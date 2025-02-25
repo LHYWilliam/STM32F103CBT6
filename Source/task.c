@@ -21,9 +21,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     if (Menu == &TextMenu) {
-        if (TextMenu.Page->Update) {
-            TextMenu_Update(Menu, &OLED);
-        }
+        TextMenu.Page->UpdateCallback(NULL);
 
     } else if (Menu == &ImageMenu) {
         ImageMenu_Update(Menu, &OLED);
@@ -67,6 +65,68 @@ void vMenuKeyTaskCode(void *pvParameters) {
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+}
+
+void Update(int16_t Y) {
+    PositionUpdate(TextMenu.Page->TitleY, Y);
+
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        if (i == 0) {
+            Y = Y + TextMenu.Page->TitleHeight / 4 -
+                TextMenu.Page->LowerPages[0].Height / 2 + 1;
+
+        } else if (i == 1) {
+            Y = TextMenu.Page->TitleY + TextMenu.Page->TitleHeight + 1;
+
+        } else {
+            Y = TextMenu.Page->LowerPages[i - 1].Y +
+                TextMenu.Page->LowerPages[i - 1].Height + 2;
+        }
+
+        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y);
+    }
+}
+
+void TextPageUpdateOneByOneCallback(void *pvParameters) {
+    TextMenu.PageNumber = TextMenu_PageNumber(TextMenu);
+
+    int16_t Y = TextMenu.Page->TitleY;
+
+    if (TextMenu.Cursor == 0) {
+        Y = 0;
+
+    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].Y < 1) {
+        Y = TextMenu.Page->TitleY -
+            TextMenu.Page->LowerPages[TextMenu.Cursor].Y + 1;
+
+    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].Y +
+                   TextMenu.Page->LowerPages[TextMenu.Cursor].Height >=
+               OLED.Height) {
+        Y = TextMenu.Page->TitleY -
+            (TextMenu.Page->LowerPages[TextMenu.Cursor].Y - OLED.Height +
+             TextMenu.Page->LowerPages[TextMenu.Cursor].Height) -
+            1;
+    }
+
+    Update(Y);
+}
+
+void TextPageUpdatePageByPageCallback(void *pvParameters) {
+    TextMenu.PageNumber = TextMenu_PageNumber(TextMenu);
+
+    int16_t Y = TextMenu.Page->TitleY;
+
+    if (TextMenu.PageNumber == 0) {
+        Y = 0;
+
+    } else {
+        uint8_t Index =
+            TextMenu.TextCountOfHomePage +
+            TextMenu.TextCountOfOtherPage * (TextMenu.PageNumber - 1);
+        Y = TextMenu.Page->TitleY - TextMenu.Page->LowerPages[Index].Y + 1;
+    }
+
+    Update(Y);
 }
 
 #define ShowTitleAndTexts(...)                                                 \

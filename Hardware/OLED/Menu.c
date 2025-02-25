@@ -62,6 +62,10 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
             self->LowerPages[i].UpperPage = self;
         }
 
+        if (!self->LowerPages[i].UpdateCallback) {
+            self->LowerPages[i].UpdateCallback = EmptyCallbackPtr;
+        }
+
         if (!self->LowerPages[i].ShowCallback) {
             self->LowerPages[i].ShowCallback = EmptyCallbackPtr;
         }
@@ -94,59 +98,6 @@ void TextPage_ReverseSetting(TextPage_t *self) {
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
     if (self->Page) {
         TextPage_Init(self->Page, OLED);
-    }
-}
-
-void TextMenu_Update(TextMenu_t *self, OLED_t *OLED) {
-    self->PageNumber = TextMenu_PageNumber(self);
-
-    int16_t Y = self->Page->TitleY;
-    switch (self->Update) {
-    case TextMenuUpdate_OneByOne:
-        if (self->Cursor == 0) {
-            Y = 0;
-
-        } else if (self->Page->LowerPages[self->Cursor].Y < 1) {
-            Y = self->Page->TitleY - self->Page->LowerPages[self->Cursor].Y + 1;
-
-        } else if (self->Page->LowerPages[self->Cursor].Y +
-                       self->Page->LowerPages[self->Cursor].Height >=
-                   OLED->Height) {
-            Y = self->Page->TitleY -
-                (self->Page->LowerPages[self->Cursor].Y - OLED->Height +
-                 self->Page->LowerPages[self->Cursor].Height) -
-                1;
-        }
-        break;
-
-    case TextMenuUpdate_PageByPage:
-        if (self->PageNumber == 0) {
-            Y = 0;
-
-        } else {
-            uint8_t Index = self->TextCountOfHomePage +
-                            self->TextCountOfOtherPage * (self->PageNumber - 1);
-            Y = self->Page->TitleY - self->Page->LowerPages[Index].Y + 1;
-        }
-        break;
-    }
-
-    PositionUpdate(self->Page->TitleY, Y);
-
-    for (uint8_t i = 0; i < self->Page->NumOfLowerPages; i++) {
-        if (i == 0) {
-            Y = Y + self->Page->TitleHeight / 4 -
-                self->Page->LowerPages[0].Height / 2 + 1;
-
-        } else if (i == 1) {
-            Y = self->Page->TitleY + self->Page->TitleHeight + 1;
-
-        } else {
-            Y = self->Page->LowerPages[i - 1].Y +
-                self->Page->LowerPages[i - 1].Height + 2;
-        }
-
-        PositionUpdate(self->Page->LowerPages[i].Y, Y);
     }
 }
 

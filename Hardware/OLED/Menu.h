@@ -7,10 +7,10 @@
 #include "OLED.h"
 
 #define TextMenu_PageNumber(Menu)                                              \
-    ((Menu->Cursor - 1) < Menu->TextCountOfHomePage                            \
+    ((Menu.Cursor - 1) < Menu.TextCountOfHomePage                              \
          ? 0                                                                   \
-         : ((Menu->Cursor - 1) - Menu->TextCountOfHomePage) /                  \
-                   Menu->TextCountOfOtherPage +                                \
+         : ((Menu.Cursor - 1) - Menu.TextCountOfHomePage) /                    \
+                   Menu.TextCountOfOtherPage +                                 \
                1)
 
 #define PositionUpdate(now, target)                                            \
@@ -36,9 +36,8 @@ typedef struct TextPage {
 
     int16_t Setting;
 
-    FunctionalState Update;
-
     void (*ShowCallback)(void *);
+    void (*UpdateCallback)(void *);
     void (*ClickCallback)(void *);
     void (*RotationCallback)(int16_t);
 } TextPage_t;
@@ -108,7 +107,6 @@ void TextPage_ResetSetY(TextPage_t *self);
 void TextPage_ReverseSetting(TextPage_t *self);
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
-void TextMenu_Update(TextMenu_t *self, OLED_t *OLED);
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self);
 ErrorStatus TextMenu_CursorDec(TextMenu_t *self);
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self);
