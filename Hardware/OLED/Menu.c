@@ -127,8 +127,7 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
     if (self->Page->LowerPages[self->Cursor].NumOfLowerPages) {
         self->Page = &self->Page->LowerPages[self->Cursor];
-        self->Cursor = 0;
-        self->Page->Cursor = self->Cursor;
+        self->Page->Cursor = self->Cursor = 0;
 
         return SUCCESS;
     }

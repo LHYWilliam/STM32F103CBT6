@@ -22,7 +22,7 @@ int main() {
 
     LEDSetting = &SettingPage.LowerPages[1];
     ReverseSetting = &SettingPage.LowerPages[2];
-    SettingLoadCallback(NULL);
+    SettingLoad(NULL);
 
     TextPage_Init(&MonitorPage, &OLED);
     TextPage_Init(&SettingPage, &OLED);

@@ -157,25 +157,32 @@ TextPage_t SettingPage = {
             SettingReversePage("Reverse"),
             SettingIncDecPage("Encoder"),
             (TextPage_t){
-                .Title = "Float",
+                .Title = "Save",
                 .ShowCallback = ShowFloatPageCallback,
-                .ClickCallback = EnterTextPageCallback,
+                .ClickCallback = SettingSaveCallback,
                 .RotationCallback = TextMenuCursorCallback,
-                .NumOfLowerPages = 1,
+                .NumOfLowerPages = 2,
                 .LowerPages =
                     (TextPage_t[]){
                         BackTextPage,
+                        (TextPage_t){
+                            .Title = "Save Success",
+                        },
                     },
             },
             (TextPage_t){
-                .Title = "Save",
-                .ClickCallback = SettingSaveCallback,
-                .RotationCallback = TextMenuCursorCallback,
-            },
-            (TextPage_t){
                 .Title = "Load",
+                .ShowCallback = ShowFloatPageCallback,
                 .ClickCallback = SettingLoadCallback,
                 .RotationCallback = TextMenuCursorCallback,
+                .NumOfLowerPages = 2,
+                .LowerPages =
+                    (TextPage_t[]){
+                        BackTextPage,
+                        (TextPage_t){
+                            .Title = "Load Success",
+                        },
+                    },
             },
             (TextPage_t){
                 .Title = "Restart",

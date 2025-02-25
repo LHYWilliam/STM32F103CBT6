@@ -72,5 +72,6 @@ extern void RestartSettingCallback(void *pvParameters);
 extern void SettingReverseCallback(void *pvParameters);
 extern void SettingIncDecCallback(int16_t Encoder);
 extern void SettingCursorToIncDecCallback(void *pvParameters);
+extern void SettingLoad(void *pvParameters);
 extern void SettingSaveCallback(void *pvParameters);
 extern void SettingLoadCallback(void *pvParameters);

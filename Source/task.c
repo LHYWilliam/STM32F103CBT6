@@ -232,9 +232,9 @@ void ShowSettingPageCallback(void *pvParameters) {
 }
 
 void ShowFloatPageCallback(void *pvParameters) {
-    TextMenu.Page->LowerPages[0].ClickCallback(NULL);
+    BackTextPageCallback(NULL);
     TextMenu.Page->ShowCallback(NULL);
-    TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback(NULL);
+    EnterTextPageCallback(NULL);
 
     OLED_ClearBufferArea(&OLED, OLED.Width / 8, OLED.Height / 8,
                          OLED.Width - OLED.Width / 4,
@@ -245,7 +245,7 @@ void ShowFloatPageCallback(void *pvParameters) {
                              OLED.Height - OLED.Height / 4);
 
     OLED_Printf(&OLED, OLED.Width / 8 + 2, OLED.Height / 8 + 2,
-                TextMenu.Page->Title);
+                TextMenu.Page->LowerPages[1].Title);
 }
 
 void ShowImageMenuCallback(void *pvParameters) {
@@ -367,6 +367,17 @@ void SettingSaveCallback(void *pvParameters) {
 
     W25Q64_SectorErase(&W25Q64, 0);
     W25Q64_PageProgram(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
+
+    EnterTextPageCallback(NULL);
+}
+
+void SettingLoad(void *pvParameters) {
+    uint8_t Setting[32];
+    W25Q64_ReadData(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
+
+    for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
+        SettingPage.LowerPages[i].Setting = Setting[i - 1];
+    }
 }
 
 void SettingLoadCallback(void *pvParameters) {
@@ -376,4 +387,6 @@ void SettingLoadCallback(void *pvParameters) {
     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
         SettingPage.LowerPages[i].Setting = Setting[i - 1];
     }
+
+    EnterTextPageCallback(NULL);
 }
