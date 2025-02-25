@@ -42,6 +42,8 @@ extern SelectioneBar_t Bar;
 extern TextPage_t *LEDSetting;
 extern TextPage_t *ReverseSetting;
 
+extern void SettingLoad(void *pvParameters);
+
 extern TaskHandle_t xMenuKeyTaskHandle;
 extern void vMenuKeyTaskCode(void *pvParameters);
 
@@ -50,28 +52,27 @@ extern TimerHandle_t vOLEDTimer;
 extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
-extern void TextPageUpdateCallback(void *pvParameters);
-extern void TextPageUpdatePageByPageCallback(void *pvParameters);
+extern void TextPage_UpdateCallback(void *pvParameters);
 
-extern void ShowMonitorPageCallback(void *pvParameters);
-extern void ShowMQxPageCallback(void *pvParameters);
-extern void ShowSettingPageCallback(void *pvParameters);
-extern void ShowFloatPageCallback(void *pvParameters);
-extern void ShowImageMenuCallback(void *pvParameters);
+extern void TextPage_ShowMonitorCallback(void *pvParameters);
+extern void TextPage_ShowMQxCallback(void *pvParameters);
+extern void TextPage_ShowSettingCallback(void *pvParameters);
+extern void TextPage_ShowFloatingCallback(void *pvParameters);
 
-extern void BackHomePageCallbck(void *pvParameters);
-extern void EnterTextPageCallback(void *pvParameters);
-extern void BackTextPageCallback(void *pvParameters);
-extern void TextMenuCursorCallback(int16_t Encoder);
-extern void ThresholdCallback(int16_t Encoder);
+extern void TextPage_CursorCallback(int16_t Encoder);
+extern void TextPage_EnterCallback(void *pvParameters);
+extern void TextPage_BackCallback(void *pvParameters);
+extern void TextPage_BackImageMenuCallback(void *pvParameters);
 
-extern void ImageMenuCursorCallback(int16_t Encoder);
-extern void ImagePageEnterTextPageCallback(void *pvParameters);
+extern void TextPage_ThresholdCallback(int16_t Encoder);
 
-extern void RestartSettingCallback(void *pvParameters);
-extern void SettingReverseCallback(void *pvParameters);
-extern void SettingIncDecCallback(int16_t Encoder);
-extern void SettingCursorToIncDecCallback(void *pvParameters);
-extern void SettingLoad(void *pvParameters);
-extern void SettingSaveCallback(void *pvParameters);
-extern void SettingLoadCallback(void *pvParameters);
+extern void ImagePage_CursorCallback(int16_t Encoder);
+extern void ImagePage_ShowCallback(void *pvParameters);
+extern void ImagePage_EnterTextPageCallback(void *pvParameters);
+
+extern void Setting_ReverseCallback(void *pvParameters);
+extern void Setting_IncDecCallback(int16_t Encoder);
+extern void Setting_CursorSwitchIncDecCallback(void *pvParameters);
+extern void Setting_SaveCallback(void *pvParameters);
+extern void Setting_LoadCallback(void *pvParameters);
+extern void Setting_RestartCallback(void *pvParameters);

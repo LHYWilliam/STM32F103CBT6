@@ -67,27 +67,7 @@ void vMenuKeyTaskCode(void *pvParameters) {
     }
 }
 
-void Update(int16_t Y) {
-    PositionUpdate(TextMenu.Page->TitleY, Y);
-
-    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
-        if (i == 0) {
-            Y = Y + TextMenu.Page->TitleHeight / 4 -
-                TextMenu.Page->LowerPages[0].Height / 2 + 1;
-
-        } else if (i == 1) {
-            Y = TextMenu.Page->TitleY + TextMenu.Page->TitleHeight + 1;
-
-        } else {
-            Y = TextMenu.Page->LowerPages[i - 1].Y +
-                TextMenu.Page->LowerPages[i - 1].Height + 2;
-        }
-
-        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y);
-    }
-}
-
-void TextPageUpdateCallback(void *pvParameters) {
+void TextPage_UpdateCallback(void *pvParameters) {
     int16_t Y = TextMenu.Page->TitleY;
 
     if (TextMenu.Cursor == 0) {
@@ -106,7 +86,23 @@ void TextPageUpdateCallback(void *pvParameters) {
             1;
     }
 
-    Update(Y);
+    PositionUpdate(TextMenu.Page->TitleY, Y);
+
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        if (i == 0) {
+            Y = Y + TextMenu.Page->TitleHeight / 4 -
+                TextMenu.Page->LowerPages[0].Height / 2 + 1;
+
+        } else if (i == 1) {
+            Y = TextMenu.Page->TitleY + TextMenu.Page->TitleHeight + 1;
+
+        } else {
+            Y = TextMenu.Page->LowerPages[i - 1].Y +
+                TextMenu.Page->LowerPages[i - 1].Height + 2;
+        }
+
+        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y);
+    }
 }
 
 #define ShowTitleAndTexts(...)                                                 \
@@ -128,7 +124,7 @@ void TextPageUpdateCallback(void *pvParameters) {
         __VA_ARGS__                                                            \
     }
 
-void ShowMonitorPageCallback(void *pvParameters) {
+void TextPage_ShowMonitorCallback(void *pvParameters) {
     ShowTitleAndTexts(
         if (i == 0) {
             OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
@@ -146,7 +142,7 @@ void ShowMonitorPageCallback(void *pvParameters) {
         });
 }
 
-void ShowMQxPageCallback(void *pvParameters) {
+void TextPage_ShowMQxCallback(void *pvParameters) {
     OLED_Printf(&OLED, TextMenu.Page->LowerPages[0].X,
                 TextMenu.Page->LowerPages[0].Y + 1, "%s",
                 TextMenu.Page->LowerPages[0].Title);
@@ -173,27 +169,27 @@ void ShowMQxPageCallback(void *pvParameters) {
         TextMenu.Page->TitleWidth, 2);
 }
 
-void ShowSettingPageCallback(void *pvParameters) {
+void TextPage_ShowSettingCallback(void *pvParameters) {
     ShowTitleAndTexts(
         OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
                     TextMenu.Page->LowerPages[i].Y, "%s",
                     TextMenu.Page->LowerPages[i].Title);
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-            SettingReverseCallback) {
+            Setting_ReverseCallback) {
             OLED_ShowImage(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                            TextMenu.Page->LowerPages[i].Y, 8, 8,
                            SettingImage[TextMenu.Page->LowerPages[i].Setting]);
         }
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-            SettingCursorToIncDecCallback) {
+            Setting_CursorSwitchIncDecCallback) {
             OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                         TextMenu.Page->LowerPages[i].Y, "%d",
                         TextMenu.Page->LowerPages[i].Setting);
 
             if (TextMenu.Page->LowerPages[i].RotationCallback ==
-                SettingIncDecCallback) {
+                Setting_IncDecCallback) {
                 uint8_t number;
                 if (TextMenu.Page->LowerPages[i].Setting == 0) {
                     number = 1;
@@ -211,10 +207,10 @@ void ShowSettingPageCallback(void *pvParameters) {
         });
 }
 
-void ShowFloatPageCallback(void *pvParameters) {
-    BackTextPageCallback(NULL);
+void TextPage_ShowFloatingCallback(void *pvParameters) {
+    TextPage_BackCallback(NULL);
     TextMenu.Page->ShowCallback(NULL);
-    EnterTextPageCallback(NULL);
+    TextPage_EnterCallback(NULL);
 
     OLED_ClearBufferArea(&OLED, OLED.Width / 8, OLED.Height / 8,
                          OLED.Width - OLED.Width / 4,
@@ -228,7 +224,7 @@ void ShowFloatPageCallback(void *pvParameters) {
                 TextMenu.Page->LowerPages[1].Title);
 }
 
-void ShowImageMenuCallback(void *pvParameters) {
+void ImagePage_ShowCallback(void *pvParameters) {
     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
         if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
             continue;
@@ -246,40 +242,40 @@ void ShowImageMenuCallback(void *pvParameters) {
     }
 }
 
-void BackHomePageCallbck(void *pvParameters) {
+void TextPage_BackImageMenuCallback(void *pvParameters) {
     Menu = &ImageMenu;
     if (ImageMenu_ReturnUpperPage(&ImageMenu, &TextMenu)) {
         SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[ImageMenu.Cursor]);
     }
 }
 
-void ImagePageEnterTextPageCallback(void *pvParameters) {
+void ImagePage_EnterTextPageCallback(void *pvParameters) {
     Menu = &TextMenu;
     ImageMenu_EnterLowerPage(&ImageMenu, &TextMenu);
     SelectioneBar_BindTextPage(&Bar,
                                &TextMenu.Page->LowerPages[TextMenu.Cursor]);
 }
 
-void EnterTextPageCallback(void *pvParameters) {
+void TextPage_EnterCallback(void *pvParameters) {
     if (TextMenu_EnterLowerPage(&TextMenu)) {
         SelectioneBar_BindTextPage(&Bar,
                                    &TextMenu.Page->LowerPages[TextMenu.Cursor]);
     }
 }
 
-void BackTextPageCallback(void *pvParameters) {
+void TextPage_BackCallback(void *pvParameters) {
     if (TextMenu_ReturnUpperPage(&TextMenu)) {
         SelectioneBar_BindTextPage(&Bar,
                                    &TextMenu.Page->LowerPages[TextMenu.Cursor]);
     }
 }
 
-void ThresholdCallback(int16_t Encoder) {
+void TextPage_ThresholdCallback(int16_t Encoder) {
     MQSensor_UpdateThreshold(&MQSensor[TextMenu.Page->UpperPage->Cursor - 1],
                              Encoder > 0 ? -128 : +128);
 }
 
-void TextMenuCursorCallback(int16_t Encoder) {
+void TextPage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         if (TextMenu_CursorInc(Menu)) {
             SelectioneBar_BindTextPage(
@@ -296,7 +292,7 @@ void TextMenuCursorCallback(int16_t Encoder) {
     }
 }
 
-void ImageMenuCursorCallback(int16_t Encoder) {
+void ImagePage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         if (ImageMenu_CursorInc(Menu)) {
             SelectioneBar_BindImagePage(&Bar,
@@ -311,13 +307,13 @@ void ImageMenuCursorCallback(int16_t Encoder) {
     }
 }
 
-void RestartSettingCallback(void *pvParameters) { __NVIC_SystemReset(); }
+void Setting_RestartCallback(void *pvParameters) { __NVIC_SystemReset(); }
 
-void SettingReverseCallback(void *pvParameters) {
+void Setting_ReverseCallback(void *pvParameters) {
     TextPage_ReverseSetting(TextMenu.Page);
 }
 
-void SettingIncDecCallback(int16_t Encoder) {
+void Setting_IncDecCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         TextMenu.Page->LowerPages[TextMenu.Cursor].Setting++;
 
@@ -326,20 +322,20 @@ void SettingIncDecCallback(int16_t Encoder) {
     }
 }
 
-void SettingCursorToIncDecCallback(void *pvParameters) {
+void Setting_CursorSwitchIncDecCallback(void *pvParameters) {
     if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
-        TextMenuCursorCallback) {
+        TextPage_CursorCallback) {
         TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
-            SettingIncDecCallback;
+            Setting_IncDecCallback;
 
     } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
-               SettingIncDecCallback) {
+               Setting_IncDecCallback) {
         TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
-            TextMenuCursorCallback;
+            TextPage_CursorCallback;
     }
 }
 
-void SettingSaveCallback(void *pvParameters) {
+void Setting_SaveCallback(void *pvParameters) {
     uint8_t Setting[32];
     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
         Setting[i - 1] = SettingPage.LowerPages[i].Setting;
@@ -348,7 +344,7 @@ void SettingSaveCallback(void *pvParameters) {
     W25Q64_SectorErase(&W25Q64, 0);
     W25Q64_PageProgram(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
 
-    EnterTextPageCallback(NULL);
+    TextPage_EnterCallback(NULL);
 }
 
 void SettingLoad(void *pvParameters) {
@@ -360,8 +356,8 @@ void SettingLoad(void *pvParameters) {
     }
 }
 
-void SettingLoadCallback(void *pvParameters) {
+void Setting_LoadCallback(void *pvParameters) {
     SettingLoad(pvParameters);
 
-    EnterTextPageCallback(NULL);
+    TextPage_EnterCallback(NULL);
 }

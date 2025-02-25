@@ -3,39 +3,71 @@
 #define Threshold                                                              \
     Threshold = VoltageToADC(2.048), .Relaxation = VoltageToADC(0.128)
 
-#define BackHomePage                                                           \
+#define BackHomePage(title)                                                    \
     (TextPage_t) {                                                             \
-        .Title = "<", .ClickCallback = BackHomePageCallbck,                    \
-        .RotationCallback = TextMenuCursorCallback,                            \
+        .Title = title, .ClickCallback = TextPage_BackImageMenuCallback,       \
+        .RotationCallback = TextPage_CursorCallback,                           \
     }
 
-#define BackTextPage                                                           \
+#define BackTextPage(title)                                                    \
     (TextPage_t) {                                                             \
-        .Title = "<", .ClickCallback = BackTextPageCallback,                   \
-        .RotationCallback = TextMenuCursorCallback,                            \
+        .Title = title, .ClickCallback = TextPage_BackCallback,                \
+        .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 #define ChartPage(title)                                                       \
     (TextPage_t) {                                                             \
         .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1,  \
-        .TitleHeight = 64 / 2, .ShowCallback = ShowMQxPageCallback,            \
-        .ClickCallback = EnterTextPageCallback,                                \
-        .RotationCallback = TextMenuCursorCallback, .NumOfLowerPages = 1,      \
+        .TitleHeight = 64 / 2, .ShowCallback = TextPage_ShowMQxCallback,       \
+        .ClickCallback = TextPage_EnterCallback,                               \
+        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]) {                                         \
-            BackTextPage,                                                      \
+            BackTextPage("<"),                                                 \
         }                                                                      \
     }
 
 #define SettingReversePage(title)                                              \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = SettingReverseCallback,               \
-        .RotationCallback = TextMenuCursorCallback,                            \
+        .Title = title, .ClickCallback = Setting_ReverseCallback,              \
+        .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 #define SettingIncDecPage(title)                                               \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = SettingCursorToIncDecCallback,        \
-        .RotationCallback = TextMenuCursorCallback,                            \
+        .Title = title, .ClickCallback = Setting_CursorSwitchIncDecCallback,   \
+        .RotationCallback = TextPage_CursorCallback,                           \
+    }
+
+#define SettingSavePage(title)                                                 \
+    (TextPage_t) {                                                             \
+        .Title = title, .ShowCallback = TextPage_ShowFloatingCallback,         \
+        .ClickCallback = Setting_SaveCallback,                                 \
+        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 2,     \
+        .LowerPages = (TextPage_t[]){                                          \
+            BackTextPage("<"),                                                 \
+            (TextPage_t){                                                      \
+                .Title = "Save Success",                                       \
+            },                                                                 \
+        },                                                                     \
+    }
+
+#define SettingLoadPage(title)                                                 \
+    (TextPage_t) {                                                             \
+        .Title = title, .ShowCallback = TextPage_ShowFloatingCallback,         \
+        .ClickCallback = Setting_LoadCallback,                                 \
+        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 2,     \
+        .LowerPages = (TextPage_t[]){                                          \
+            BackTextPage("<"),                                                 \
+            (TextPage_t){                                                      \
+                .Title = "Load Success",                                       \
+            },                                                                 \
+        },                                                                     \
+    }
+
+#define RestartPage(title)                                                     \
+    (TextPage_t) {                                                             \
+        .Title = title, .ClickCallback = Setting_RestartCallback,              \
+        .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 LED_t LED = {
@@ -132,12 +164,12 @@ LCD_t LCD = {
 
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
-    .ShowCallback = ShowMonitorPageCallback,
-    .UpdateCallback = TextPageUpdateCallback,
+    .ShowCallback = TextPage_ShowMonitorCallback,
+    .UpdateCallback = TextPage_UpdateCallback,
     .NumOfLowerPages = 5,
     .LowerPages =
         (TextPage_t[]){
-            BackHomePage,
+            BackHomePage("<"),
             ChartPage("MQ2"),
             ChartPage("MQ3"),
             ChartPage("MQ7"),
@@ -147,48 +179,18 @@ TextPage_t MonitorPage = {
 
 TextPage_t SettingPage = {
     .Title = "Setting",
-    .ShowCallback = ShowSettingPageCallback,
-    .UpdateCallback = TextPageUpdateCallback,
+    .ShowCallback = TextPage_ShowSettingCallback,
+    .UpdateCallback = TextPage_UpdateCallback,
     .NumOfLowerPages = 7,
     .LowerPages =
         (TextPage_t[]){
-            BackHomePage,
+            BackHomePage("<"),
             SettingReversePage("LED"),
             SettingReversePage("Reverse"),
             SettingIncDecPage("Encoder"),
-            (TextPage_t){
-                .Title = "Save",
-                .ShowCallback = ShowFloatPageCallback,
-                .ClickCallback = SettingSaveCallback,
-                .RotationCallback = TextMenuCursorCallback,
-                .NumOfLowerPages = 2,
-                .LowerPages =
-                    (TextPage_t[]){
-                        BackTextPage,
-                        (TextPage_t){
-                            .Title = "Save Success",
-                        },
-                    },
-            },
-            (TextPage_t){
-                .Title = "Load",
-                .ShowCallback = ShowFloatPageCallback,
-                .ClickCallback = SettingLoadCallback,
-                .RotationCallback = TextMenuCursorCallback,
-                .NumOfLowerPages = 2,
-                .LowerPages =
-                    (TextPage_t[]){
-                        BackTextPage,
-                        (TextPage_t){
-                            .Title = "Load Success",
-                        },
-                    },
-            },
-            (TextPage_t){
-                .Title = "Restart",
-                .ClickCallback = RestartSettingCallback,
-                .RotationCallback = TextMenuCursorCallback,
-            },
+            SettingSavePage("Save"),
+            SettingLoadPage("Load"),
+            RestartPage("Restart"),
         },
 };
 
@@ -198,9 +200,9 @@ ImageMenu_t ImageMenu = {
     .Space = 32,
     .ImageWidth = 32,
     .ImageHeight = 32,
-    .ShowCallback = ShowImageMenuCallback,
-    .ClickCallback = ImagePageEnterTextPageCallback,
-    .RotationCallback = ImageMenuCursorCallback,
+    .ShowCallback = ImagePage_ShowCallback,
+    .ClickCallback = ImagePage_EnterTextPageCallback,
+    .RotationCallback = ImagePage_CursorCallback,
     .NumOfPages = 2,
     .Page =
         (ImagePage_t[]){
