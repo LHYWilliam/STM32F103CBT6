@@ -36,6 +36,8 @@ typedef struct TextPage {
 
     int16_t Setting;
 
+    FunctionalState Update;
+
     void (*ShowCallback)(void *);
     void (*ClickCallback)(void *);
     void (*RotationCallback)(int16_t);

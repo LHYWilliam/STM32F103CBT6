@@ -21,7 +21,7 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
 void vUpdateTimerCallback(TimerHandle_t pxTimer) {
     if (Menu == &TextMenu) {
-        if (TextMenu.Page->UpperPage != &MonitorPage) {
+        if (TextMenu.Page->Update) {
             TextMenu_Update(Menu, &OLED);
         }
 
