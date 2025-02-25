@@ -20,14 +20,14 @@
 #endif
 
 typedef struct OLED_t {
-    uint8_t I2C;
+    FunctionalState I2C;
     I2C_TypeDef *I2Cx;
     GPIOxPiny_t SCL;
     GPIOxPiny_t SDA;
     uint32_t SCL_ODR;
     uint32_t SDA_ODR;
 
-    uint8_t SPI;
+    FunctionalState SPI;
     SPI_TypeDef *SPIx;
     GPIOxPiny_t D0;
     GPIOxPiny_t D1;
@@ -59,7 +59,7 @@ typedef struct OLED_t {
 
 #if U8G2
 
-    uint8_t U8g2;
+    FunctionalState U8g2;
     u8g2_t u8g2;
 
 #endif

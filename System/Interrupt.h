@@ -15,7 +15,6 @@ typedef struct {
     uint32_t NVIC_PriorityGroup;
     uint8_t NVIC_IRQChannelPreemptionPriority;
     uint8_t NVIC_IRQChannelSubPriority;
-
 } GPIOInterrut_t;
 
 typedef struct {

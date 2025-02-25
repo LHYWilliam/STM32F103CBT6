@@ -39,15 +39,15 @@ typedef struct {
     uint8_t channel;
 
     uint32_t sourceAddr;
-    uint8_t sourceInc;
+    FunctionalState sourceInc;
 
     uint32_t targetAddr;
-    uint8_t targetInc;
+    FunctionalState targetInc;
 
     uint8_t DataSize;
     uint32_t BufferSize;
     uint32_t Circular;
-    uint8_t M2M;
+    FunctionalState M2M;
 
     DMA_Channel_TypeDef *DMAy_Channelx;
 } DMA_t;

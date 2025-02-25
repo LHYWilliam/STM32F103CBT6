@@ -19,9 +19,9 @@ typedef struct {
     uint8_t *Channel;
     uint16_t NbrOfChannel;
 
-    uint8_t Cmd;
-    uint8_t DMA;
-    uint8_t Continuous;
+    FunctionalState Cmd;
+    FunctionalState DMA;
+    FunctionalState Continuous;
 
     uint32_t TRGO;
 } ADC_t;

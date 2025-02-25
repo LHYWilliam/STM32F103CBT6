@@ -40,7 +40,7 @@ typedef struct {
     uint16_t Prescaler;
     uint16_t Period;
 
-    uint8_t Cmd;
+    FunctionalState Cmd;
 
     uint16_t TRGO;
 } TIM_t;

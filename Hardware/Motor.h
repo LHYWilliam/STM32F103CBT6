@@ -17,8 +17,8 @@ typedef struct {
     uint8_t Channel;
 
     uint16_t Range;
-    uint8_t Invert;
-    uint8_t TIM_Init;
+    FunctionalState Invert;
+    FunctionalState TIM_Init;
 
     void (*TIM_SetCompare)(TIM_TypeDef *TIMx, uint16_t Compare1);
 } Motor_t;

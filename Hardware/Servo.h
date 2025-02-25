@@ -13,7 +13,7 @@ typedef struct {
     uint8_t Channel[4];
     uint8_t NbrOfChannel;
 
-    uint8_t TIM_Init;
+    FunctionalState TIM_Init;
 
     void (*TIM_SetCompare[4])(TIM_TypeDef *TIMx, uint16_t Compare);
 } Servo_t;
