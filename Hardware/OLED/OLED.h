@@ -92,6 +92,8 @@ void OLED_DrawVLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Height,
                     uint8_t step);
 void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
                    int16_t Y1);
+void OLED_DrawHollowRectangle(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+                              uint8_t Height);
 void OLED_ShowChart(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, uint16_t *Data, uint16_t Length,
                     int16_t Index);

@@ -153,7 +153,18 @@ TextPage_t SettingPage = {
             BackHomePage,
             SettingReversePage("LED"),
             SettingReversePage("Reverse"),
-            SettingIncDecPage("Test"),
+            SettingIncDecPage("Encoder"),
+            (TextPage_t){
+                .Title = "Float",
+                .ShowCallback = ShowFloatPageCallback,
+                .ClickCallback = EnterTextPageCallback,
+                .RotationCallback = TextMenuCursorCallback,
+                .NumOfLowerPages = 1,
+                .LowerPages =
+                    (TextPage_t[]){
+                        BackTextPage,
+                    },
+            },
             (TextPage_t){
                 .Title = "Save",
                 .ClickCallback = SettingSaveCallback,

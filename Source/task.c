@@ -171,6 +171,23 @@ void ShowSettingPageCallback(void *pvParameters) {
         });
 }
 
+void ShowFloatPageCallback(void *pvParameters) {
+    TextMenu.Page->LowerPages[0].ClickCallback(NULL);
+    TextMenu.Page->ShowCallback(NULL);
+    TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback(NULL);
+
+    OLED_ClearBufferArea(&OLED, OLED.Width / 8, OLED.Height / 8,
+                         OLED.Width - OLED.Width / 4,
+                         OLED.Height - OLED.Height / 4);
+
+    OLED_DrawHollowRectangle(&OLED, OLED.Width / 8, OLED.Height / 8,
+                             OLED.Width - OLED.Width / 4,
+                             OLED.Height - OLED.Height / 4);
+
+    OLED_Printf(&OLED, OLED.Width / 8 + 2, OLED.Height / 8 + 2,
+                TextMenu.Page->Title);
+}
+
 void ShowImageMenuCallback(void *pvParameters) {
     for (uint8_t i = 0; i < ImageMenu.NumOfPages; i++) {
         if (ImageMenu.Page[i].ImageX + ImageMenu.ImageWidth < 0) {
