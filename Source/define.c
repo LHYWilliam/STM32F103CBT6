@@ -133,7 +133,7 @@ LCD_t LCD = {
 TextPage_t MonitorPage = {
     .Title = "异味检测与开窗系统",
     .ShowCallback = ShowMonitorPageCallback,
-    .UpdateCallback = TextPageUpdateOneByOneCallback,
+    .UpdateCallback = TextPageUpdateCallback,
     .NumOfLowerPages = 5,
     .LowerPages =
         (TextPage_t[]){
@@ -148,7 +148,7 @@ TextPage_t MonitorPage = {
 TextPage_t SettingPage = {
     .Title = "Setting",
     .ShowCallback = ShowSettingPageCallback,
-    .UpdateCallback = TextPageUpdateOneByOneCallback,
+    .UpdateCallback = TextPageUpdateCallback,
     .NumOfLowerPages = 7,
     .LowerPages =
         (TextPage_t[]){
@@ -192,11 +192,7 @@ TextPage_t SettingPage = {
         },
 };
 
-TextMenu_t TextMenu = {
-    .Update = TextMenuUpdate_OneByOne,
-    .TextCountOfHomePage = 4,
-    .TextCountOfOtherPage = 6,
-};
+TextMenu_t TextMenu;
 
 ImageMenu_t ImageMenu = {
     .Space = 32,

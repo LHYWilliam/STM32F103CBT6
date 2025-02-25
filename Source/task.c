@@ -87,9 +87,7 @@ void Update(int16_t Y) {
     }
 }
 
-void TextPageUpdateOneByOneCallback(void *pvParameters) {
-    TextMenu.PageNumber = TextMenu_PageNumber(TextMenu);
-
+void TextPageUpdateCallback(void *pvParameters) {
     int16_t Y = TextMenu.Page->TitleY;
 
     if (TextMenu.Cursor == 0) {
@@ -106,24 +104,6 @@ void TextPageUpdateOneByOneCallback(void *pvParameters) {
             (TextMenu.Page->LowerPages[TextMenu.Cursor].Y - OLED.Height +
              TextMenu.Page->LowerPages[TextMenu.Cursor].Height) -
             1;
-    }
-
-    Update(Y);
-}
-
-void TextPageUpdatePageByPageCallback(void *pvParameters) {
-    TextMenu.PageNumber = TextMenu_PageNumber(TextMenu);
-
-    int16_t Y = TextMenu.Page->TitleY;
-
-    if (TextMenu.PageNumber == 0) {
-        Y = 0;
-
-    } else {
-        uint8_t Index =
-            TextMenu.TextCountOfHomePage +
-            TextMenu.TextCountOfOtherPage * (TextMenu.PageNumber - 1);
-        Y = TextMenu.Page->TitleY - TextMenu.Page->LowerPages[Index].Y + 1;
     }
 
     Update(Y);
@@ -381,12 +361,7 @@ void SettingLoad(void *pvParameters) {
 }
 
 void SettingLoadCallback(void *pvParameters) {
-    uint8_t Setting[32];
-    W25Q64_ReadData(&W25Q64, 0, Setting, SettingPage.NumOfLowerPages - 1);
-
-    for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
-        SettingPage.LowerPages[i].Setting = Setting[i - 1];
-    }
+    SettingLoad(pvParameters);
 
     EnterTextPageCallback(NULL);
 }

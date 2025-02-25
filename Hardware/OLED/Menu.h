@@ -6,13 +6,6 @@
 
 #include "OLED.h"
 
-#define TextMenu_PageNumber(Menu)                                              \
-    ((Menu.Cursor - 1) < Menu.TextCountOfHomePage                              \
-         ? 0                                                                   \
-         : ((Menu.Cursor - 1) - Menu.TextCountOfHomePage) /                    \
-                   Menu.TextCountOfOtherPage +                                 \
-               1)
-
 #define PositionUpdate(now, target)                                            \
     ((now) += ((now) < (target) ? 1 : (now) > (target) ? -1 : 0))
 
@@ -42,20 +35,9 @@ typedef struct TextPage {
     void (*RotationCallback)(int16_t);
 } TextPage_t;
 
-typedef enum {
-    TextMenuUpdate_OneByOne,
-    TextMenuUpdate_PageByPage,
-} TextMenuUpdate;
-
 typedef struct {
     uint8_t Cursor;
     TextPage_t *Page;
-
-    uint8_t PageNumber;
-    uint8_t TextCountOfHomePage;
-    uint8_t TextCountOfOtherPage;
-
-    TextMenuUpdate Update;
 } TextMenu_t;
 
 typedef struct {
