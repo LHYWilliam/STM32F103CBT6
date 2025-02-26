@@ -28,22 +28,23 @@
 
 #define SettingReversePage(title)                                              \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = Setting_ReverseCallback,              \
+        .Title = title, .ClickCallback = TextPage_SettingReverseCallback,      \
         .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 #define SettingIncDecPage(title)                                               \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = Setting_CursorSwitchIncDecCallback,   \
+        .Title = title,                                                        \
+        .ClickCallback = TextPage_SettingCursorSwitchIncDecCallback,           \
         .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 #define SettingSavePage(title)                                                 \
     (TextPage_t) {                                                             \
         .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,           \
-        .TitleHeight = 1, .ShowCallback = TextPage_ShowFloatingCallback,       \
-        .UpdateCallback = TextPage_UpdateFloatCallback,                        \
-        .ClickCallback = Setting_SaveCallback,                                 \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,         \
+        .UpdateCallback = TextPage_UpdateDialogCallback,                       \
+        .ClickCallback = TextPage_SettingSaveCallback,                         \
         .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \
             (TextPage_t){                                                      \
@@ -58,9 +59,9 @@
 #define SettingLoadPage(title)                                                 \
     (TextPage_t) {                                                             \
         .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,           \
-        .TitleHeight = 1, .ShowCallback = TextPage_ShowFloatingCallback,       \
-        .UpdateCallback = TextPage_UpdateFloatCallback,                        \
-        .ClickCallback = Setting_LoadCallback,                                 \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,         \
+        .UpdateCallback = TextPage_UpdateDialogCallback,                       \
+        .ClickCallback = TextPage_SettingLoadCallback,                         \
         .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \
             (TextPage_t){                                                      \
@@ -74,7 +75,7 @@
 
 #define RestartPage(title)                                                     \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = Setting_RestartCallback,              \
+        .Title = title, .ClickCallback = TextPage_SettingRestartCallback,      \
         .RotationCallback = TextPage_CursorCallback,                           \
     }
 

@@ -38,7 +38,7 @@ void TextPage_UpdateCallback(void *pvParameters) {
     }
 }
 
-void TextPage_UpdateFloatCallback(void *pvParameters) {
+void TextPage_UpdateDialogCallback(void *pvParameters) {
     PositionUpdate(TextMenu.Page->TitleX, OLED.Width / 8, 1);
     PositionUpdate(TextMenu.Page->TitleY, OLED.Height / 8, 1);
     PositionUpdate(TextMenu.Page->TitleWidth, OLED.Width - OLED.Width / 4 - 1,

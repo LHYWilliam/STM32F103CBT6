@@ -1,10 +1,5 @@
 #include "main.h"
 
-void TextPage_ThresholdCallback(int16_t Encoder) {
-    MQSensor_UpdateThreshold(&MQSensor[TextMenu.Page->UpperPage->Cursor - 1],
-                             Encoder > 0 ? -128 : +128);
-}
-
 void TextPage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         if (TextPage_CursorInc(TextMenu.Page)) {
@@ -20,6 +15,20 @@ void TextPage_CursorCallback(int16_t Encoder) {
     }
 }
 
+void TextPage_ThresholdCallback(int16_t Encoder) {
+    MQSensor_UpdateThreshold(&MQSensor[TextMenu.Page->UpperPage->Cursor - 1],
+                             Encoder > 0 ? -128 : +128);
+}
+
+void TextPage_SettingIncDecCallback(int16_t Encoder) {
+    if (Encoder >= 3) {
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting++;
+
+    } else if (Encoder <= -3) {
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting--;
+    }
+}
+
 void ImagePage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         if (ImageMenu_CursorInc(&ImageMenu)) {
@@ -32,14 +41,5 @@ void ImagePage_CursorCallback(int16_t Encoder) {
             SelectioneBar_BindImagePage(&Bar,
                                         &ImageMenu.Page[ImageMenu.Cursor]);
         }
-    }
-}
-
-void Setting_IncDecCallback(int16_t Encoder) {
-    if (Encoder >= 3) {
-        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting++;
-
-    } else if (Encoder <= -3) {
-        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting--;
     }
 }

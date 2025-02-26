@@ -53,27 +53,25 @@ extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
 extern void TextPage_UpdateCallback(void *pvParameters);
-extern void TextPage_UpdateFloatCallback(void *pvParameters);
+extern void TextPage_UpdateDialogCallback(void *pvParameters);
 
-extern void TextPage_ShowMonitorCallback(void *pvParameters);
 extern void TextPage_ShowMQxCallback(void *pvParameters);
+extern void TextPage_ShowDialogCallback(void *pvParameters);
+extern void TextPage_ShowMonitorCallback(void *pvParameters);
 extern void TextPage_ShowSettingCallback(void *pvParameters);
-extern void TextPage_ShowFloatingCallback(void *pvParameters);
-
-extern void TextPage_CursorCallback(int16_t Encoder);
-extern void TextPage_EnterCallback(void *pvParameters);
-extern void TextPage_BackCallback(void *pvParameters);
-extern void TextPage_BackImageMenuCallback(void *pvParameters);
-
-extern void TextPage_ThresholdCallback(int16_t Encoder);
-
-extern void ImagePage_CursorCallback(int16_t Encoder);
 extern void ImagePage_ShowCallback(void *pvParameters);
+
+extern void TextPage_BackCallback(void *pvParameters);
+extern void TextPage_EnterCallback(void *pvParameters);
+extern void TextPage_SettingSaveCallback(void *pvParameters);
+extern void TextPage_SettingLoadCallback(void *pvParameters);
+extern void TextPage_BackImageMenuCallback(void *pvParameters);
+extern void TextPage_SettingReverseCallback(void *pvParameters);
+extern void TextPage_SettingRestartCallback(void *pvParameters);
+extern void TextPage_SettingCursorSwitchIncDecCallback(void *pvParameters);
 extern void ImagePage_EnterTextPageCallback(void *pvParameters);
 
-extern void Setting_ReverseCallback(void *pvParameters);
-extern void Setting_IncDecCallback(int16_t Encoder);
-extern void Setting_CursorSwitchIncDecCallback(void *pvParameters);
-extern void Setting_SaveCallback(void *pvParameters);
-extern void Setting_LoadCallback(void *pvParameters);
-extern void Setting_RestartCallback(void *pvParameters);
+extern void TextPage_CursorCallback(int16_t Encoder);
+extern void TextPage_ThresholdCallback(int16_t Encoder);
+extern void TextPage_SettingIncDecCallback(int16_t Encoder);
+extern void ImagePage_CursorCallback(int16_t Encoder);
