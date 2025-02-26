@@ -7,11 +7,11 @@ project:
     - setup: Options for STM32F103CBT6
       add-path:
         - Util
+        - Source
         - System
         - Hardware
-        - Hardware/OLED
         - Hardware/LCD
-        - U8g2
+        - Hardware/OLED
       debug: "on"
       misc:
         - C:
@@ -59,9 +59,9 @@ project:
       files:
         - file: Source/main.c
         - file: Source/main.h
-        - file: Source/define.c
-        - file: Source/task.c
-        - file: Source/interrupt.c
+        - file: Source/Task.c
+        - file: Source/Define.c
+        - file: Source/Interrupt.c
         - file: Source/Menu/Click.c
         - file: Source/Menu/Rotation.c
         - file: Source/Menu/Show.c

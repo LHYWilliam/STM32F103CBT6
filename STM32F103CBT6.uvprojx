@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\OLED;.\Hardware\LCD;.\U8g2</IncludePath>
+              <IncludePath>.\Util;.\Source;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -395,19 +395,19 @@
               <FilePath>.\Source\main.h</FilePath>
             </File>
             <File>
-              <FileName>define.c</FileName>
+              <FileName>Task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\define.c</FilePath>
+              <FilePath>.\Source\Task.c</FilePath>
             </File>
             <File>
-              <FileName>task.c</FileName>
+              <FileName>Define.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\task.c</FilePath>
+              <FilePath>.\Source\Define.c</FilePath>
             </File>
             <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>Interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\interrupt.c</FilePath>
+              <FilePath>.\Source\Interrupt.c</FilePath>
             </File>
             <File>
               <FileName>Click.c</FileName>
