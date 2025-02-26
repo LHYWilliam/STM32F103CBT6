@@ -8,22 +8,22 @@ typedef struct {
     uint8_t GPIO_PortSource;
     uint8_t GPIO_PinSource;
 
-    uint32_t EXTI_Line;
+    uint32_t            EXTI_Line;
     EXTITrigger_TypeDef EXTI_Trigger;
 
-    uint8_t NVIC_IRQChannel;
+    uint8_t  NVIC_IRQChannel;
     uint32_t NVIC_PriorityGroup;
-    uint8_t NVIC_IRQChannelPreemptionPriority;
-    uint8_t NVIC_IRQChannelSubPriority;
+    uint8_t  NVIC_IRQChannelPreemptionPriority;
+    uint8_t  NVIC_IRQChannelSubPriority;
 } GPIOInterrut_t;
 
 typedef struct {
     TIM_TypeDef *TIMx;
 
-    uint8_t NVIC_IRQChannel;
+    uint8_t  NVIC_IRQChannel;
     uint32_t NVIC_PriorityGroup;
-    uint8_t NVIC_IRQChannelPreemptionPriority;
-    uint8_t NVIC_IRQChannelSubPriority;
+    uint8_t  NVIC_IRQChannelPreemptionPriority;
+    uint8_t  NVIC_IRQChannelSubPriority;
 } TIMInterrupt_t;
 
 typedef struct {
@@ -31,10 +31,10 @@ typedef struct {
 
     uint16_t USART_IT;
 
-    uint8_t NVIC_IRQChannel;
+    uint8_t  NVIC_IRQChannel;
     uint32_t NVIC_PriorityGroup;
-    uint8_t NVIC_IRQChannelPreemptionPriority;
-    uint8_t NVIC_IRQChannelSubPriority;
+    uint8_t  NVIC_IRQChannelPreemptionPriority;
+    uint8_t  NVIC_IRQChannelSubPriority;
 
 } USARTInterrupt_t;
 

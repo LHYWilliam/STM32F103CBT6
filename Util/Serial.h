@@ -6,10 +6,10 @@
 
 #include "GPIO.h"
 
-#define USARTx_IRQn(x)                                                         \
-    ((x) == USART1   ? USART1_IRQn                                             \
-     : (x) == USART2 ? USART2_IRQn                                             \
-     : (x) == USART3 ? USART3_IRQn                                             \
+#define USARTx_IRQn(x)             \
+    ((x) == USART1   ? USART1_IRQn \
+     : (x) == USART2 ? USART2_IRQn \
+     : (x) == USART3 ? USART3_IRQn \
                      : NULL)
 
 typedef enum {
@@ -24,7 +24,7 @@ typedef struct {
     GPIOxPiny_t RX;
 
     USART_TypeDef *USARTx;
-    uint32_t BaudRate;
+    uint32_t       BaudRate;
 
     uint8_t Priority;
     uint8_t Interrupt;

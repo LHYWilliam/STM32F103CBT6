@@ -11,7 +11,7 @@ void TIM_Init(TIM_t *self, ClockSourceConfig_t *config) {
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = {
         .TIM_Prescaler = self->Prescaler,
-        .TIM_Period = self->Period,
+        .TIM_Period    = self->Period,
     };
     TIM_TimeBaseInit(self->TIMx, &TIM_TimeBaseInitStruct);
 

@@ -18,19 +18,19 @@ void Serial_Init(Serial_t *self) {
     }
 
     USART_t USART = {
-        .USARTx = self->USARTx,
+        .USARTx   = self->USARTx,
         .BaudRate = self->BaudRate,
-        .Mode = (self->TX[0] ? USART_Mode_Tx : 0) |
+        .Mode     = (self->TX[0] ? USART_Mode_Tx : 0) |
                 (self->RX[0] ? USART_Mode_Rx : 0),
     };
     USART_Init_(&USART);
 
     if (self->Interrupt) {
         USARTInterrupt_t Interrupt = {
-            .USARTx = self->USARTx,
-            .USART_IT = self->Interrupt,
-            .NVIC_IRQChannel = USARTx_IRQn(self->USARTx),
-            .NVIC_PriorityGroup = NVIC_PriorityGroup_4,
+            .USARTx                            = self->USARTx,
+            .USART_IT                          = self->Interrupt,
+            .NVIC_IRQChannel                   = USARTx_IRQn(self->USARTx),
+            .NVIC_PriorityGroup                = NVIC_PriorityGroup_4,
             .NVIC_IRQChannelPreemptionPriority = self->Priority,
         };
         USART_Interrupt_Init(&Interrupt);

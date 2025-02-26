@@ -16,7 +16,7 @@ void LCD_SetFont(LCD_t *self, uint32_t Font) {
     self->Font = Font;
     for (uint8_t i = 0; i < sizeof(LCDFonts) / sizeof(LCDFonts[0]); i++) {
         if (LCDFonts[i].Font == self->Font) {
-            self->FontWidth = LCDFonts[i].FontWidth;
+            self->FontWidth  = LCDFonts[i].FontWidth;
             self->FontHeight = LCDFonts[i].FontHeight;
             break;
         }
@@ -97,9 +97,9 @@ void LCD_Init(LCD_t *self) {
     self->SCL_ODR = GPIO_InitPin(&GPIO, self->SCL);
     self->SDA_ODR = GPIO_InitPin(&GPIO, self->SDA);
     self->RES_ODR = GPIO_InitPin(&GPIO, self->RES);
-    self->DC_ODR = GPIO_InitPin(&GPIO, self->DC);
-    self->CS_ODR = GPIO_InitPin(&GPIO, self->CS);
-    self->BL_ODR = GPIO_InitPin(&GPIO, self->BL);
+    self->DC_ODR  = GPIO_InitPin(&GPIO, self->DC);
+    self->CS_ODR  = GPIO_InitPin(&GPIO, self->CS);
+    self->BL_ODR  = GPIO_InitPin(&GPIO, self->BL);
 
     GPIO_Write(self->SCL_ODR, 1);
     GPIO_Write(self->SDA_ODR, 1);
@@ -108,8 +108,8 @@ void LCD_Init(LCD_t *self) {
     GPIO_Write(self->CS_ODR, 1);
     GPIO_Write(self->BL_ODR, 0);
 
-    self->WriteData8 = LCD_SWSPI_WriteData8;
-    self->WriteData16 = LCD_SWSPI_WriteData16;
+    self->WriteData8   = LCD_SWSPI_WriteData8;
+    self->WriteData16  = LCD_SWSPI_WriteData16;
     self->WriteData16s = LCD_SWSPI_WriteData16s;
     self->WriteDatas16 = LCD_SWSPI_WriteDatas16;
     self->WriteCommand = LCD_SWSPI_WriteCommand;

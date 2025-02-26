@@ -5,8 +5,8 @@ void GPIO_Interrupt_Init(GPIOInterrut_t *self) {
     GPIO_EXTILineConfig(self->GPIO_PortSource, self->GPIO_PinSource);
 
     EXTI_InitTypeDef EXTI_InitStruct = {
-        .EXTI_Line = self->EXTI_Line,
-        .EXTI_Mode = EXTI_Mode_Interrupt,
+        .EXTI_Line    = self->EXTI_Line,
+        .EXTI_Mode    = EXTI_Mode_Interrupt,
         .EXTI_Trigger = self->EXTI_Trigger,
         .EXTI_LineCmd = ENABLE,
     };
@@ -18,7 +18,7 @@ void GPIO_Interrupt_Init(GPIOInterrut_t *self) {
         .NVIC_IRQChannelPreemptionPriority =
             self->NVIC_IRQChannelPreemptionPriority,
         .NVIC_IRQChannelSubPriority = self->NVIC_IRQChannelSubPriority,
-        .NVIC_IRQChannelCmd = ENABLE,
+        .NVIC_IRQChannelCmd         = ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);
 }
@@ -32,7 +32,7 @@ void TIM_Interrupt_Init(TIMInterrupt_t *self) {
         .NVIC_IRQChannelPreemptionPriority =
             self->NVIC_IRQChannelPreemptionPriority,
         .NVIC_IRQChannelSubPriority = self->NVIC_IRQChannelSubPriority,
-        .NVIC_IRQChannelCmd = ENABLE,
+        .NVIC_IRQChannelCmd         = ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);
 
@@ -50,7 +50,7 @@ void USART_Interrupt_Init(USARTInterrupt_t *self) {
         .NVIC_IRQChannelPreemptionPriority =
             self->NVIC_IRQChannelPreemptionPriority,
         .NVIC_IRQChannelSubPriority = self->NVIC_IRQChannelSubPriority,
-        .NVIC_IRQChannelCmd = ENABLE,
+        .NVIC_IRQChannelCmd         = ENABLE,
     };
     NVIC_Init(&NVIC_InitStruct);
 }

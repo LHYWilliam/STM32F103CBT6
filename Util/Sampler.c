@@ -15,27 +15,27 @@ void Sampler_Init(Sampler_t *self) {
     }
 
     ADC_t ADC = {
-        .ADCx = self->ADCx,
-        .Cmd = DISABLE,
-        .Channel = self->ADC_Channel,
+        .ADCx         = self->ADCx,
+        .Cmd          = DISABLE,
+        .Channel      = self->ADC_Channel,
         .NbrOfChannel = self->NbrOfChannel,
-        .Continuous = self->Continuous,
-        .DMA = self->DMAx ? ENABLE : DISABLE,
-        .TRGO = ADC_ExternalTrigConv_Tx_TRGO(self->TIMx),
+        .Continuous   = self->Continuous,
+        .DMA          = self->DMAx ? ENABLE : DISABLE,
+        .TRGO         = ADC_ExternalTrigConv_Tx_TRGO(self->TIMx),
     };
     ADC_Init_(&ADC);
 
     if (self->DMAx) {
         DMA_t DMA = {
-            .DMAx = self->DMAx,
-            .channel = self->DMA_Channel,
-            .sourceAddr = (uint32_t) & (self->ADCx->DR),
-            .sourceInc = DISABLE,
+            .DMAx       = self->DMAx,
+            .channel    = self->DMA_Channel,
+            .sourceAddr = (uint32_t)&(self->ADCx->DR),
+            .sourceInc  = DISABLE,
             .targetAddr = (uint32_t)self->Data,
-            .targetInc = ENABLE,
-            .DataSize = 16,
+            .targetInc  = ENABLE,
+            .DataSize   = 16,
             .BufferSize = self->Length,
-            .Circular = ENABLE,
+            .Circular   = ENABLE,
         };
 
         DMA_Init_(&DMA);
@@ -46,12 +46,12 @@ void Sampler_Init(Sampler_t *self) {
 
     if (self->TIMx) {
         Timer_t Timer = {
-            .TIMx = self->TIMx,
-            .Hz = self->Hz,
-            .ms = self->ms,
+            .TIMx      = self->TIMx,
+            .Hz        = self->Hz,
+            .ms        = self->ms,
             .Interrupt = ENABLE,
-            .Priority = self->Priority,
-            .TRGO = TIM_TRGOSource_Update,
+            .Priority  = self->Priority,
+            .TRGO      = TIM_TRGOSource_Update,
         };
         Timer_Init(&Timer);
     }
@@ -79,7 +79,7 @@ uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {
         ;
 
     if (self->Data) {
-        self->Index = (self->Index + 1) % self->Length;
+        self->Index             = (self->Index + 1) % self->Length;
         self->Data[self->Index] = ADC_GetConversionValue(self->ADCx);
 
         return self->Data[self->Index];

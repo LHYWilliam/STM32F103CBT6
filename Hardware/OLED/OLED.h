@@ -7,7 +7,7 @@
 #include "GPIO.h"
 #include "OLED_Font.h"
 
-#define OLED_IndexToX(Index, Length, X, Width)                                 \
+#define OLED_IndexToX(Index, Length, X, Width) \
     ((Index) * (Width - 1) / (Length - 1) + X)
 #define OLED_ADCToY(ADC, Y, Height) ((4095 - ADC) * (Height - 1) / 4095 + Y)
 
@@ -21,24 +21,24 @@
 
 typedef struct OLED_t {
     FunctionalState I2C;
-    I2C_TypeDef *I2Cx;
-    GPIOxPiny_t SCL;
-    GPIOxPiny_t SDA;
-    uint32_t SCL_ODR;
-    uint32_t SDA_ODR;
+    I2C_TypeDef    *I2Cx;
+    GPIOxPiny_t     SCL;
+    GPIOxPiny_t     SDA;
+    uint32_t        SCL_ODR;
+    uint32_t        SDA_ODR;
 
     FunctionalState SPI;
-    SPI_TypeDef *SPIx;
-    GPIOxPiny_t D0;
-    GPIOxPiny_t D1;
-    GPIOxPiny_t RES;
-    GPIOxPiny_t DC;
-    GPIOxPiny_t CS;
-    uint32_t D0_ODR;
-    uint32_t D1_ODR;
-    uint32_t RES_ODR;
-    uint32_t DC_ODR;
-    uint32_t CS_ODR;
+    SPI_TypeDef    *SPIx;
+    GPIOxPiny_t     D0;
+    GPIOxPiny_t     D1;
+    GPIOxPiny_t     RES;
+    GPIOxPiny_t     DC;
+    GPIOxPiny_t     CS;
+    uint32_t        D0_ODR;
+    uint32_t        D1_ODR;
+    uint32_t        RES_ODR;
+    uint32_t        DC_ODR;
+    uint32_t        CS_ODR;
 
     uint8_t Width;
     uint8_t Height;
@@ -54,13 +54,13 @@ typedef struct OLED_t {
     uint8_t DisplayBuffer[8][128];
 
     OLEDFont Font;
-    uint8_t FontWidth;
-    uint8_t FontHeight;
+    uint8_t  FontWidth;
+    uint8_t  FontHeight;
 
 #if U8G2
 
     FunctionalState U8g2;
-    u8g2_t u8g2;
+    u8g2_t          u8g2;
 
 #endif
 

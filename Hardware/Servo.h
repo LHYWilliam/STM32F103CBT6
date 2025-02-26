@@ -10,8 +10,8 @@ typedef struct {
     GPIOxPiny_t PWM[4];
 
     TIM_TypeDef *TIMx;
-    uint8_t Channel[4];
-    uint8_t NbrOfChannel;
+    uint8_t      Channel[4];
+    uint8_t      NbrOfChannel;
 
     FunctionalState TIM_Init;
 

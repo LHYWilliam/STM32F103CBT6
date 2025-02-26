@@ -8,7 +8,7 @@ void MQSensor_Init(MQSensor_t *self) {
     GPIO_Write(self->ODR, !self->Mode);
 
     self->Length = MQSensor_DataLength;
-    self->Index = -1;
+    self->Index  = -1;
 }
 
 void MQSensor_UpdateState(MQSensor_t *self) {

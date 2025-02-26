@@ -154,8 +154,8 @@ void ImagePage_Init(ImagePage_t *self, OLED_t *OLED) {
         OLED_SetFont(OLED, Font);
 
     } else {
-        self->TitleY = self->ImageY + self->ImageHeight + OLED->FontHeight;
-        self->TitleWidth = strlen(self->Title) * OLED->FontWidth;
+        self->TitleY      = self->ImageY + self->ImageHeight + OLED->FontHeight;
+        self->TitleWidth  = strlen(self->Title) * OLED->FontWidth;
         self->TitleHeight = OLED->FontHeight;
     }
 }
@@ -228,16 +228,16 @@ ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
 }
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page) {
-    self->TargetX = &Page->X;
-    self->TargetY = &Page->Y;
-    self->TargetWidth = &Page->Width;
+    self->TargetX      = &Page->X;
+    self->TargetY      = &Page->Y;
+    self->TargetWidth  = &Page->Width;
     self->TargetHeight = &Page->Height;
 }
 
 void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page) {
-    self->TargetX = &Page->TitleX;
-    self->TargetY = &Page->TitleY;
-    self->TargetWidth = &Page->TitleWidth;
+    self->TargetX      = &Page->TitleX;
+    self->TargetY      = &Page->TitleY;
+    self->TargetWidth  = &Page->TitleWidth;
     self->TargetHeight = &Page->TitleHeight;
 }
 

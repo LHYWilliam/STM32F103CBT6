@@ -13,7 +13,7 @@ typedef enum {
 
 typedef struct {
     GPIOxPiny_t GPIOxPiny;
-    LEDMode Mode;
+    LEDMode     Mode;
 
     uint32_t ODR;
 } LED_t;

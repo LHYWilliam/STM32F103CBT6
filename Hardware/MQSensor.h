@@ -16,14 +16,14 @@ typedef enum {
 
 typedef struct {
     GPIOxPiny_t LED;
-    LEDMode Mode;
-    uint32_t ODR;
+    LEDMode     Mode;
+    uint32_t    ODR;
 
-    uint16_t Threshold;
-    uint16_t Relaxation;
+    uint16_t      Threshold;
+    uint16_t      Relaxation;
     MQSensorState State;
 
-    int16_t Index;
+    int16_t  Index;
     uint16_t Length;
     uint16_t Data[MQSensor_DataLength];
 } MQSensor_t;

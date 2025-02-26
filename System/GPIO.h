@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BITBAND(addr, bitnum)                                                  \
-    (((addr) & 0xF0000000) + 0x2000000 + (((addr) & 0xFFFFF) << 5) +           \
+#define BITBAND(addr, bitnum)                                        \
+    (((addr) & 0xF0000000) + 0x2000000 + (((addr) & 0xFFFFF) << 5) + \
      ((bitnum) << 2))
 #define MEM_ADDR(addr)         *((volatile uint32_t *)(addr))
 #define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND((addr), (bitnum)))
@@ -88,28 +88,28 @@
 #define C14                    "C14"
 #define C15                    "C15"
 
-#define RCC_APB2Periph_GPIOx(x)                                                \
-    (x[0] == 'A'   ? RCC_APB2Periph_GPIOA                                      \
-     : x[0] == 'B' ? RCC_APB2Periph_GPIOB                                      \
-     : x[0] == 'C' ? RCC_APB2Periph_GPIOC                                      \
+#define RCC_APB2Periph_GPIOx(x)           \
+    (x[0] == 'A'   ? RCC_APB2Periph_GPIOA \
+     : x[0] == 'B' ? RCC_APB2Periph_GPIOB \
+     : x[0] == 'C' ? RCC_APB2Periph_GPIOC \
                    : NULL)
 
-#define GPIOx(x)                                                               \
+#define GPIOx(x) \
     (x[0] == 'A' ? GPIOA : x[0] == 'B' ? GPIOB : x[0] == 'C' ? GPIOC : NULL)
 
 #define GPIO_Pin(x)  (x[2] ? 10 + x[2] - '0' : x[1] - '0')
 #define GPIO_Pinx(x) GPIO_Pin_0 << GPIO_Pin(x)
 
-#define GPIO_Input(CR, x)                                                      \
-    do {                                                                       \
-        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
-        MEM_ADDR((CR)) |= ((uint32_t)0b1000 << ((x) % 8 * 4));                 \
+#define GPIO_Input(CR, x)                                         \
+    do {                                                          \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4))); \
+        MEM_ADDR((CR)) |= ((uint32_t)0b1000 << ((x) % 8 * 4));    \
     } while (0)
 
-#define GPIO_Output(CR, x)                                                     \
-    do {                                                                       \
-        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
-        MEM_ADDR((CR)) |= ((uint32_t)0b0011 << ((x) % 8 * 4));                 \
+#define GPIO_Output(CR, x)                                        \
+    do {                                                          \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4))); \
+        MEM_ADDR((CR)) |= ((uint32_t)0b0011 << ((x) % 8 * 4));    \
     } while (0)
 
 #define GPIO_Write(x, val) MEM_ADDR((x)) = ((val) ? 1 : 0)
@@ -120,7 +120,7 @@
 typedef char GPIOxPiny_t[4];
 
 typedef struct {
-    char GPIOxPiny[4];
+    char             GPIOxPiny[4];
     GPIOMode_TypeDef Mode;
 } GPIO_t;
 

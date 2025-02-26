@@ -5,7 +5,7 @@ uint32_t GPIO_InitPin(GPIO_t *self, const GPIOxPiny_t Pin) {
 
     GPIO_InitTypeDef GPIO_InitStruct = {
         .GPIO_Speed = GPIO_Speed_50MHz,
-        .GPIO_Mode = self->Mode,
+        .GPIO_Mode  = self->Mode,
     };
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(self->GPIOxPiny), ENABLE);

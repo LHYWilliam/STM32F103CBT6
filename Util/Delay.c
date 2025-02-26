@@ -5,9 +5,9 @@
 
 void Delay_us(uint32_t us) {
     uint32_t now, last, reload, total, goal;
-    total = 0;
-    goal = us * 72;
-    last = SysTick->VAL;
+    total  = 0;
+    goal   = us * 72;
+    last   = SysTick->VAL;
     reload = SysTick->LOAD;
 
     for (;;) {

@@ -9,14 +9,14 @@ void Encoder_Init(Encoder_t *self) {
     GPIO_InitPin(&GPIO, self->GPIOxPiny[1]);
 
     TIM_t TIM = {
-        .TIMx = self->TIMx,
+        .TIMx      = self->TIMx,
         .Prescaler = 1 - 1,
-        .Period = 65536 - 1,
+        .Period    = 65536 - 1,
     };
     TIM_Init(&TIM, NULL);
 
     Capture_t Capture = {
-        .TIMx = self->TIMx,
+        .TIMx           = self->TIMx,
         .TIM_ICPolarity = TIM_ICPolarity_Rising,
     };
 

@@ -3,8 +3,8 @@
 
 typedef struct {
     uint32_t Font;
-    uint8_t FontWidth;
-    uint8_t FontHeight;
+    uint8_t  FontWidth;
+    uint8_t  FontHeight;
 } LCDFont_t;
 
 extern LCDFont_t LCDFonts[3];

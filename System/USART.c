@@ -7,7 +7,7 @@ void USART_Init_(USART_t *self) {
                                          ENABLE);
 
     USART_InitTypeDef USART_InitStruct = {
-        .USART_Mode = self->Mode,
+        .USART_Mode     = self->Mode,
         .USART_BaudRate = self->BaudRate,
     };
     USART_Init(self->USARTx, &USART_InitStruct);

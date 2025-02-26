@@ -10,13 +10,13 @@ typedef struct {
     GPIOxPiny_t PWM;
     GPIOxPiny_t IN1;
     GPIOxPiny_t IN2;
-    uint32_t IN1_ODR;
-    uint32_t IN2_ODR;
+    uint32_t    IN1_ODR;
+    uint32_t    IN2_ODR;
 
     TIM_TypeDef *TIMx;
-    uint8_t Channel;
+    uint8_t      Channel;
 
-    uint16_t Range;
+    uint16_t        Range;
     FunctionalState Invert;
     FunctionalState TIM_Init;
 

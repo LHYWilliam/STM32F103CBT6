@@ -7,18 +7,19 @@ void Motor_Init(Motor_t *self) {
     GPIO.Mode = GPIO_Mode_AF_PP;
     GPIO_InitPin(&GPIO, self->PWM);
 
-    GPIO.Mode = GPIO_Mode_Out_PP;
+    GPIO.Mode     = GPIO_Mode_Out_PP;
     self->IN1_ODR = GPIO_InitPin(&GPIO, self->IN1);
     self->IN2_ODR = GPIO_InitPin(&GPIO, self->IN2);
 
     uint8_t Channel[1] = {self->Channel};
+
     PWM_t PWM = {
-        .TIMx = self->TIMx,
-        .Prescaler = 100 - 1,
-        .Period = self->Range - 1,
-        .Channel = Channel,
+        .TIMx         = self->TIMx,
+        .Prescaler    = 100 - 1,
+        .Period       = self->Range - 1,
+        .Channel      = Channel,
         .NbrOfChannel = 1,
-        .TIM_Init = self->TIM_Init,
+        .TIM_Init     = self->TIM_Init,
     };
     PWM_Init(&PWM);
 

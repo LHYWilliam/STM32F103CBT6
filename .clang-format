@@ -1,4 +1,11 @@
 IndentWidth: 4
 
-AlignConsecutiveMacros: AcrossEmptyLinesAndComments 
-AlignTrailingComments:	true
+AlignOperands: true # 对齐二元或三元表达式中的操作数
+AlignEscapedNewlines: Left # 对齐使用反斜杠换行的代码
+AlignConsecutiveBitFields: true # 对齐结构体或类中的连续位域声明
+AlignAfterOpenBracket: Align # 对齐函数调用或初始化列表中括号后的参数
+AlignTrailingComments: true # 对齐代码行尾的注释
+BreakBeforeTernaryOperators: true # 控制三元运算符的换行和对齐方式
+AlignConsecutiveAssignments: true # 对齐连续赋值语句中的等号
+AlignConsecutiveDeclarations: true # 对齐连续变量声明中的变量名
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments # 对齐连续的宏定义

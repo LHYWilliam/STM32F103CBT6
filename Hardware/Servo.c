@@ -13,12 +13,12 @@ void Servo_Init(Servo_t *self) {
     }
 
     PWM_t PWM = {
-        .TIMx = self->TIMx,
-        .Prescaler = 72 - 1,
-        .Period = 20000 - 1,
-        .Channel = self->Channel,
+        .TIMx         = self->TIMx,
+        .Prescaler    = 72 - 1,
+        .Period       = 20000 - 1,
+        .Channel      = self->Channel,
         .NbrOfChannel = self->NbrOfChannel,
-        .TIM_Init = self->TIM_Init,
+        .TIM_Init     = self->TIM_Init,
     };
     PWM_Init(&PWM);
 

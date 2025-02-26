@@ -6,21 +6,21 @@
 
 #include <stdlib.h>
 
-#define RCC_APBxPeriphClockCmd(x)                                              \
+#define RCC_APBxPeriphClockCmd(x) \
     ((x) == TIM1 ? RCC_APB2PeriphClockCmd : RCC_APB1PeriphClockCmd)
 
-#define RCC_APBxPeriph_TIMx(x)                                                 \
-    ((x) == TIM1   ? RCC_APB2Periph_TIM1                                       \
-     : (x) == TIM2 ? RCC_APB1Periph_TIM2                                       \
-     : (x) == TIM3 ? RCC_APB1Periph_TIM3                                       \
-     : (x) == TIM4 ? RCC_APB1Periph_TIM4                                       \
+#define RCC_APBxPeriph_TIMx(x)           \
+    ((x) == TIM1   ? RCC_APB2Periph_TIM1 \
+     : (x) == TIM2 ? RCC_APB1Periph_TIM2 \
+     : (x) == TIM3 ? RCC_APB1Periph_TIM3 \
+     : (x) == TIM4 ? RCC_APB1Periph_TIM4 \
                    : NULL)
 
-#define TIMx_IRQn(x)                                                           \
-    ((x) == TIM1   ? NULL                                                      \
-     : (x) == TIM2 ? TIM2_IRQn                                                 \
-     : (x) == TIM3 ? TIM3_IRQn                                                 \
-     : (x) == TIM4 ? TIM4_IRQn                                                 \
+#define TIMx_IRQn(x)           \
+    ((x) == TIM1   ? NULL      \
+     : (x) == TIM2 ? TIM2_IRQn \
+     : (x) == TIM3 ? TIM3_IRQn \
+     : (x) == TIM4 ? TIM4_IRQn \
                    : NULL)
 
 static uint16_t TIM_Channel_x[] = {

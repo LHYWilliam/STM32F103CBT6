@@ -9,10 +9,10 @@
 #include "TIM.h"
 
 typedef struct {
-    GPIO_t *gpio;
+    GPIO_t    *gpio;
     Capture_t *frequency;
     Capture_t *duty;
-    TIM_t *tim;
+    TIM_t     *tim;
 } PWMI_t;
 
 void PWMI_Init(PWMI_t *self);

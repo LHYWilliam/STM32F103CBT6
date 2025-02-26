@@ -6,12 +6,12 @@
 
 typedef struct {
     uint8_t *Channel;
-    uint8_t NbrOfChannel;
+    uint8_t  NbrOfChannel;
 
     TIM_TypeDef *TIMx;
-    uint16_t Prescaler;
-    uint16_t Period;
-    uint8_t TIM_Init;
+    uint16_t     Prescaler;
+    uint16_t     Period;
+    uint8_t      TIM_Init;
 
     void (*TIM_SetCompare[4])(TIM_TypeDef *TIMx, uint16_t Compare);
 } PWM_t;

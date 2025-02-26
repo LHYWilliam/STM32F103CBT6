@@ -14,20 +14,20 @@ typedef struct LCD {
     GPIOxPiny_t DC;
     GPIOxPiny_t CS;
     GPIOxPiny_t BL;
-    uint32_t SCL_ODR;
-    uint32_t SDA_ODR;
-    uint32_t RES_ODR;
-    uint32_t DC_ODR;
-    uint32_t CS_ODR;
-    uint32_t BL_ODR;
+    uint32_t    SCL_ODR;
+    uint32_t    SDA_ODR;
+    uint32_t    RES_ODR;
+    uint32_t    DC_ODR;
+    uint32_t    CS_ODR;
+    uint32_t    BL_ODR;
 
     uint8_t Width;
     uint8_t Height;
     uint8_t Direction;
 
     uint32_t Font;
-    uint8_t FontWidth;
-    uint8_t FontHeight;
+    uint8_t  FontWidth;
+    uint8_t  FontHeight;
 
     uint16_t PenColor;
     uint16_t BackColor;
