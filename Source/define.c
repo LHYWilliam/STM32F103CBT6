@@ -40,26 +40,32 @@
 
 #define SettingSavePage(title)                                                 \
     (TextPage_t) {                                                             \
-        .Title = title, .ShowCallback = TextPage_ShowFloatingCallback,         \
+        .Title = title, .TitleX = 128 / 2 - 6 * 4 / 2, .TitleY = 64 / 4,       \
+        .ShowCallback = TextPage_ShowFloatingCallback,                         \
         .ClickCallback = Setting_SaveCallback,                                 \
-        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 2,     \
+        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \
-            BackTextPage("<"),                                                 \
             (TextPage_t){                                                      \
-                .Title = "Save Success",                                       \
+                .Title = "back",                                               \
+                .X = 128 / 2 - 6 * 4 / 2,                                      \
+                .Y = 64 / 2,                                                   \
+                .ClickCallback = TextPage_BackCallback,                        \
             },                                                                 \
         },                                                                     \
     }
 
 #define SettingLoadPage(title)                                                 \
     (TextPage_t) {                                                             \
-        .Title = title, .ShowCallback = TextPage_ShowFloatingCallback,         \
+        .Title = title, .TitleX = 128 / 2 - 6 * 4 / 2, .TitleY = 64 / 4,       \
+        .ShowCallback = TextPage_ShowFloatingCallback,                         \
         .ClickCallback = Setting_LoadCallback,                                 \
-        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 2,     \
+        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \
-            BackTextPage("<"),                                                 \
             (TextPage_t){                                                      \
-                .Title = "Load Success",                                       \
+                .Title = "back",                                               \
+                .X = 128 / 2 - 6 * 4 / 2,                                      \
+                .Y = 64 / 2,                                                   \
+                .ClickCallback = TextPage_BackCallback,                        \
             },                                                                 \
         },                                                                     \
     }

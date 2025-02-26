@@ -36,7 +36,6 @@ typedef struct TextPage {
 } TextPage_t;
 
 typedef struct {
-    uint8_t Cursor;
     TextPage_t *Page;
 } TextMenu_t;
 

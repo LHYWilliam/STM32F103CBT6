@@ -38,8 +38,6 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
     }
 
     for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
-        self->LowerPages[i].X += 1;
-
         if (IsChinese(self->LowerPages[i].Title)) {
             OLEDFont Font = OLED->Font;
             OLED_SetFont(OLED, OLEDFont_Chinese12X12);
@@ -65,7 +63,6 @@ void TextPage_Init(TextPage_t *self, OLED_t *OLED) {
         if (!self->LowerPages[i].UpdateCallback) {
             self->LowerPages[i].UpdateCallback = EmptyCallbackPtr;
         }
-
         if (!self->LowerPages[i].ShowCallback) {
             self->LowerPages[i].ShowCallback = EmptyCallbackPtr;
         }
@@ -102,9 +99,9 @@ void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
 }
 
 ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
-    if (self->Page->NumOfLowerPages) {
-        self->Cursor = (self->Cursor + 1) % self->Page->NumOfLowerPages;
-        self->Page->Cursor = self->Cursor;
+    if (self->Page->NumOfLowerPages >= 2) {
+        self->Page->Cursor =
+            (self->Page->Cursor + 1) % self->Page->NumOfLowerPages;
 
         return SUCCESS;
     }
@@ -113,10 +110,10 @@ ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
 }
 
 ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
-    if (self->Page->NumOfLowerPages) {
-        self->Cursor = (self->Cursor + self->Page->NumOfLowerPages - 1) %
-                       self->Page->NumOfLowerPages;
-        self->Page->Cursor = self->Cursor;
+    if (self->Page->NumOfLowerPages >= 2) {
+        self->Page->Cursor =
+            (self->Page->Cursor + self->Page->NumOfLowerPages - 1) %
+            self->Page->NumOfLowerPages;
 
         return SUCCESS;
     }
@@ -125,9 +122,8 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
 }
 
 ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
-    if (self->Page->LowerPages[self->Cursor].NumOfLowerPages) {
-        self->Page = &self->Page->LowerPages[self->Cursor];
-        self->Page->Cursor = self->Cursor = 0;
+    if (self->Page->LowerPages[self->Page->Cursor].NumOfLowerPages) {
+        self->Page = &self->Page->LowerPages[self->Page->Cursor];
 
         return SUCCESS;
     }
@@ -137,9 +133,7 @@ ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
 
 ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
     if (self->Page->UpperPage) {
-        TextPage_ResetSetY(self->Page);
         self->Page = self->Page->UpperPage;
-        self->Cursor = self->Page->Cursor;
 
         return SUCCESS;
     }
@@ -224,8 +218,6 @@ ErrorStatus ImageMenu_CursorDec(ImageMenu_t *self) {
 
 ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *self, TextMenu_t *TextMenu) {
     TextMenu->Page = self->Page[self->Cursor].TextPage;
-    TextMenu->Cursor = 0;
-    TextMenu->Page->Cursor = TextMenu->Cursor;
 
     return SUCCESS;
 }

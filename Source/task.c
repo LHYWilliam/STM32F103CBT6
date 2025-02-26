@@ -49,8 +49,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
                 ImageMenu.RotationCallback(Encode);
 
             } else if (Menu == &TextMenu) {
-                TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback(
-                    Encode);
+                TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
+                    .RotationCallback(Encode);
             }
         }
 
@@ -59,7 +59,8 @@ void vMenuKeyTaskCode(void *pvParameters) {
                 ImageMenu.ClickCallback(NULL);
 
             } else if (Menu == &TextMenu) {
-                TextMenu.Page->LowerPages[TextMenu.Cursor].ClickCallback(NULL);
+                TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
+                    NULL);
             }
         }
 
@@ -70,19 +71,19 @@ void vMenuKeyTaskCode(void *pvParameters) {
 void TextPage_UpdateCallback(void *pvParameters) {
     int16_t Y = TextMenu.Page->TitleY;
 
-    if (TextMenu.Cursor == 0) {
+    if (TextMenu.Page->Cursor == 0 || TextMenu.Page->Cursor == 1) {
         Y = 0;
 
-    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].Y < 1) {
+    } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y < 0) {
         Y = TextMenu.Page->TitleY -
-            TextMenu.Page->LowerPages[TextMenu.Cursor].Y + 1;
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y;
 
-    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].Y +
-                   TextMenu.Page->LowerPages[TextMenu.Cursor].Height >=
-               OLED.Height) {
+    } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y +
+                   TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Height >
+               OLED.Height - 1) {
         Y = TextMenu.Page->TitleY -
-            (TextMenu.Page->LowerPages[TextMenu.Cursor].Y - OLED.Height +
-             TextMenu.Page->LowerPages[TextMenu.Cursor].Height) -
+            (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y - OLED.Height +
+             TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Height) -
             1;
     }
 
@@ -112,12 +113,12 @@ void TextPage_UpdateCallback(void *pvParameters) {
     }                                                                          \
                                                                                \
     for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {             \
-        if (TextMenu.Page->LowerPages[i].Y < 0) {                              \
+        if (TextMenu.Page->LowerPages[i].Y +                                   \
+                TextMenu.Page->LowerPages[i].Height <                          \
+            0) {                                                               \
             continue;                                                          \
         }                                                                      \
-        if (TextMenu.Page->LowerPages[i].Y +                                   \
-                TextMenu.Page->LowerPages[i].Height >=                         \
-            OLED.Height) {                                                     \
+        if (TextMenu.Page->LowerPages[i].Y > OLED.Height - 1) {                \
             break;                                                             \
         }                                                                      \
                                                                                \
@@ -220,8 +221,14 @@ void TextPage_ShowFloatingCallback(void *pvParameters) {
                              OLED.Width - OLED.Width / 4,
                              OLED.Height - OLED.Height / 4);
 
-    OLED_Printf(&OLED, OLED.Width / 8 + 2, OLED.Height / 8 + 2,
-                TextMenu.Page->LowerPages[1].Title);
+    OLED_Printf(&OLED, TextMenu.Page->TitleX - 6 * 8 / 2, TextMenu.Page->TitleY,
+                "%s success", TextMenu.Page->Title);
+
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                    TextMenu.Page->LowerPages[i].Y,
+                    TextMenu.Page->LowerPages[i].Title);
+    }
 }
 
 void ImagePage_ShowCallback(void *pvParameters) {
@@ -252,21 +259,21 @@ void TextPage_BackImageMenuCallback(void *pvParameters) {
 void ImagePage_EnterTextPageCallback(void *pvParameters) {
     Menu = &TextMenu;
     ImageMenu_EnterLowerPage(&ImageMenu, &TextMenu);
-    SelectioneBar_BindTextPage(&Bar,
-                               &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+    SelectioneBar_BindTextPage(
+        &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
 }
 
 void TextPage_EnterCallback(void *pvParameters) {
     if (TextMenu_EnterLowerPage(&TextMenu)) {
-        SelectioneBar_BindTextPage(&Bar,
-                                   &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+        SelectioneBar_BindTextPage(
+            &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
     }
 }
 
 void TextPage_BackCallback(void *pvParameters) {
     if (TextMenu_ReturnUpperPage(&TextMenu)) {
-        SelectioneBar_BindTextPage(&Bar,
-                                   &TextMenu.Page->LowerPages[TextMenu.Cursor]);
+        SelectioneBar_BindTextPage(
+            &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
     }
 }
 
@@ -279,15 +286,15 @@ void TextPage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         if (TextMenu_CursorInc(Menu)) {
             SelectioneBar_BindTextPage(
-                &Bar, &((TextMenu_t *)Menu)
-                           ->Page->LowerPages[((TextMenu_t *)Menu)->Cursor]);
+                &Bar,
+                &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Page->Cursor]);
         }
 
     } else if (Encoder <= -3) {
         if (TextMenu_CursorDec(Menu)) {
             SelectioneBar_BindTextPage(
-                &Bar, &((TextMenu_t *)Menu)
-                           ->Page->LowerPages[((TextMenu_t *)Menu)->Cursor]);
+                &Bar,
+                &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Page->Cursor]);
         }
     }
 }
@@ -315,22 +322,22 @@ void Setting_ReverseCallback(void *pvParameters) {
 
 void Setting_IncDecCallback(int16_t Encoder) {
     if (Encoder >= 3) {
-        TextMenu.Page->LowerPages[TextMenu.Cursor].Setting++;
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting++;
 
     } else if (Encoder <= -3) {
-        TextMenu.Page->LowerPages[TextMenu.Cursor].Setting--;
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting--;
     }
 }
 
 void Setting_CursorSwitchIncDecCallback(void *pvParameters) {
-    if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
+    if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback ==
         TextPage_CursorCallback) {
-        TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
             Setting_IncDecCallback;
 
-    } else if (TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback ==
-               Setting_IncDecCallback) {
-        TextMenu.Page->LowerPages[TextMenu.Cursor].RotationCallback =
+    } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
+                   .RotationCallback == Setting_IncDecCallback) {
+        TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
             TextPage_CursorCallback;
     }
 }
