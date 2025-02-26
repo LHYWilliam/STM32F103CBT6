@@ -40,8 +40,9 @@
 
 #define SettingSavePage(title)                                                 \
     (TextPage_t) {                                                             \
-        .Title = title, .TitleX = 128 / 2 - 6 * 4 / 2, .TitleY = 64 / 4,       \
-        .ShowCallback = TextPage_ShowFloatingCallback,                         \
+        .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,           \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowFloatingCallback,       \
+        .UpdateCallback = TextPage_UpdateFloatCallback,                        \
         .ClickCallback = Setting_SaveCallback,                                 \
         .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \
@@ -56,8 +57,9 @@
 
 #define SettingLoadPage(title)                                                 \
     (TextPage_t) {                                                             \
-        .Title = title, .TitleX = 128 / 2 - 6 * 4 / 2, .TitleY = 64 / 4,       \
-        .ShowCallback = TextPage_ShowFloatingCallback,                         \
+        .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,           \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowFloatingCallback,       \
+        .UpdateCallback = TextPage_UpdateFloatCallback,                        \
         .ClickCallback = Setting_LoadCallback,                                 \
         .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,     \
         .LowerPages = (TextPage_t[]){                                          \

@@ -187,14 +187,15 @@ void ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED) {
     int16_t X =
         self->Page[0].ImageX - (self->Page[self->Cursor].ImageX +
                                 self->Page[0].ImageWidth / 2 - OLED->Width / 2);
-    PositionUpdate(self->Page[0].ImageX, X);
+    PositionUpdate(self->Page[0].ImageX, X, 1);
     self->Page[0].TitleX = self->Page[0].ImageX + self->Page[0].ImageWidth / 2 -
                            self->Page[0].TitleWidth / 2;
 
     for (uint8_t i = 1; i < self->NumOfPages; i++) {
-        PositionUpdate(self->Page[i].ImageX, self->Page[i - 1].ImageX +
-                                                 self->Page[i].ImageWidth +
-                                                 self->Space);
+        PositionUpdate(self->Page[i].ImageX,
+                       self->Page[i - 1].ImageX + self->Page[i].ImageWidth +
+                           self->Space,
+                       1);
 
         self->Page[i].TitleX = self->Page[i].ImageX +
                                self->Page[i].ImageWidth / 2 -
@@ -241,10 +242,10 @@ void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page) {
 }
 
 void SelectioneBar_Update(SelectioneBar_t *self) {
-    PositionUpdate(self->X, *self->TargetX - 1);
-    PositionUpdate(self->Y, *self->TargetY - 1);
-    PositionUpdate(self->Width, *self->TargetWidth + 2);
-    PositionUpdate(self->Height, *self->TargetHeight + 2);
+    PositionUpdate(self->X, *self->TargetX - 1, 1);
+    PositionUpdate(self->Y, *self->TargetY - 1, 1);
+    PositionUpdate(self->Width, *self->TargetWidth + 2, 1);
+    PositionUpdate(self->Height, *self->TargetHeight + 2, 1);
 }
 
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar) {

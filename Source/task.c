@@ -87,7 +87,7 @@ void TextPage_UpdateCallback(void *pvParameters) {
             1;
     }
 
-    PositionUpdate(TextMenu.Page->TitleY, Y);
+    PositionUpdate(TextMenu.Page->TitleY, Y, 1);
 
     for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
         if (i == 0) {
@@ -102,7 +102,26 @@ void TextPage_UpdateCallback(void *pvParameters) {
                 TextMenu.Page->LowerPages[i - 1].Height + 2;
         }
 
-        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y);
+        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y, 1);
+    }
+}
+
+void TextPage_UpdateFloatCallback(void *pvParameters) {
+    PositionUpdate(TextMenu.Page->TitleX, OLED.Width / 8, 1);
+    PositionUpdate(TextMenu.Page->TitleY, OLED.Height / 8, 1);
+    PositionUpdate(TextMenu.Page->TitleWidth, OLED.Width - OLED.Width / 4 - 1,
+                   2); // -1 for border
+    PositionUpdate(TextMenu.Page->TitleHeight,
+                   OLED.Height - OLED.Height / 4 - 1, 2); // -1 for border
+
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        PositionUpdate(
+            TextMenu.Page->LowerPages[i].X,
+            OLED.Width / 2 - TextMenu.Page->LowerPages[i].TitleWidth / 2, 1);
+        PositionUpdate(TextMenu.Page->LowerPages[i].Y,
+                       TextMenu.Page->TitleY + TextMenu.Page->TitleHeight -
+                           OLED.FontHeight * 2,
+                       1);
     }
 }
 
@@ -217,17 +236,27 @@ void TextPage_ShowFloatingCallback(void *pvParameters) {
                          OLED.Width - OLED.Width / 4,
                          OLED.Height - OLED.Height / 4);
 
-    OLED_DrawHollowRectangle(&OLED, OLED.Width / 8, OLED.Height / 8,
-                             OLED.Width - OLED.Width / 4,
-                             OLED.Height - OLED.Height / 4);
-
-    OLED_Printf(&OLED, TextMenu.Page->TitleX - 6 * 8 / 2, TextMenu.Page->TitleY,
-                "%s success", TextMenu.Page->Title);
+    OLED_DrawHollowRectangle(&OLED, TextMenu.Page->TitleX,
+                             TextMenu.Page->TitleY, TextMenu.Page->TitleWidth,
+                             TextMenu.Page->TitleHeight);
 
     for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        if (TextMenu.Page->LowerPages[i].X +
+                    TextMenu.Page->LowerPages[i].Width >
+                TextMenu.Page->TitleX + TextMenu.Page->TitleWidth ||
+            TextMenu.Page->LowerPages[i].Y +
+                    TextMenu.Page->LowerPages[i].Height >
+                TextMenu.Page->TitleY + TextMenu.Page->TitleHeight) {
+            continue;
+        }
         OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
                     TextMenu.Page->LowerPages[i].Y,
                     TextMenu.Page->LowerPages[i].Title);
+
+        if (i == TextMenu.Page->NumOfLowerPages - 1) {
+            OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
+                        TextMenu.Page->TitleY + OLED.FontHeight, "Success");
+        }
     }
 }
 

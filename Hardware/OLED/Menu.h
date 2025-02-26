@@ -6,8 +6,8 @@
 
 #include "OLED.h"
 
-#define PositionUpdate(now, target)                                            \
-    ((now) += ((now) < (target) ? 1 : (now) > (target) ? -1 : 0))
+#define PositionUpdate(now, target, step)                                      \
+    ((now) += ((now) < (target) ? step : (now) > (target) ? -step : 0))
 
 typedef struct TextPage {
     char Title[32];

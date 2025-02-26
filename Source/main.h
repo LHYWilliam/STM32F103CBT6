@@ -53,6 +53,7 @@ extern void vUpdateTimerCallback(TimerHandle_t pxTimer);
 extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
 extern void TextPage_UpdateCallback(void *pvParameters);
+extern void TextPage_UpdateFloatCallback(void *pvParameters);
 
 extern void TextPage_ShowMonitorCallback(void *pvParameters);
 extern void TextPage_ShowMQxCallback(void *pvParameters);
