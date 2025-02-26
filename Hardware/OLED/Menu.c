@@ -98,10 +98,9 @@ void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {
     }
 }
 
-ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
-    if (self->Page->NumOfLowerPages >= 2) {
-        self->Page->Cursor =
-            (self->Page->Cursor + 1) % self->Page->NumOfLowerPages;
+ErrorStatus TextPage_CursorInc(TextPage_t *self) {
+    if (self->NumOfLowerPages >= 2) {
+        self->Cursor = (self->Cursor + 1) % self->NumOfLowerPages;
 
         return SUCCESS;
     }
@@ -109,11 +108,10 @@ ErrorStatus TextMenu_CursorInc(TextMenu_t *self) {
     return ERROR;
 }
 
-ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
-    if (self->Page->NumOfLowerPages >= 2) {
-        self->Page->Cursor =
-            (self->Page->Cursor + self->Page->NumOfLowerPages - 1) %
-            self->Page->NumOfLowerPages;
+ErrorStatus TextPage_CursorDec(TextPage_t *self) {
+    if (self->NumOfLowerPages >= 2) {
+        self->Cursor =
+            (self->Cursor + self->NumOfLowerPages - 1) % self->NumOfLowerPages;
 
         return SUCCESS;
     }
@@ -121,9 +119,9 @@ ErrorStatus TextMenu_CursorDec(TextMenu_t *self) {
     return ERROR;
 }
 
-ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
-    if (self->Page->LowerPages[self->Page->Cursor].NumOfLowerPages) {
-        self->Page = &self->Page->LowerPages[self->Page->Cursor];
+ErrorStatus TextPage_EnterLowerPage(TextPage_t **self) {
+    if ((*self)->LowerPages[(*self)->Cursor].NumOfLowerPages) {
+        *self = &(*self)->LowerPages[(*self)->Cursor];
 
         return SUCCESS;
     }
@@ -131,9 +129,9 @@ ErrorStatus TextMenu_EnterLowerPage(TextMenu_t *self) {
     return ERROR;
 }
 
-ErrorStatus TextMenu_ReturnUpperPage(TextMenu_t *self) {
-    if (self->Page->UpperPage) {
-        self->Page = self->Page->UpperPage;
+ErrorStatus TextPage_ReturnUpperPage(TextPage_t **self) {
+    if ((*self)->UpperPage) {
+        *self = (*self)->UpperPage;
 
         return SUCCESS;
     }

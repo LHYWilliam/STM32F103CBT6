@@ -24,7 +24,7 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
         TextMenu.Page->UpdateCallback(NULL);
 
     } else if (Menu == &ImageMenu) {
-        ImageMenu_Update(Menu, &OLED);
+        ImageMenu_Update(&ImageMenu, &OLED);
     }
 
     SelectioneBar_Update(&Bar);
@@ -264,14 +264,14 @@ void ImagePage_EnterTextPageCallback(void *pvParameters) {
 }
 
 void TextPage_EnterCallback(void *pvParameters) {
-    if (TextMenu_EnterLowerPage(&TextMenu)) {
+    if (TextPage_EnterLowerPage(&TextMenu.Page)) {
         SelectioneBar_BindTextPage(
             &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
     }
 }
 
 void TextPage_BackCallback(void *pvParameters) {
-    if (TextMenu_ReturnUpperPage(&TextMenu)) {
+    if (TextPage_ReturnUpperPage(&TextMenu.Page)) {
         SelectioneBar_BindTextPage(
             &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
     }
@@ -284,30 +284,28 @@ void TextPage_ThresholdCallback(int16_t Encoder) {
 
 void TextPage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
-        if (TextMenu_CursorInc(Menu)) {
+        if (TextPage_CursorInc(TextMenu.Page)) {
             SelectioneBar_BindTextPage(
-                &Bar,
-                &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Page->Cursor]);
+                &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
         }
 
     } else if (Encoder <= -3) {
-        if (TextMenu_CursorDec(Menu)) {
+        if (TextPage_CursorDec(TextMenu.Page)) {
             SelectioneBar_BindTextPage(
-                &Bar,
-                &((TextMenu_t *)Menu)->Page->LowerPages[TextMenu.Page->Cursor]);
+                &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
         }
     }
 }
 
 void ImagePage_CursorCallback(int16_t Encoder) {
     if (Encoder >= 3) {
-        if (ImageMenu_CursorInc(Menu)) {
+        if (ImageMenu_CursorInc(&ImageMenu)) {
             SelectioneBar_BindImagePage(&Bar,
                                         &ImageMenu.Page[ImageMenu.Cursor]);
         }
 
     } else if (Encoder <= -3) {
-        if (ImageMenu_CursorDec(Menu)) {
+        if (ImageMenu_CursorDec(&ImageMenu)) {
             SelectioneBar_BindImagePage(&Bar,
                                         &ImageMenu.Page[ImageMenu.Cursor]);
         }
