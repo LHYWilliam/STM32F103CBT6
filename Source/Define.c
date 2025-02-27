@@ -3,13 +3,13 @@
 #define Threshold \
     Threshold = VoltageToADC(2.048), .Relaxation = VoltageToADC(0.128)
 
-#define BackHomePage(title)                                              \
+#define TextPage_BackHome(title)                                         \
     (TextPage_t) {                                                       \
         .Title = title, .ClickCallback = TextPage_BackImageMenuCallback, \
         .RotationCallback = TextPage_CursorCallback,                     \
     }
 
-#define BackTextPage(title)                                     \
+#define TextPage_Back(title)                                    \
     (TextPage_t) {                                              \
         .Title = title, .ClickCallback = TextPage_BackCallback, \
         .RotationCallback = TextPage_CursorCallback,            \
@@ -22,58 +22,41 @@
         .ClickCallback    = TextPage_EnterCallback,                           \
         .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1,    \
         .LowerPages = (TextPage_t[]) {                                        \
-            BackTextPage("<"),                                                \
+            TextPage_Back("<"),                                               \
         }                                                                     \
     }
 
-#define SettingReversePage(title)                                         \
+#define TextPage_ReverseSetting(title)                                    \
     (TextPage_t) {                                                        \
         .Title = title, .ClickCallback = TextPage_SettingReverseCallback, \
         .RotationCallback = TextPage_CursorCallback,                      \
     }
 
-#define SettingIncDecPage(title)                                        \
-    (TextPage_t) {                                                      \
-        .Title            = title,                                      \
-        .ClickCallback    = TextPage_SettingCursorSwitchIncDecCallback, \
-        .RotationCallback = TextPage_CursorCallback,                    \
+#define TextPage_EncoderSetting(title)                                   \
+    (TextPage_t) {                                                       \
+        .Title            = title,                                       \
+        .ClickCallback    = TextPage_SettingCursorSwitchEncoderCallback, \
+        .RotationCallback = TextPage_CursorCallback,                     \
     }
 
-#define SettingSavePage(title)                                             \
-    (TextPage_t) {                                                         \
-        .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,       \
-        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,     \
-        .UpdateCallback   = TextPage_UpdateDialogCallback,                 \
-        .ClickCallback    = TextPage_SettingSaveCallback,                  \
-        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1, \
-        .LowerPages = (TextPage_t[]){                                      \
-            (TextPage_t){                                                  \
-                .Title         = "back",                                   \
-                .X             = 128 / 2 - 6 * 4 / 2,                      \
-                .Y             = 64 / 2,                                   \
-                .ClickCallback = TextPage_BackCallback,                    \
-            },                                                             \
-        },                                                                 \
+#define TextPage_ConfirmDialog(title, click)                                 \
+    (TextPage_t) {                                                           \
+        .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,         \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,       \
+        .UpdateCallback = TextPage_UpdateDialogCallback,                     \
+        .ClickCallback = click, .RotationCallback = TextPage_CursorCallback, \
+        .NumOfLowerPages = 1,                                                \
+        .LowerPages      = (TextPage_t[]){                                   \
+            (TextPage_t){                                               \
+                     .Title         = "back",                                \
+                     .X             = 128 / 2 - 6 * 4 / 2,                   \
+                     .Y             = 64 / 2,                                \
+                     .ClickCallback = TextPage_BackCallback,                 \
+            },                                                          \
+        },                                                              \
     }
 
-#define SettingLoadPage(title)                                             \
-    (TextPage_t) {                                                         \
-        .Title = title, .TitleX = 64, .TitleY = 32, .TitleWidth = 1,       \
-        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,     \
-        .UpdateCallback   = TextPage_UpdateDialogCallback,                 \
-        .ClickCallback    = TextPage_SettingLoadCallback,                  \
-        .RotationCallback = TextPage_CursorCallback, .NumOfLowerPages = 1, \
-        .LowerPages = (TextPage_t[]){                                      \
-            (TextPage_t){                                                  \
-                .Title         = "back",                                   \
-                .X             = 128 / 2 - 6 * 4 / 2,                      \
-                .Y             = 64 / 2,                                   \
-                .ClickCallback = TextPage_BackCallback,                    \
-            },                                                             \
-        },                                                                 \
-    }
-
-#define RestartPage(title)                                                \
+#define TextPage_RestartSetting(title)                                    \
     (TextPage_t) {                                                        \
         .Title = title, .ClickCallback = TextPage_SettingRestartCallback, \
         .RotationCallback = TextPage_CursorCallback,                      \
@@ -178,7 +161,7 @@ TextPage_t MonitorPage = {
     .NumOfLowerPages = 5,
     .LowerPages =
         (TextPage_t[]){
-            BackHomePage("<"),
+            TextPage_BackHome("<"),
             ChartPage("MQ2"),
             ChartPage("MQ3"),
             ChartPage("MQ7"),
@@ -193,13 +176,13 @@ TextPage_t SettingPage = {
     .NumOfLowerPages = 7,
     .LowerPages =
         (TextPage_t[]){
-            BackHomePage("<"),
-            SettingReversePage("LED"),
-            SettingReversePage("Reverse"),
-            SettingIncDecPage("Encoder"),
-            SettingSavePage("Save"),
-            SettingLoadPage("Load"),
-            RestartPage("Restart"),
+            TextPage_BackHome("<"),
+            TextPage_ReverseSetting("LED"),
+            TextPage_ReverseSetting("Reverse"),
+            TextPage_EncoderSetting("Encoder"),
+            TextPage_ConfirmDialog("Save", TextPage_SettingSaveCallback),
+            TextPage_ConfirmDialog("Load", TextPage_SettingLoadCallback),
+            TextPage_RestartSetting("Restart"),
         },
 };
 

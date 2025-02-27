@@ -56,14 +56,14 @@ void TextPage_SettingRestartCallback(void *pvParameters) {
     __NVIC_SystemReset();
 }
 
-void TextPage_SettingCursorSwitchIncDecCallback(void *pvParameters) {
+void TextPage_SettingCursorSwitchEncoderCallback(void *pvParameters) {
     if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback ==
         TextPage_CursorCallback) {
         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
-            TextPage_SettingIncDecCallback;
+            TextPage_SettingEncoderCallback;
 
     } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
-                   .RotationCallback == TextPage_SettingIncDecCallback) {
+                   .RotationCallback == TextPage_SettingEncoderCallback) {
         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
             TextPage_CursorCallback;
     }

@@ -20,7 +20,7 @@ void TextPage_ThresholdCallback(int16_t Encoder) {
                              Encoder > 0 ? -128 : +128);
 }
 
-void TextPage_SettingIncDecCallback(int16_t Encoder) {
+void TextPage_SettingEncoderCallback(int16_t Encoder) {
     if (Encoder >= 3) {
         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Setting++;
 

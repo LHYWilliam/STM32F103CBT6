@@ -113,13 +113,13 @@ void TextPage_ShowSettingCallback(void *pvParameters) {
         }
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-            TextPage_SettingCursorSwitchIncDecCallback) {
+            TextPage_SettingCursorSwitchEncoderCallback) {
             OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                         TextMenu.Page->LowerPages[i].Y, "%d",
                         TextMenu.Page->LowerPages[i].Setting);
 
             if (TextMenu.Page->LowerPages[i].RotationCallback ==
-                TextPage_SettingIncDecCallback) {
+                TextPage_SettingEncoderCallback) {
                 uint8_t number;
                 if (TextMenu.Page->LowerPages[i].Setting == 0) {
                     number = 1;
