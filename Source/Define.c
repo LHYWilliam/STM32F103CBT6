@@ -15,7 +15,7 @@
         .RotationCallback = TextPage_CursorCallback,            \
     }
 
-#define ChartPage(title)                                                      \
+#define TextPage_Chart(title)                                                 \
     (TextPage_t) {                                                            \
         .Title = title, .TitleX = 1, .TitleY = 64 / 4, .TitleWidth = 128 - 1, \
         .TitleHeight = 64 / 2, .ShowCallback = TextPage_ShowMQxCallback,      \
@@ -162,10 +162,10 @@ TextPage_t MonitorPage = {
     .LowerPages =
         (TextPage_t[]){
             TextPage_BackHome("<"),
-            ChartPage("MQ2"),
-            ChartPage("MQ3"),
-            ChartPage("MQ7"),
-            ChartPage("MQ135"),
+            TextPage_Chart("MQ2"),
+            TextPage_Chart("MQ3"),
+            TextPage_Chart("MQ7"),
+            TextPage_Chart("MQ135"),
         },
 };
 
