@@ -88,8 +88,7 @@ void TextPage_ResetSetY(TextPage_t *self) {
 }
 
 void TextPage_ReverseSetting(TextPage_t *self) {
-    self->LowerPages[self->Cursor].Setting =
-        !self->LowerPages[self->Cursor].Setting;
+    self->Setting = !self->Setting;
 }
 
 void TextMenu_Init(TextMenu_t *self, OLED_t *OLED) {

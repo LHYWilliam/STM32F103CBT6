@@ -27,10 +27,8 @@ int main() {
     TextPage_Init(&MonitorPage, &OLED);
     TextPage_Init(&SettingPage, &OLED);
 
-    TextMenu_Init(&TextMenu, &OLED);
     ImageMenu_Init(&ImageMenu, &OLED);
     SelectioneBar_BindImagePage(&Bar, &ImageMenu.Page[0]);
-    // SelectioneBar_BindTextPage(&Bar, &TextMenu.Page->LowerPages[0]);
 
     xTaskCreate(vMenuKeyTaskCode, "vMenuKeyTask", 128, NULL, 1,
                 &xMenuKeyTaskHandle);

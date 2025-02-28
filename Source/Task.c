@@ -1,5 +1,13 @@
 #include "main.h"
 
+void TextPage_SettingMonitor() {
+    if (LEDSetting->Setting) {
+        LED_On(&LED);
+    } else {
+        LED_Off(&LED);
+    }
+}
+
 void vOLEDTimerCallback(TimerHandle_t pxTimer) {
     OLED_ClearBuffer(&OLED);
 
@@ -33,11 +41,7 @@ void vUpdateTimerCallback(TimerHandle_t pxTimer) {
         MQSensor_UpdateState(&MQSensor[i]);
     }
 
-    if (LEDSetting->Setting) {
-        LED_On(&LED);
-    } else {
-        LED_Off(&LED);
-    }
+    TextPage_SettingMonitor();
 }
 
 void vMenuKeyTaskCode(void *pvParameters) {

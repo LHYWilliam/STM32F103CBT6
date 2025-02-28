@@ -106,14 +106,14 @@ void TextPage_ShowSettingCallback(void *pvParameters) {
                     TextMenu.Page->LowerPages[i].Title);
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-            TextPage_SettingReverseCallback) {
+            TextPage_ReverseSettingCallback) {
             OLED_ShowImage(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                            TextMenu.Page->LowerPages[i].Y, 8, 8,
                            SettingImage[TextMenu.Page->LowerPages[i].Setting]);
         }
 
         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-            TextPage_SettingCursorSwitchEncoderCallback) {
+            TextPage_CursorSwitchEncoderSettingCallback) {
             OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
                         TextMenu.Page->LowerPages[i].Y, "%d",
                         TextMenu.Page->LowerPages[i].Setting);

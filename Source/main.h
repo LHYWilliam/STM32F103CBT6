@@ -63,12 +63,12 @@ extern void ImagePage_ShowCallback(void *pvParameters);
 
 extern void TextPage_BackCallback(void *pvParameters);
 extern void TextPage_EnterCallback(void *pvParameters);
-extern void TextPage_SettingSaveCallback(void *pvParameters);
-extern void TextPage_SettingLoadCallback(void *pvParameters);
+extern void TextPage_SaveSettingCallback(void *pvParameters);
+extern void TextPage_LoadSettingCallback(void *pvParameters);
+extern void TextPage_ReverseSettingCallback(void *pvParameters);
+extern void TextPage_RestartSettingCallback(void *pvParameters);
+extern void TextPage_CursorSwitchEncoderSettingCallback(void *pvParameters);
 extern void TextPage_BackImageMenuCallback(void *pvParameters);
-extern void TextPage_SettingReverseCallback(void *pvParameters);
-extern void TextPage_SettingRestartCallback(void *pvParameters);
-extern void TextPage_SettingCursorSwitchEncoderCallback(void *pvParameters);
 extern void ImagePage_EnterTextPageCallback(void *pvParameters);
 
 extern void TextPage_CursorCallback(int16_t Encoder);

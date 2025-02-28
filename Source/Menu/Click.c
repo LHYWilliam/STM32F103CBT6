@@ -14,7 +14,7 @@ void TextPage_EnterCallback(void *pvParameters) {
     }
 }
 
-void TextPage_SettingSaveCallback(void *pvParameters) {
+void TextPage_SaveSettingCallback(void *pvParameters) {
     uint8_t Setting[32];
     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {
         Setting[i - 1] = SettingPage.LowerPages[i].Setting;
@@ -35,7 +35,7 @@ void SettingLoad(void *pvParameters) {
     }
 }
 
-void TextPage_SettingLoadCallback(void *pvParameters) {
+void TextPage_LoadSettingCallback(void *pvParameters) {
     SettingLoad(pvParameters);
 
     TextPage_EnterCallback(NULL);
@@ -48,15 +48,15 @@ void TextPage_BackImageMenuCallback(void *pvParameters) {
     }
 }
 
-void TextPage_SettingReverseCallback(void *pvParameters) {
-    TextPage_ReverseSetting(TextMenu.Page);
+void TextPage_ReverseSettingCallback(void *pvParameters) {
+    TextPage_ReverseSetting(&TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
 }
 
-void TextPage_SettingRestartCallback(void *pvParameters) {
+void TextPage_RestartSettingCallback(void *pvParameters) {
     __NVIC_SystemReset();
 }
 
-void TextPage_SettingCursorSwitchEncoderCallback(void *pvParameters) {
+void TextPage_CursorSwitchEncoderSettingCallback(void *pvParameters) {
     if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback ==
         TextPage_CursorCallback) {
         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =

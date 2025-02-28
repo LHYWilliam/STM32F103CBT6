@@ -28,14 +28,14 @@
 
 #define TextPage_ReverseSetting(title)                                    \
     (TextPage_t) {                                                        \
-        .Title = title, .ClickCallback = TextPage_SettingReverseCallback, \
+        .Title = title, .ClickCallback = TextPage_ReverseSettingCallback, \
         .RotationCallback = TextPage_CursorCallback,                      \
     }
 
 #define TextPage_EncoderSetting(title)                                   \
     (TextPage_t) {                                                       \
         .Title            = title,                                       \
-        .ClickCallback    = TextPage_SettingCursorSwitchEncoderCallback, \
+        .ClickCallback    = TextPage_CursorSwitchEncoderSettingCallback, \
         .RotationCallback = TextPage_CursorCallback,                     \
     }
 
@@ -58,7 +58,7 @@
 
 #define TextPage_RestartSetting(title)                                    \
     (TextPage_t) {                                                        \
-        .Title = title, .ClickCallback = TextPage_SettingRestartCallback, \
+        .Title = title, .ClickCallback = TextPage_RestartSettingCallback, \
         .RotationCallback = TextPage_CursorCallback,                      \
     }
 
@@ -180,8 +180,8 @@ TextPage_t SettingPage = {
             TextPage_ReverseSetting("LED"),
             TextPage_ReverseSetting("Reverse"),
             TextPage_EncoderSetting("Encoder"),
-            TextPage_ConfirmDialog("Save", TextPage_SettingSaveCallback),
-            TextPage_ConfirmDialog("Load", TextPage_SettingLoadCallback),
+            TextPage_ConfirmDialog("Save", TextPage_SaveSettingCallback),
+            TextPage_ConfirmDialog("Load", TextPage_LoadSettingCallback),
             TextPage_RestartSetting("Restart"),
         },
 };
