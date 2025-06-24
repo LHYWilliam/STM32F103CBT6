@@ -79,6 +79,7 @@ Serial_t Serial = {
     .RX       = A3,
     .USARTx   = USART2,
     .BaudRate = 115200,
+    .Default  = ENABLE,
 };
 
 Key_t KeyConfirm = {

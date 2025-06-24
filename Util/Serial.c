@@ -4,6 +4,8 @@
 #include "Serial.h"
 #include "USART.h"
 
+Serial_t *DefaultSerial;
+
 void Serial_Init(Serial_t *self) {
     GPIO_t GPIO;
 
@@ -39,6 +41,10 @@ void Serial_Init(Serial_t *self) {
     if (self->DMA) {
         USART_DMACmd(self->USARTx, self->DMA, ENABLE);
     }
+
+    if (self->Default) {
+        DefaultSerial = self;
+    }
 }
 
 void Serial_SendByte(Serial_t *self, uint8_t Byte) {
@@ -62,4 +68,21 @@ void Serial_Printf(Serial_t *self, const char *format, ...) {
     for (uint8_t i = 0; self->PrintfBuffer[i]; i++) {
         Serial_SendByte(self, self->PrintfBuffer[i]);
     }
+}
+
+int fputc(int ch, FILE *f) {
+    USART_SendData(DefaultSerial->USARTx, (uint8_t)ch);
+
+    while (USART_GetFlagStatus(DefaultSerial->USARTx, USART_FLAG_TC) == RESET) {
+    }
+
+    return ch;
+}
+
+int GetKey(void) {
+
+    while (!(DefaultSerial->USARTx->SR & USART_FLAG_RXNE))
+        ;
+
+    return ((int)(DefaultSerial->USARTx->DR & 0x1FF));
 }

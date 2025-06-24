@@ -3,7 +3,7 @@
 
 #include "RTC.h"
 
-void RTC_Init(void) {
+void RTC_Init() {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
 
@@ -38,8 +38,13 @@ void RTC_Init(void) {
     RTC_WaitForLastTask();
 }
 
-uint32_t RTC_time_s(void) { return RTC_GetCounter(); }
+uint32_t RTC_Gets() { return RTC_GetCounter(); }
 
-uint32_t RTC_time_ms(void) {
+uint32_t RTC_Getms() {
     return RTC_GetCounter() * 1000 + (40000 - RTC_GetDivider()) / 40000.0 * 999;
+}
+
+uint32_t RTC_Getus() {
+    return RTC_Getms() * 1000 +
+           (SysTick->LOAD + 1 - SysTick->VAL) * 1000 / (SysTick->LOAD + 1);
 }

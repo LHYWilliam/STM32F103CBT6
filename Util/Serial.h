@@ -32,6 +32,8 @@ typedef struct {
     uint8_t DMA;
 
     uint8_t PrintfBuffer[128];
+
+    uint8_t Default;
 } Serial_t;
 
 void Serial_Init(Serial_t *self);

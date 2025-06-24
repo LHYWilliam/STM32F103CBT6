@@ -5,7 +5,8 @@
 #include CMSIS_device_header
 
 void     RTC_Init(void);
-uint32_t RTC_time_s(void);
-uint32_t RTC_time_ms(void);
+uint32_t RTC_Gets(void);
+uint32_t RTC_Getms(void);
+uint32_t RTC_Getus(void);
 
 #endif

@@ -15,6 +15,10 @@ project:
         - Hardware/LCD
         - Hardware/OLED
       debug: "on"
+      define:
+        - __MICROLIB
+      define-asm:
+        - __MICROLIB
       misc:
         - C:
             - -std=c99
@@ -43,6 +47,7 @@ project:
           ASM:
             - -masm=auto
           Link:
+            - --library_type=microlib
             - --map
             - --load_addr_map_info
             - --xref
@@ -147,6 +152,9 @@ project:
     - component: ARM::RTOS&FreeRTOS:Heap&Heap_4
     - component: ARM::RTOS&FreeRTOS:Timers
     - component: Keil::Device:Startup
+      misc:
+        - ASM:
+            - -masm=auto
     - component: Keil::Device:StdPeriph Drivers:ADC
     - component: Keil::Device:StdPeriph Drivers:BKP
     - component: Keil::Device:StdPeriph Drivers:CAN

@@ -16,7 +16,7 @@ void PID_Init(PID_t *self) {
 
 int16_t PID_Caculate(PID_t *self, float error) {
     float    output = 0;
-    uint32_t now    = RTC_time_ms();
+    uint32_t now    = RTC_Getms();
     float    dt     = (float)(now - self->last_time) / 1000;
 
     if (self->last_time == 0 || dt > 1) {
