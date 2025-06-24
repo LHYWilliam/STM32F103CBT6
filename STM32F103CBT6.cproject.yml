@@ -14,6 +14,7 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
+        - Hardware/ICM42688
       debug: "on"
       define:
         - __MICROLIB
@@ -142,6 +143,12 @@ project:
         - file: Hardware/W25Q64.h
         - file: Hardware/MQSensor.c
         - file: Hardware/MQSensor.h
+        - file: Hardware/ICM42688/ICM42688.c
+        - file: Hardware/ICM42688/ICM42688.h
+        - file: Hardware/ICM42688/ICM42688_AHRS.c
+        - file: Hardware/ICM42688/ICM42688_AHRS.h
+        - file: Hardware/ICM42688/ICM42688_SPI.c
+        - file: Hardware/ICM42688/ICM42688_SPI.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

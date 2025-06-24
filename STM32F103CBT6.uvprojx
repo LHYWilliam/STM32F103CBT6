@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\Source;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED</IncludePath>
+              <IncludePath>.\Util;.\Source;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\ICM42688</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -753,6 +753,36 @@
               <FileName>MQSensor.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\MQSensor.h</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688.h</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688_AHRS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688_AHRS.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688_AHRS.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688_AHRS.h</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688_SPI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688_SPI.h</FilePath>
             </File>
           </Files>
         </Group>
