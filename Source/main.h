@@ -1,5 +1,3 @@
-#include <math.h>
-
 #include "FreeRTOS.h"
 #include "timers.h"
 
@@ -17,30 +15,24 @@
 #define ADCToVoltage(ADC)     ((ADC) / 4095.0 * 3.3)
 #define VoltageToADC(Voltage) (uint32_t)((Voltage) / 3.3 * 4095.0)
 
-extern LED_t    LED;
-extern Serial_t Serial;
-extern W25Q64_t W25Q64;
-
-extern Key_t     KeyConfirm;
-extern Encoder_t Encoder;
-
+extern LED_t      LED;
+extern Encoder_t  Encoder;
+extern Key_t      KeyConfirm;
+extern LCD_t      LCD;
+extern OLED_t     OLED;
+extern Serial_t   Serial;
+extern W25Q64_t   W25Q64;
+extern Sampler_t  Sampler;
 extern MQSensor_t MQSensor[4];
 
-extern Sampler_t Sampler;
-
-extern OLED_t OLED;
-extern LCD_t  LCD;
-
-extern TextPage_t MonitorPage;
-extern TextPage_t SettingPage;
-
+extern TextPage_t      MonitorPage;
+extern TextPage_t      SettingPage;
+extern TextPage_t     *LEDSetting;
+extern TextPage_t     *ReverseSetting;
 extern void           *Menu;
 extern TextMenu_t      TextMenu;
 extern ImageMenu_t     ImageMenu;
 extern SelectioneBar_t Bar;
-
-extern TextPage_t *LEDSetting;
-extern TextPage_t *ReverseSetting;
 
 extern void SettingLoad(void *pvParameters);
 

@@ -1,8 +1,10 @@
 project:
   packs:
-    - pack: Keil::STM32F1xx_DFP
-    - pack: ARM::CMSIS
-    - pack: ARM::CMSIS-FreeRTOS
+    - pack: ARM::CMSIS@^6.1.0
+    - pack: ARM::CMSIS-FreeRTOS@^11.1.0
+    - pack: Keil::STM32F1xx_DFP@^2.4.1
+    - pack: ARM::CMSIS-NN@^4.0.0
+    - pack: ARM::CMSIS-DSP@^1.10.1
   setups:
     - setup: Options for STM32F103CBT6
       add-path:
@@ -37,6 +39,7 @@ project:
           CPP:
             - -xc++
             - -std=c++11
+            - -fno-exceptions
           ASM:
             - -masm=auto
           Link:

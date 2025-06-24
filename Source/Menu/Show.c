@@ -1,4 +1,5 @@
 #include "main.h"
+#include <math.h>
 
 #define ShowTitleAndTexts(...)                                           \
     if (TextMenu.Page->TitleY + TextMenu.Page->TitleHeight >= 0) {       \
