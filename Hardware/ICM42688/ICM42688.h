@@ -1,15 +1,11 @@
 #ifndef __BSP_ICM42688_H__
 #define __BSP_ICM42688_H__
 
-#include <stdint.h>
+#include "RTE_Components.h"
+#include CMSIS_device_header
 
-// #define ICM_USE_HARD_SPI
-#define ICM_USE_I2C
+#include "GPIO.H"
 
-/* ICM42688 registers
-https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
-*/
-// Bank 0
 #define ICM42688_DEVICE_CONFIG        0x11
 #define ICM42688_DRIVE_CONFIG         0x13
 #define ICM42688_INT_CONFIG           0x14
@@ -70,7 +66,6 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define ICM42688_WHO_AM_I             0x75
 #define ICM42688_REG_BANK_SEL         0x76
 
-// Bank 1
 #define ICM42688_SENSOR_CONFIG0       0x03
 #define ICM42688_GYRO_CONFIG_STATIC2  0x0B
 #define ICM42688_GYRO_CONFIG_STATIC3  0x0C
@@ -91,7 +86,6 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define ICM42688_INTF_CONFIG5         0x7B
 #define ICM42688_INTF_CONFIG6         0x7C
 
-// Bank 2
 #define ICM42688_ACCEL_CONFIG_STATIC2 0x03
 #define ICM42688_ACCEL_CONFIG_STATIC3 0x04
 #define ICM42688_ACCEL_CONFIG_STATIC4 0x05
@@ -99,7 +93,6 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define ICM42688_YA_ST_DATA           0x3C
 #define ICM42688_ZA_ST_DATA           0x3D
 
-// Bank 4
 #define ICM42688_GYRO_ON_OFF_CONFIG   0x0E
 #define ICM42688_APEX_CONFIG1         0x40
 #define ICM42688_APEX_CONFIG2         0x41
@@ -128,14 +121,14 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define ICM42688_OFFSET_USER7         0x7E
 #define ICM42688_OFFSET_USER8         0x7F
 
-#define ICM42688_ADDRESS              0xD2 // Address of ICM42688 accel/gyro when ADO = HIGH
+#define ICM42688_ADDRESS              0xD2
 
 #define AFS_2G                        0x03
 #define AFS_4G                        0x02
 #define AFS_8G                        0x01
-#define AFS_16G                       0x00 // default
+#define AFS_16G                       0x00
 
-#define GFS_2000DPS                   0x00 // default
+#define GFS_2000DPS                   0x00
 #define GFS_1000DPS                   0x01
 #define GFS_500DPS                    0x02
 #define GFS_250DPS                    0x03
@@ -147,7 +140,7 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define AODR_8000Hz                   0x03
 #define AODR_4000Hz                   0x04
 #define AODR_2000Hz                   0x05
-#define AODR_1000Hz                   0x06 // default
+#define AODR_1000Hz                   0x06
 #define AODR_200Hz                    0x07
 #define AODR_100Hz                    0x08
 #define AODR_50Hz                     0x09
@@ -161,7 +154,7 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define GODR_8000Hz                   0x03
 #define GODR_4000Hz                   0x04
 #define GODR_2000Hz                   0x05
-#define GODR_1000Hz                   0x06 // default
+#define GODR_1000Hz                   0x06
 #define GODR_200Hz                    0x07
 #define GODR_100Hz                    0x08
 #define GODR_50Hz                     0x09
@@ -172,24 +165,46 @@ https://store.invensense.com/datasheets/invensense/DS-ICM-42688v1-2.pdf
 #define ICM42688_ID                   0x47
 
 typedef struct {
-    int16_t x; /**< Raw int16_t value from the x axis */
-    int16_t y; /**< Raw int16_t value from the y axis */
-    int16_t z; /**< Raw int16_t value from the z axis */
-} icm42688RawData_t;
+    int16_t X;
+    int16_t Y;
+    int16_t Z;
+} ICM42688RawData_t;
 
 typedef struct {
-    float x; /**< value from the x axis */
-    float y; /**< value from the y axis */
-    float z; /**< value from the z axis */
-} icm42688RealData_t;
+    float X;
+    float Y;
+    float Z;
+} ICM42688RealData_t;
 
-#define SPI_IMU_CS PAout(2) // Ñ¡ÖÐIMU
-//--------------------------------------------------------//
-int8_t bsp_Icm42688Init(void);
-int8_t bsp_IcmGetTemperature(int16_t *pTemp);
-int8_t bsp_IcmGetAccelerometer(icm42688RawData_t *accData);
-int8_t bsp_IcmGetGyroscope(icm42688RawData_t *GyroData);
-int8_t bsp_IcmGetRawData(icm42688RealData_t *accData,
-                         icm42688RealData_t *GyroData);
+typedef struct {
+    GPIOxPiny_t SCLK;
+    GPIOxPiny_t MOSI;
+    GPIOxPiny_t MISO;
+    GPIOxPiny_t CS;
+    uint32_t    SCLK_ODR;
+    uint32_t    MOSI_ODR;
+    uint32_t    CS_ODR;
+
+    SPI_TypeDef *SPIx;
+
+    float Kp;
+    float Ki;
+
+    float Angles[3];
+    float RawAccGyro[6];
+    float CalibratedAccGyro[9];
+
+    float    q[4];
+    float    AccSensitivity;
+    float    GyroSensitivity;
+    uint32_t LastUpdate, Now;
+    float    XIntegral, YIntegral, ZIntegral;
+} ICM42688_t;
+
+void ICM42688_Init(ICM42688_t *Self);
+void ICM42688_GetRawAcc(ICM42688_t *Self, ICM42688RawData_t *AccData);
+void ICM42688_GetRawGyro(ICM42688_t *Self, ICM42688RawData_t *GyroData);
+void ICM42688_GetRealAccGyro(ICM42688_t *Self, float *RealAccGyro);
+void ICM42688_GetTemperature(ICM42688_t *Self, int16_t *Temperature);
 
 #endif
