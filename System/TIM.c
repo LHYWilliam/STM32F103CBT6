@@ -2,37 +2,37 @@
 
 #include "Tim.h"
 
-void TIM_Init(TIM_t *self, ClockSourceConfig_t *config) {
-    RCC_APBxPeriphClockCmd(self->TIMx)(RCC_APBxPeriph_TIMx(self->TIMx), ENABLE);
+void TIM_Init(TIM_t *Self, ClockSourceConfig_t *Config) {
+    RCC_APBxPeriphClockCmd(Self->TIMx)(RCC_APBxPeriph_TIMx(Self->TIMx), ENABLE);
 
-    if (self->ClockSource) {
-        self->ClockSource(self->TIMx, config);
+    if (Self->ClockSource) {
+        Self->ClockSource(Self->TIMx, Config);
     }
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct = {
-        .TIM_Prescaler = self->Prescaler,
-        .TIM_Period    = self->Period,
+        .TIM_Prescaler = Self->Prescaler,
+        .TIM_Period    = Self->Period,
     };
-    TIM_TimeBaseInit(self->TIMx, &TIM_TimeBaseInitStruct);
+    TIM_TimeBaseInit(Self->TIMx, &TIM_TimeBaseInitStruct);
 
-    if (self->TRGO) {
-        TIM_SelectOutputTrigger(self->TIMx, self->TRGO);
+    if (Self->TRGO) {
+        TIM_SelectOutputTrigger(Self->TIMx, Self->TRGO);
     }
 
-    if (self->TIMx == TIM1) {
-        TIM_CtrlPWMOutputs(self->TIMx, ENABLE);
+    if (Self->TIMx == TIM1) {
+        TIM_CtrlPWMOutputs(Self->TIMx, ENABLE);
     }
 
-    if (self->Cmd) {
-        TIM_ClearFlag(self->TIMx, TIM_FLAG_Update);
-        TIM_Cmd(self->TIMx, ENABLE);
+    if (Self->Cmd) {
+        TIM_ClearFlag(Self->TIMx, TIM_FLAG_Update);
+        TIM_Cmd(Self->TIMx, ENABLE);
     }
 }
 
-void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *config) {
+void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *Config) {
     TIM_InternalClockConfig(TIMx);
 }
-void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *config) {
-    TIM_ETRClockMode2Config(TIMx, config->TIM_ExtTRGPrescaler,
-                            config->TIM_ExtTRGPolarity, config->ExtTRGFilter);
+void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *Config) {
+    TIM_ETRClockMode2Config(TIMx, Config->TIM_ExtTRGPrescaler,
+                            Config->TIM_ExtTRGPolarity, Config->ExtTRGFilter);
 };

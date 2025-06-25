@@ -15,9 +15,9 @@ typedef struct {
     TIM_t     *tim;
 } PWMI_t;
 
-void PWMI_Init(PWMI_t *self);
+void PWMI_Init(PWMI_t *Self);
 
-uint16_t PWMI_GetFrequency(PWMI_t *self);
-uint16_t PWMI_GetDuty(PWMI_t *self);
+uint16_t PWMI_GetFrequency(PWMI_t *Self);
+uint16_t PWMI_GetDuty(PWMI_t *Self);
 
 #endif

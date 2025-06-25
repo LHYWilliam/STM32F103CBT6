@@ -43,10 +43,10 @@ typedef struct OLED_t {
     uint8_t Width;
     uint8_t Height;
 
-    void (*OLED_WriteDatas)(struct OLED_t *self, uint8_t *Datas,
+    void (*OLED_WriteDatas)(struct OLED_t *Self, uint8_t *Datas,
                             uint16_t Length);
-    void (*OLED_WriteCommand)(struct OLED_t *self, uint8_t Command);
-    void (*OLED_WriteCommands)(struct OLED_t *self, uint8_t *Commands,
+    void (*OLED_WriteCommand)(struct OLED_t *Self, uint8_t Command);
+    void (*OLED_WriteCommands)(struct OLED_t *Self, uint8_t *Commands,
                                uint16_t Length);
 
     uint8_t PrintfBuffer[128];
@@ -66,51 +66,51 @@ typedef struct OLED_t {
 
 } OLED_t;
 
-void OLED_Init(OLED_t *self);
+void OLED_Init(OLED_t *Self);
 
 #if U8G2
 
-void u8g2_Printf(OLED_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
+void u8g2_Printf(OLED_t *Self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
                  ...);
 
 #endif
 
-void OLED_Fill(OLED_t *self);
-void OLED_FillArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_Fill(OLED_t *Self);
+void OLED_FillArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                    uint8_t Height);
-void OLED_Clear(OLED_t *self);
-void OLED_ClearArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_Clear(OLED_t *Self);
+void OLED_ClearArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height);
-void OLED_Reverse(OLED_t *self);
-void OLED_ReverseArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_Reverse(OLED_t *Self);
+void OLED_ReverseArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                       uint8_t Height);
 
-void OLED_DrawPoint(OLED_t *self, int16_t X, int16_t Y);
-void OLED_DrawHLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_DrawPoint(OLED_t *Self, int16_t X, int16_t Y);
+void OLED_DrawHLine(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t step);
-void OLED_DrawVLine(OLED_t *self, int16_t X, int16_t Y, uint8_t Height,
+void OLED_DrawVLine(OLED_t *Self, int16_t X, int16_t Y, uint8_t Height,
                     uint8_t step);
-void OLED_DrawLine(OLED_t *self, int16_t X0, int16_t Y0, int16_t X1,
+void OLED_DrawLine(OLED_t *Self, int16_t X0, int16_t Y0, int16_t X1,
                    int16_t Y1);
-void OLED_DrawHollowRectangle(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_DrawHollowRectangle(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                               uint8_t Height);
-void OLED_ShowChart(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_ShowChart(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, uint16_t *Data, uint16_t Length,
                     int16_t Index);
 
-void OLED_ShowImage(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_ShowImage(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, const uint8_t *Image);
 
-void OLED_SetFont(OLED_t *self, OLEDFont Font);
-void OLED_ShowChar(OLED_t *self, int16_t X, int16_t Y, char Char);
-void OLED_ShowString(OLED_t *self, int16_t X, int16_t Y, const char *String);
-void OLED_Printf(OLED_t *self, int16_t x, int16_t y, const char *format, ...);
+void OLED_SetFont(OLED_t *Self, OLEDFont Font);
+void OLED_ShowChar(OLED_t *Self, int16_t X, int16_t Y, char Char);
+void OLED_ShowString(OLED_t *Self, int16_t X, int16_t Y, const char *String);
+void OLED_Printf(OLED_t *Self, int16_t x, int16_t y, const char *format, ...);
 
-void OLED_ClearBuffer(OLED_t *self);
-void OLED_ClearBufferArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_ClearBuffer(OLED_t *Self);
+void OLED_ClearBufferArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                           uint8_t Height);
-void OLED_SendBuffer(OLED_t *self);
-void OLED_SendBufferArea(OLED_t *self, int16_t X, int16_t Y, uint8_t Width,
+void OLED_SendBuffer(OLED_t *Self);
+void OLED_SendBufferArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                          uint8_t Height);
 
 #endif

@@ -15,6 +15,6 @@ typedef struct Timer {
     uint16_t TRGO;
 } Timer_t;
 
-void Timer_Init(Timer_t *self);
+void Timer_Init(Timer_t *Self);
 
 #endif

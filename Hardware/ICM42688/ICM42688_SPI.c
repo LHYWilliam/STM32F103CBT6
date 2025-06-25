@@ -60,11 +60,11 @@ uint8_t ICM42688_HWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t Byte) {
     return SPI_I2S_ReceiveData(Self->SPIx);
 }
 
-void ICM42688_HWSPI_ReadWriteBytes(ICM42688_t *Self, uint8_t *Datas,
+void ICM42688_HWSPI_ReadWriteBytes(ICM42688_t *Self, uint8_t *Bytes,
                                    uint8_t Length) {
     for (uint8_t i = 0; i < Length; i++) {
-        *Datas = ICM42688_HWSPI_ReadWriteByte(Self, *Datas);
-        Datas++;
+        *Bytes = ICM42688_HWSPI_ReadWriteByte(Self, *Bytes);
+        Bytes++;
     }
 }
 
@@ -79,24 +79,24 @@ uint8_t ICM42688_HWSPI_ReadReg(ICM42688_t *Self, uint8_t Reg) {
     return Value;
 }
 
-void ICM42688_HWSPI_ReadRegs(ICM42688_t *Self, uint8_t Reg, uint8_t *Datas,
+void ICM42688_HWSPI_ReadRegs(ICM42688_t *Self, uint8_t Reg, uint8_t *Bytes,
                              uint16_t Length) {
     Reg |= 0x80;
 
     ICM42688_HWSPI_Start(Self);
     ICM42688_HWSPI_ReadWriteByte(Self, Reg);
     while (Length) {
-        *Datas = ICM42688_HWSPI_ReadWriteByte(Self, 0x00);
+        *Bytes = ICM42688_HWSPI_ReadWriteByte(Self, 0x00);
         Length--;
-        Datas++;
+        Bytes++;
     }
     ICM42688_HWSPI_Stop(Self);
 }
 
-uint8_t ICM42688_HWSPI_WriteReg(ICM42688_t *Self, uint8_t Reg, uint8_t Value) {
+uint8_t ICM42688_HWSPI_WriteReg(ICM42688_t *Self, uint8_t Reg, uint8_t Byte) {
     ICM42688_HWSPI_Start(Self);
     ICM42688_HWSPI_ReadWriteByte(Self, Reg);
-    ICM42688_HWSPI_ReadWriteByte(Self, Value);
+    ICM42688_HWSPI_ReadWriteByte(Self, Byte);
     ICM42688_HWSPI_Stop(Self);
 
     return 0;

@@ -25,6 +25,6 @@ typedef struct {
     void (*TIM_SetCompare)(TIM_TypeDef *TIMx, uint16_t Compare1);
 } Compare_t;
 
-void Compare_Init(Compare_t *self);
+void Compare_Init(Compare_t *Self);
 
 #endif

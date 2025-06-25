@@ -38,8 +38,8 @@ typedef struct {
 
 } USARTInterrupt_t;
 
-void GPIO_Interrupt_Init(GPIOInterrut_t *self);
-void TIM_Interrupt_Init(TIMInterrupt_t *self);
-void USART_Interrupt_Init(USARTInterrupt_t *self);
+void GPIO_Interrupt_Init(GPIOInterrut_t *Self);
+void TIM_Interrupt_Init(TIMInterrupt_t *Self);
+void USART_Interrupt_Init(USARTInterrupt_t *Self);
 
 #endif

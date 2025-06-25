@@ -47,7 +47,7 @@ void ICM42688_AHRS_GetYawPitchRoll(ICM42688_t *Self, float *Angles) {
 }
 
 void ICM42688_AHRS_Update(ICM42688_t *Self) {
-    ICM42688_GetRealAccGyro(Self, Self->RawAccGyro);
+    ICM42688_GetAccGyro(Self, Self->RawAccGyro);
     ICM42688_AHRS_CalculateCalibratedAccGyro(Self);
     ICM42688_AHRS_CalculateQ(Self);
     ICM42688_AHRS_CalculateAngle(Self);

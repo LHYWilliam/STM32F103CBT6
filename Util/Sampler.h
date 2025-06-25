@@ -27,7 +27,7 @@ typedef struct {
     uint8_t      Priority;
 } Sampler_t;
 
-void     Sampler_Init(Sampler_t *self);
-uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel);
+void     Sampler_Init(Sampler_t *Self);
+uint16_t Sampler_Get(Sampler_t *Self, uint8_t Channel);
 
 #endif

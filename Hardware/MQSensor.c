@@ -1,29 +1,29 @@
 #include "MQSensor.h"
 
-void MQSensor_Init(MQSensor_t *self) {
+void MQSensor_Init(MQSensor_t *Self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_Out_PP;
-    self->ODR = GPIO_InitPin(&GPIO, self->LED);
+    Self->ODR = GPIO_InitPin(&GPIO, Self->LED);
 
-    GPIO_Write(self->ODR, !self->Mode);
+    GPIO_Write(Self->ODR, !Self->Mode);
 
-    self->Length = MQSensor_DataLength;
-    self->Index  = -1;
+    Self->Length = MQSensor_DataLength;
+    Self->Index  = -1;
 }
 
-void MQSensor_UpdateState(MQSensor_t *self) {
-    if (self->Data[self->Index] > self->Threshold + self->Relaxation) {
-        GPIO_Write(self->ODR, self->Mode);
-        self->State = MQSensorState_Warning;
+void MQSensor_UpdateState(MQSensor_t *Self) {
+    if (Self->Data[Self->Index] > Self->Threshold + Self->Relaxation) {
+        GPIO_Write(Self->ODR, Self->Mode);
+        Self->State = MQSensorState_Warning;
 
-    } else if (self->Data[self->Index] < self->Threshold - self->Relaxation) {
-        GPIO_Write(self->ODR, !self->Mode);
-        self->State = MQSensorState_Safe;
+    } else if (Self->Data[Self->Index] < Self->Threshold - Self->Relaxation) {
+        GPIO_Write(Self->ODR, !Self->Mode);
+        Self->State = MQSensorState_Safe;
     }
 }
 
-void MQSensor_UpdateThreshold(MQSensor_t *self, int16_t dt) {
-    if ((0 <= self->Threshold + dt) && (self->Threshold + dt <= 4095)) {
-        self->Threshold += dt;
+void MQSensor_UpdateThreshold(MQSensor_t *Self, int16_t dt) {
+    if ((0 <= Self->Threshold + dt) && (Self->Threshold + dt <= 4095)) {
+        Self->Threshold += dt;
     }
 }

@@ -3,38 +3,38 @@
 #include "DMA.h"
 #include "Timer.h"
 
-void Sampler_Init(Sampler_t *self) {
+void Sampler_Init(Sampler_t *Self) {
     GPIO_t GPIO;
     GPIO.Mode = GPIO_Mode_AIN;
 
     for (uint8_t i = 0; i < 10; i++) {
-        if (*self->GPIOxPiny[i]) {
-            GPIO_InitPin(&GPIO, self->GPIOxPiny[i]);
-            self->NbrOfChannel++;
+        if (*Self->GPIOxPiny[i]) {
+            GPIO_InitPin(&GPIO, Self->GPIOxPiny[i]);
+            Self->NbrOfChannel++;
         }
     }
 
     ADC_t ADC = {
-        .ADCx         = self->ADCx,
+        .ADCx         = Self->ADCx,
         .Cmd          = DISABLE,
-        .Channel      = self->ADC_Channel,
-        .NbrOfChannel = self->NbrOfChannel,
-        .Continuous   = self->Continuous,
-        .DMA          = self->DMAx ? ENABLE : DISABLE,
-        .TRGO         = ADC_ExternalTrigConv_Tx_TRGO(self->TIMx),
+        .Channel      = Self->ADC_Channel,
+        .NbrOfChannel = Self->NbrOfChannel,
+        .Continuous   = Self->Continuous,
+        .DMA          = Self->DMAx ? ENABLE : DISABLE,
+        .TRGO         = ADC_ExternalTrigConv_Tx_TRGO(Self->TIMx),
     };
     ADC_Init_(&ADC);
 
-    if (self->DMAx) {
+    if (Self->DMAx) {
         DMA_t DMA = {
-            .DMAx       = self->DMAx,
-            .channel    = self->DMA_Channel,
-            .sourceAddr = (uint32_t)&(self->ADCx->DR),
+            .DMAx       = Self->DMAx,
+            .channel    = Self->DMA_Channel,
+            .sourceAddr = (uint32_t)&(Self->ADCx->DR),
             .sourceInc  = DISABLE,
-            .targetAddr = (uint32_t)self->Data,
+            .targetAddr = (uint32_t)Self->Data,
             .targetInc  = ENABLE,
             .DataSize   = 16,
-            .BufferSize = self->Length,
+            .BufferSize = Self->Length,
             .Circular   = ENABLE,
         };
 
@@ -44,46 +44,46 @@ void Sampler_Init(Sampler_t *self) {
 
     ADC_Cmd_(&ADC);
 
-    if (self->TIMx) {
+    if (Self->TIMx) {
         Timer_t Timer = {
-            .TIMx      = self->TIMx,
-            .Hz        = self->Hz,
-            .ms        = self->ms,
+            .TIMx      = Self->TIMx,
+            .Hz        = Self->Hz,
+            .ms        = Self->ms,
             .Interrupt = ENABLE,
-            .Priority  = self->Priority,
+            .Priority  = Self->Priority,
             .TRGO      = TIM_TRGOSource_Update,
         };
         Timer_Init(&Timer);
     }
 
-    self->Index = self->Length - 1;
+    Self->Index = Self->Length - 1;
 }
 
-uint16_t Sampler_Get(Sampler_t *self, uint8_t Channel) {
+uint16_t Sampler_Get(Sampler_t *Self, uint8_t Channel) {
     static uint8_t ADC_Channel[] = {
         ADC_Channel_0, ADC_Channel_1, ADC_Channel_2, ADC_Channel_3,
         ADC_Channel_4, ADC_Channel_5, ADC_Channel_6, ADC_Channel_7,
         ADC_Channel_8, ADC_Channel_9,
     };
 
-    if (self->NbrOfChannel > 1) {
-        ADC_RegularChannelConfig(self->ADCx, ADC_Channel[Channel], 1,
+    if (Self->NbrOfChannel > 1) {
+        ADC_RegularChannelConfig(Self->ADCx, ADC_Channel[Channel], 1,
                                  ADC_SampleTime_55Cycles5);
     }
 
-    if (self->Continuous == NULL) {
-        ADC_SoftwareStartConvCmd(self->ADCx, ENABLE);
+    if (Self->Continuous == NULL) {
+        ADC_SoftwareStartConvCmd(Self->ADCx, ENABLE);
     }
 
-    while (ADC_GetFlagStatus(self->ADCx, ADC_FLAG_EOC) == RESET)
+    while (ADC_GetFlagStatus(Self->ADCx, ADC_FLAG_EOC) == RESET)
         ;
 
-    if (self->Data) {
-        self->Index             = (self->Index + 1) % self->Length;
-        self->Data[self->Index] = ADC_GetConversionValue(self->ADCx);
+    if (Self->Data) {
+        Self->Index             = (Self->Index + 1) % Self->Length;
+        Self->Data[Self->Index] = ADC_GetConversionValue(Self->ADCx);
 
-        return self->Data[self->Index];
+        return Self->Data[Self->Index];
     } else {
-        return ADC_GetConversionValue(self->ADCx);
+        return ADC_GetConversionValue(Self->ADCx);
     }
 }

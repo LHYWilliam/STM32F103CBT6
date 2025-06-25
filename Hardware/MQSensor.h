@@ -28,8 +28,8 @@ typedef struct {
     uint16_t Data[MQSensor_DataLength];
 } MQSensor_t;
 
-void MQSensor_Init(MQSensor_t *self);
-void MQSensor_UpdateState(MQSensor_t *self);
-void MQSensor_UpdateThreshold(MQSensor_t *self, int16_t dt);
+void MQSensor_Init(MQSensor_t *Self);
+void MQSensor_UpdateState(MQSensor_t *Self);
+void MQSensor_UpdateThreshold(MQSensor_t *Self, int16_t dt);
 
 #endif

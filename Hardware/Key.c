@@ -1,16 +1,16 @@
 #include "Key.h"
 #include "Delay.h"
 
-void Key_Init(Key_t *self) {
+void Key_Init(Key_t *Self) {
     GPIO_t GPIO;
-    GPIO.Mode = self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU;
-    self->IDR = GPIO_InitPin(&GPIO, self->GPIOxPiny);
+    GPIO.Mode = Self->Mode ? GPIO_Mode_IPD : GPIO_Mode_IPU;
+    Self->IDR = GPIO_InitPin(&GPIO, Self->GPIOxPiny);
 }
 
-uint8_t Key_Read(Key_t *self) {
-    if (GPIO_ReadInput(self->IDR) == self->Mode) {
+uint8_t Key_Read(Key_t *Self) {
+    if (GPIO_ReadInput(Self->IDR) == Self->Mode) {
         Delay_ms(10);
-        while (GPIO_ReadInput(self->IDR) == self->Mode)
+        while (GPIO_ReadInput(Self->IDR) == Self->Mode)
             ;
         Delay_ms(10);
         return 1;

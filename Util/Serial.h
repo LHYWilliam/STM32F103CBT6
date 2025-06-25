@@ -36,9 +36,9 @@ typedef struct {
     uint8_t Default;
 } Serial_t;
 
-void Serial_Init(Serial_t *self);
-void Serial_SendByte(Serial_t *self, uint8_t Byte);
-void Serial_SendBytes(Serial_t *self, uint8_t *Bytes, uint16_t Length);
-void Serial_Printf(Serial_t *self, const char *format, ...);
+void Serial_Init(Serial_t *Self);
+void Serial_SendByte(Serial_t *Self, uint8_t Byte);
+void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint16_t Length);
+void Serial_Printf(Serial_t *Self, const char *format, ...);
 
 #endif

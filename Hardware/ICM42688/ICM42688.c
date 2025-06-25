@@ -15,47 +15,22 @@ void ICM42688_Init(ICM42688_t *Self) {
     ICM42688_AHRS_Init(Self);
 }
 
-void ICM42688_GetRawAcc(ICM42688_t *Self, ICM42688RawData_t *Acc) {
-    uint8_t Buffer[6];
-    ICM42688_HWSPI_ReadRegs(Self, ICM42688_ACCEL_DATA_X1, Buffer, 6);
-
-    Acc->X = ((uint16_t)Buffer[0] << 8) | Buffer[1];
-    Acc->Y = ((uint16_t)Buffer[2] << 8) | Buffer[3];
-    Acc->Z = ((uint16_t)Buffer[4] << 8) | Buffer[5];
-    Acc->X = (int16_t)(Acc->X * Self->AccSensitivity);
-    Acc->Y = (int16_t)(Acc->Y * Self->AccSensitivity);
-    Acc->Z = (int16_t)(Acc->Z * Self->AccSensitivity);
-}
-
-void ICM42688_GetRawGyro(ICM42688_t *Self, ICM42688RawData_t *Gyro) {
-    uint8_t Buffer[6];
-    ICM42688_HWSPI_ReadRegs(Self, ICM42688_GYRO_DATA_X1, Buffer, 6);
-
-    Gyro->X = ((uint16_t)Buffer[0] << 8) | Buffer[1];
-    Gyro->Y = ((uint16_t)Buffer[2] << 8) | Buffer[3];
-    Gyro->Z = ((uint16_t)Buffer[4] << 8) | Buffer[5];
-    Gyro->X = (int16_t)(Gyro->X * Self->GyroSensitivity);
-    Gyro->Y = (int16_t)(Gyro->Y * Self->GyroSensitivity);
-    Gyro->Z = (int16_t)(Gyro->Z * Self->GyroSensitivity);
-}
-
-void ICM42688_GetRealAccGyro(ICM42688_t *Self, float *RealAccGyro) {
+void ICM42688_GetAccGyro(ICM42688_t *Self, float *AccGyro) {
     uint8_t Buffer[12];
     ICM42688_HWSPI_ReadRegs(Self, ICM42688_ACCEL_DATA_X1, Buffer, 12);
 
-    RealAccGyro[0] = (float)((int16_t)(((uint16_t)Buffer[0] << 8) | Buffer[1]) *
-                             Self->AccSensitivity);
-    RealAccGyro[1] = (float)((int16_t)(((uint16_t)Buffer[2] << 8) | Buffer[3]) *
-                             Self->AccSensitivity);
-    RealAccGyro[2] = (float)((int16_t)(((uint16_t)Buffer[4] << 8) | Buffer[5]) *
-                             Self->AccSensitivity);
-    RealAccGyro[3] = (float)((int16_t)(((uint16_t)Buffer[6] << 8) | Buffer[7]) *
-                             Self->GyroSensitivity);
-    RealAccGyro[4] = (float)((int16_t)(((uint16_t)Buffer[8] << 8) | Buffer[9]) *
-                             Self->GyroSensitivity);
-    RealAccGyro[5] =
-        (float)((int16_t)(((uint16_t)Buffer[10] << 8) | Buffer[11]) *
-                Self->GyroSensitivity);
+    AccGyro[0] = (float)((int16_t)(((uint16_t)Buffer[0] << 8) | Buffer[1]) *
+                         Self->AccSensitivity);
+    AccGyro[1] = (float)((int16_t)(((uint16_t)Buffer[2] << 8) | Buffer[3]) *
+                         Self->AccSensitivity);
+    AccGyro[2] = (float)((int16_t)(((uint16_t)Buffer[4] << 8) | Buffer[5]) *
+                         Self->AccSensitivity);
+    AccGyro[3] = (float)((int16_t)(((uint16_t)Buffer[6] << 8) | Buffer[7]) *
+                         Self->GyroSensitivity);
+    AccGyro[4] = (float)((int16_t)(((uint16_t)Buffer[8] << 8) | Buffer[9]) *
+                         Self->GyroSensitivity);
+    AccGyro[5] = (float)((int16_t)(((uint16_t)Buffer[10] << 8) | Buffer[11]) *
+                         Self->GyroSensitivity);
 }
 
 void ICM42688_GetTemperature(ICM42688_t *Self, int16_t *Temperature) {

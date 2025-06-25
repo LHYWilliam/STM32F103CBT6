@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
     TIM_TypeDef *TIMx;
-    void (*ClockSource)(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
+    void (*ClockSource)(TIM_TypeDef *TIMx, ClockSourceConfig_t *Config);
 
     uint16_t Prescaler;
     uint16_t Period;
@@ -45,8 +45,8 @@ typedef struct {
     uint16_t TRGO;
 } TIM_t;
 
-void TIM_Init(TIM_t *self, ClockSourceConfig_t *config);
-void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
-void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *config);
+void TIM_Init(TIM_t *Self, ClockSourceConfig_t *Config);
+void TIM_InternalClock(TIM_TypeDef *TIMx, ClockSourceConfig_t *Config);
+void TIM_ETRClockMode2(TIM_TypeDef *TIMx, ClockSourceConfig_t *Config);
 
 #endif

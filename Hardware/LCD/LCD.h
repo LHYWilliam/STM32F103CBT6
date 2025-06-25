@@ -41,24 +41,24 @@ typedef struct LCD {
     void (*WriteCommand)(struct LCD *, uint8_t);
 } LCD_t;
 
-void LCD_Init(LCD_t *self);
-void LCD_SetPenColor(LCD_t *self, uint16_t Color);
-void LCD_SetBackColor(LCD_t *self, uint16_t Color);
-void LCD_SetFont(LCD_t *self, uint32_t Font);
+void LCD_Init(LCD_t *Self);
+void LCD_SetPenColor(LCD_t *Self, uint16_t Color);
+void LCD_SetBackColor(LCD_t *Self, uint16_t Color);
+void LCD_SetFont(LCD_t *Self, uint32_t Font);
 
-void LCD_Fill(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
+void LCD_Fill(LCD_t *Self, uint16_t X, uint16_t Y, uint16_t Width,
               uint16_t Height, uint16_t Color);
-void LCD_Clear(LCD_t *self);
+void LCD_Clear(LCD_t *Self);
 
-void LCD_DrawPoint(LCD_t *self, uint16_t X, uint16_t Y);
-void LCD_DrawHLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length);
-void LCD_DrawVLine(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Length);
+void LCD_DrawPoint(LCD_t *Self, uint16_t X, uint16_t Y);
+void LCD_DrawHLine(LCD_t *Self, uint16_t X, uint16_t Y, uint16_t Length);
+void LCD_DrawVLine(LCD_t *Self, uint16_t X, uint16_t Y, uint16_t Length);
 
-void LCD_ShowChar(LCD_t *self, uint16_t X, uint16_t Y, uint8_t Char);
-void LCD_ShowString(LCD_t *self, uint16_t X, uint16_t Y, char *String);
-void LCD_Printf(LCD_t *self, int16_t X, int16_t Y, const char *Format, ...);
+void LCD_ShowChar(LCD_t *Self, uint16_t X, uint16_t Y, uint8_t Char);
+void LCD_ShowString(LCD_t *Self, uint16_t X, uint16_t Y, char *String);
+void LCD_Printf(LCD_t *Self, int16_t X, int16_t Y, const char *Format, ...);
 
-void LCD_ShowImage(LCD_t *self, uint16_t X, uint16_t Y, uint16_t Width,
+void LCD_ShowImage(LCD_t *Self, uint16_t X, uint16_t Y, uint16_t Width,
                    uint16_t Height, const uint8_t *Image);
 
 #endif

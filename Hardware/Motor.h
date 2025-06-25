@@ -23,7 +23,7 @@ typedef struct {
     void (*TIM_SetCompare)(TIM_TypeDef *TIMx, uint16_t Compare1);
 } Motor_t;
 
-void Motor_Init(Motor_t *self);
-void Motor_Set(Motor_t *self, int16_t speed);
+void Motor_Init(Motor_t *Self);
+void Motor_Set(Motor_t *Self, int16_t Speed);
 
 #endif

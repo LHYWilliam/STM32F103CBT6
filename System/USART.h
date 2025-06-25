@@ -19,6 +19,6 @@ typedef struct {
     uint32_t       BaudRate;
 } USART_t;
 
-void USART_Init_(USART_t *self);
+void USART_Init_(USART_t *Self);
 
 #endif

@@ -4,27 +4,27 @@
 #include "TIM.h"
 #include "Timer.h"
 
-void Timer_Init(Timer_t *self) {
+void Timer_Init(Timer_t *Self) {
     TIM_t tim = {
-        .TIMx        = self->TIMx,
+        .TIMx        = Self->TIMx,
         .ClockSource = TIM_InternalClock,
-        .Prescaler   = self->ms   ? 7200 - 1
-                       : self->Hz ? (uint16_t)(72000000. / 65535. - 1)
+        .Prescaler   = Self->ms   ? 7200 - 1
+                       : Self->Hz ? (uint16_t)(72000000. / 65535. - 1)
                                   : NULL,
-        .Period      = self->ms   ? self->ms * 10 - 1
-                       : self->Hz ? (uint16_t)(65535. / self->Hz - 1)
+        .Period      = Self->ms   ? Self->ms * 10 - 1
+                       : Self->Hz ? (uint16_t)(65535. / Self->Hz - 1)
                                   : NULL,
-        .Cmd         = self->Interrupt ? DISABLE : ENABLE,
-        .TRGO        = self->TRGO,
+        .Cmd         = Self->Interrupt ? DISABLE : ENABLE,
+        .TRGO        = Self->TRGO,
     };
     TIM_Init(&tim, NULL);
 
-    if (self->Interrupt) {
+    if (Self->Interrupt) {
         TIMInterrupt_t TIM_interrupt = {
-            .TIMx                              = self->TIMx,
-            .NVIC_IRQChannel                   = TIMx_IRQn(self->TIMx),
+            .TIMx                              = Self->TIMx,
+            .NVIC_IRQChannel                   = TIMx_IRQn(Self->TIMx),
             .NVIC_PriorityGroup                = NVIC_PriorityGroup_4,
-            .NVIC_IRQChannelPreemptionPriority = self->Priority,
+            .NVIC_IRQChannelPreemptionPriority = Self->Priority,
         };
         TIM_Interrupt_Init(&TIM_interrupt);
     }

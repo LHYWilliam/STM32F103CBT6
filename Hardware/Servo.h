@@ -18,7 +18,7 @@ typedef struct {
     void (*TIM_SetCompare[4])(TIM_TypeDef *TIMx, uint16_t Compare);
 } Servo_t;
 
-void Servo_Init(Servo_t *self);
-void Servo_SetAngle(Servo_t *self, uint8_t Channel, float Angle);
+void Servo_Init(Servo_t *Self);
+void Servo_SetAngle(Servo_t *Self, uint8_t Channel, float Angle);
 
 #endif

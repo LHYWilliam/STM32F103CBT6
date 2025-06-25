@@ -1,23 +1,23 @@
 #include "GPIO.h"
 
-uint32_t GPIO_InitPin(GPIO_t *self, const GPIOxPiny_t Pin) {
-    strcpy(self->GPIOxPiny, Pin);
+uint32_t GPIO_InitPin(GPIO_t *Self, const GPIOxPiny_t Pin) {
+    strcpy(Self->GPIOxPiny, Pin);
 
     GPIO_InitTypeDef GPIO_InitStruct = {
         .GPIO_Speed = GPIO_Speed_50MHz,
-        .GPIO_Mode  = self->Mode,
+        .GPIO_Mode  = Self->Mode,
     };
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOx(self->GPIOxPiny), ENABLE);
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pinx(self->GPIOxPiny),
-    GPIO_Init(GPIOx(self->GPIOxPiny), &GPIO_InitStruct);
+    RCC_APB2PeriphClockCmd(GPIO_RCC_APB2Periph_GPIOx(Self->GPIOxPiny), ENABLE);
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pinx(Self->GPIOxPiny),
+    GPIO_Init(GPIOx(Self->GPIOxPiny), &GPIO_InitStruct);
 
-    if (self->Mode == GPIO_Mode_AIN || self->Mode == GPIO_Mode_IN_FLOATING ||
-        self->Mode == GPIO_Mode_IPD || self->Mode == GPIO_Mode_IPU) {
-        return GPIO_IDR(self->GPIOxPiny);
+    if (Self->Mode == GPIO_Mode_AIN || Self->Mode == GPIO_Mode_IN_FLOATING ||
+        Self->Mode == GPIO_Mode_IPD || Self->Mode == GPIO_Mode_IPU) {
+        return GPIO_IDR(Self->GPIOxPiny);
 
     } else {
-        return GPIO_ODR(self->GPIOxPiny);
+        return GPIO_ODR(Self->GPIOxPiny);
     }
 }
 

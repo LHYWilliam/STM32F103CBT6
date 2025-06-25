@@ -83,29 +83,29 @@ typedef struct {
     uint8_t *TargetHeight;
 } SelectioneBar_t;
 
-void        TextPage_Init(TextPage_t *self, OLED_t *OLED);
-ErrorStatus TextPage_CursorInc(TextPage_t *self);
-ErrorStatus TextPage_CursorDec(TextPage_t *self);
-ErrorStatus TextPage_EnterLowerPage(TextPage_t **self);
-ErrorStatus TextPage_ReturnUpperPage(TextPage_t **self);
-void        TextPage_ResetSetY(TextPage_t *self);
-void        TextPage_ReverseSetting(TextPage_t *self);
+void        TextPage_Init(TextPage_t *Self, OLED_t *OLED);
+ErrorStatus TextPage_CursorInc(TextPage_t *Self);
+ErrorStatus TextPage_CursorDec(TextPage_t *Self);
+ErrorStatus TextPage_EnterLowerPage(TextPage_t **Self);
+ErrorStatus TextPage_ReturnUpperPage(TextPage_t **Self);
+void        TextPage_ResetSetY(TextPage_t *Self);
+void        TextPage_ReverseSetting(TextPage_t *Self);
 
-void TextMenu_Init(TextMenu_t *self, OLED_t *OLED);
+void TextMenu_Init(TextMenu_t *Self, OLED_t *OLED);
 
-void ImagePage_Init(ImagePage_t *self, OLED_t *OLED);
+void ImagePage_Init(ImagePage_t *Self, OLED_t *OLED);
 
-void        ImageMenu_Init(ImageMenu_t *self, OLED_t *OLED);
-void        ImageMenu_Update(ImageMenu_t *self, OLED_t *OLED);
-ErrorStatus ImageMenu_CursorInc(ImageMenu_t *self);
-ErrorStatus ImageMenu_CursorDec(ImageMenu_t *self);
+void        ImageMenu_Init(ImageMenu_t *Self, OLED_t *OLED);
+void        ImageMenu_Update(ImageMenu_t *Self, OLED_t *OLED);
+ErrorStatus ImageMenu_CursorInc(ImageMenu_t *Self);
+ErrorStatus ImageMenu_CursorDec(ImageMenu_t *Self);
 ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *ImageMenu,
                                      TextMenu_t  *TextMenu);
-ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *self, TextMenu_t *TextMenu);
+ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *Self, TextMenu_t *TextMenu);
 
-void SelectioneBar_BindTextPage(SelectioneBar_t *self, TextPage_t *Page);
-void SelectioneBar_BindImagePage(SelectioneBar_t *self, ImagePage_t *Page);
-void SelectioneBar_Update(SelectioneBar_t *self);
+void SelectioneBar_BindTextPage(SelectioneBar_t *Self, TextPage_t *Page);
+void SelectioneBar_BindImagePage(SelectioneBar_t *Self, ImagePage_t *Page);
+void SelectioneBar_Update(SelectioneBar_t *Self);
 void OLED_ShowSelectioneBar(OLED_t *OLED, SelectioneBar_t *SelectioneBar);
 
 #endif

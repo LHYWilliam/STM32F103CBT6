@@ -26,7 +26,7 @@ typedef struct {
     uint32_t TRGO;
 } ADC_t;
 
-void ADC_Init_(ADC_t *self);
-void ADC_Cmd_(ADC_t *self);
+void ADC_Init_(ADC_t *Self);
+void ADC_Cmd_(ADC_t *Self);
 
 #endif

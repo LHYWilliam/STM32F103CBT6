@@ -2,15 +2,15 @@
 
 #include "USART.h"
 
-void USART_Init_(USART_t *self) {
-    RCC_APBxPeriphClockCmd(self->USARTx)(RCC_APBPeriphx_USARTx(self->USARTx),
+void USART_Init_(USART_t *Self) {
+    RCC_APBxPeriphClockCmd(Self->USARTx)(RCC_APBPeriphx_USARTx(Self->USARTx),
                                          ENABLE);
 
     USART_InitTypeDef USART_InitStruct = {
-        .USART_Mode     = self->Mode,
-        .USART_BaudRate = self->BaudRate,
+        .USART_Mode     = Self->Mode,
+        .USART_BaudRate = Self->BaudRate,
     };
-    USART_Init(self->USARTx, &USART_InitStruct);
+    USART_Init(Self->USARTx, &USART_InitStruct);
 
-    USART_Cmd(self->USARTx, ENABLE);
+    USART_Cmd(Self->USARTx, ENABLE);
 }

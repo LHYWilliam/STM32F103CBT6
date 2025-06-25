@@ -18,9 +18,9 @@ typedef struct {
     uint32_t ODR;
 } LED_t;
 
-void LED_Init(LED_t *self);
-void LED_On(LED_t *self);
-void LED_Off(LED_t *self);
-void LED_Toggle(LED_t *self);
+void LED_Init(LED_t *Self);
+void LED_On(LED_t *Self);
+void LED_Off(LED_t *Self);
+void LED_Toggle(LED_t *Self);
 
 #endif

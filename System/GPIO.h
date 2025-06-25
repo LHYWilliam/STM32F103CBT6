@@ -88,7 +88,7 @@
 #define C14                    "C14"
 #define C15                    "C15"
 
-#define RCC_APB2Periph_GPIOx(x)           \
+#define GPIO_RCC_APB2Periph_GPIOx(x)      \
     (x[0] == 'A'   ? RCC_APB2Periph_GPIOA \
      : x[0] == 'B' ? RCC_APB2Periph_GPIOB \
      : x[0] == 'C' ? RCC_APB2Periph_GPIOC \

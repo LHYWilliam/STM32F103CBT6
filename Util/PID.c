@@ -6,50 +6,50 @@
 
 float RC = 1 / (2 * 3.14 * 20);
 
-void PID_Init(PID_t *self) {
-    self->NaN             = RESET;
-    self->last_time       = 0;
-    self->last_error      = 0.;
-    self->integrator      = 0.;
-    self->last_derivative = 0.;
+void PID_Init(PID_t *Self) {
+    Self->NaN            = RESET;
+    Self->LastTime       = 0;
+    Self->LastError      = 0.;
+    Self->Integrator     = 0.;
+    Self->LastDerivative = 0.;
 }
 
-int16_t PID_Caculate(PID_t *self, float error) {
+int16_t PID_Caculate(PID_t *Self, float Error) {
     float    output = 0;
     uint32_t now    = RTC_Getms();
-    float    dt     = (float)(now - self->last_time) / 1000;
+    float    dt     = (float)(now - Self->LastTime) / 1000;
 
-    if (self->last_time == 0 || dt > 1) {
-        self->integrator = dt = 0;
-        self->NaN             = SET;
+    if (Self->LastTime == 0 || dt > 1) {
+        Self->Integrator = dt = 0;
+        Self->NaN             = SET;
     }
-    self->last_time = now;
+    Self->LastTime = now;
 
-    output += error * self->Kp;
+    output += Error * Self->Kp;
 
-    if (self->Kd && dt) {
+    if (Self->Kd && dt) {
         float derivative;
-        if (self->NaN == SET) {
-            derivative            = 0;
-            self->last_derivative = 0;
-            self->NaN             = RESET;
+        if (Self->NaN == SET) {
+            derivative           = 0;
+            Self->LastDerivative = 0;
+            Self->NaN            = RESET;
         } else {
-            derivative = (error - self->last_error) / dt;
+            derivative = (Error - Self->LastError) / dt;
         }
 
-        derivative = self->last_derivative +
-                     (dt / (RC + dt)) * (derivative - self->last_derivative);
-        self->last_error      = error;
-        self->last_derivative = derivative;
+        derivative = Self->LastDerivative +
+                     (dt / (RC + dt)) * (derivative - Self->LastDerivative);
+        Self->LastError      = Error;
+        Self->LastDerivative = derivative;
 
-        output += self->Kd * derivative;
+        output += Self->Kd * derivative;
     }
 
-    if (self->Ki && dt) {
-        self->integrator += error * self->Ki * dt;
-        LIMIT(self->integrator, -self->imax, self->imax);
+    if (Self->Ki && dt) {
+        Self->Integrator += Error * Self->Ki * dt;
+        LIMIT(Self->Integrator, -Self->imax, Self->imax);
 
-        output += self->integrator;
+        output += Self->Integrator;
     }
 
     return (int32_t)output;

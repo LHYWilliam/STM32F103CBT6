@@ -6,67 +6,67 @@
 
 Serial_t *DefaultSerial;
 
-void Serial_Init(Serial_t *self) {
+void Serial_Init(Serial_t *Self) {
     GPIO_t GPIO;
 
-    if (self->TX[0]) {
+    if (Self->TX[0]) {
         GPIO.Mode = GPIO_Mode_AF_PP;
-        GPIO_InitPin(&GPIO, self->TX);
+        GPIO_InitPin(&GPIO, Self->TX);
     }
 
-    if (self->RX[0]) {
+    if (Self->RX[0]) {
         GPIO.Mode = GPIO_Mode_IPU;
-        GPIO_InitPin(&GPIO, self->RX);
+        GPIO_InitPin(&GPIO, Self->RX);
     }
 
     USART_t USART = {
-        .USARTx   = self->USARTx,
-        .BaudRate = self->BaudRate,
-        .Mode     = (self->TX[0] ? USART_Mode_Tx : 0) |
-                (self->RX[0] ? USART_Mode_Rx : 0),
+        .USARTx   = Self->USARTx,
+        .BaudRate = Self->BaudRate,
+        .Mode     = (Self->TX[0] ? USART_Mode_Tx : 0) |
+                (Self->RX[0] ? USART_Mode_Rx : 0),
     };
     USART_Init_(&USART);
 
-    if (self->Interrupt) {
+    if (Self->Interrupt) {
         USARTInterrupt_t Interrupt = {
-            .USARTx                            = self->USARTx,
-            .USART_IT                          = self->Interrupt,
-            .NVIC_IRQChannel                   = USARTx_IRQn(self->USARTx),
+            .USARTx                            = Self->USARTx,
+            .USART_IT                          = Self->Interrupt,
+            .NVIC_IRQChannel                   = USARTx_IRQn(Self->USARTx),
             .NVIC_PriorityGroup                = NVIC_PriorityGroup_4,
-            .NVIC_IRQChannelPreemptionPriority = self->Priority,
+            .NVIC_IRQChannelPreemptionPriority = Self->Priority,
         };
         USART_Interrupt_Init(&Interrupt);
     }
 
-    if (self->DMA) {
-        USART_DMACmd(self->USARTx, self->DMA, ENABLE);
+    if (Self->DMA) {
+        USART_DMACmd(Self->USARTx, Self->DMA, ENABLE);
     }
 
-    if (self->Default) {
-        DefaultSerial = self;
+    if (Self->Default) {
+        DefaultSerial = Self;
     }
 }
 
-void Serial_SendByte(Serial_t *self, uint8_t Byte) {
-    while (USART_GetFlagStatus(self->USARTx, USART_FLAG_TXE) == RESET)
+void Serial_SendByte(Serial_t *Self, uint8_t Byte) {
+    while (USART_GetFlagStatus(Self->USARTx, USART_FLAG_TXE) == RESET)
         ;
-    USART_SendData(self->USARTx, Byte);
+    USART_SendData(Self->USARTx, Byte);
 }
 
-void Serial_SendBytes(Serial_t *self, uint8_t *Bytes, uint16_t Length) {
+void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint16_t Length) {
     for (uint8_t i = 0; i < Length; i++) {
-        Serial_SendByte(self, Bytes[i]);
+        Serial_SendByte(Self, Bytes[i]);
     }
 }
 
-void Serial_Printf(Serial_t *self, const char *format, ...) {
+void Serial_Printf(Serial_t *Self, const char *format, ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf((char *)self->PrintfBuffer, format, arg);
+    vsprintf((char *)Self->PrintfBuffer, format, arg);
     va_end(arg);
 
-    for (uint8_t i = 0; self->PrintfBuffer[i]; i++) {
-        Serial_SendByte(self, self->PrintfBuffer[i]);
+    for (uint8_t i = 0; Self->PrintfBuffer[i]; i++) {
+        Serial_SendByte(Self, Self->PrintfBuffer[i]);
     }
 }
 

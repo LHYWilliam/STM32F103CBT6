@@ -204,7 +204,7 @@ typedef struct {
 void ICM42688_Init(ICM42688_t *Self);
 void ICM42688_GetRawAcc(ICM42688_t *Self, ICM42688RawData_t *AccData);
 void ICM42688_GetRawGyro(ICM42688_t *Self, ICM42688RawData_t *GyroData);
-void ICM42688_GetRealAccGyro(ICM42688_t *Self, float *RealAccGyro);
+void ICM42688_GetAccGyro(ICM42688_t *Self, float *AccGyro);
 void ICM42688_GetTemperature(ICM42688_t *Self, int16_t *Temperature);
 
 #endif

@@ -52,7 +52,7 @@ typedef struct {
     DMA_Channel_TypeDef *DMAy_Channelx;
 } DMA_t;
 
-void DMA_Init_(DMA_t *self);
-void DMA_Cmd_(DMA_t *self);
+void DMA_Init_(DMA_t *Self);
+void DMA_Cmd_(DMA_t *Self);
 
 #endif

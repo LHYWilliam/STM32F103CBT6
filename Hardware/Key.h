@@ -18,7 +18,7 @@ typedef struct {
     uint32_t IDR;
 } Key_t;
 
-void    Key_Init(Key_t *self);
-uint8_t Key_Read(Key_t *self);
+void    Key_Init(Key_t *Self);
+uint8_t Key_Read(Key_t *Self);
 
 #endif
