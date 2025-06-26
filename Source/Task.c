@@ -1,17 +1,24 @@
 #include "main.h"
 
 void vMainTaskCode(void *pvParameters) {
-    // float YawPitchRoll[3];
-    // for (;;) {
-    //     ICM42688_AHRS_Update(&ICM42688);
-    //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
+    float YawPitchRoll[3];
+    for (;;) {
+        ICM42688_AHRS_Update(&ICM42688);
 
-    //     printf("Yaw, Pitch, Roll :  %6.2f, %6.2f, %6.2f\n ", YawPitchRoll[0],
-    //            YawPitchRoll[1], YawPitchRoll[2]);
+        if (ICM42688.CalibrationFinished == RESET) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
+        }
+        ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
 
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
+        printf("Yaw, Pitch, Roll :  %6.2f, %6.2f, %6.2f\n ", YawPitchRoll[0],
+               YawPitchRoll[1], YawPitchRoll[2]);
 
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+
+    // GrayScaleSensor
+    /*
     uint8_t GrayScaleData[8];
     for (;;) {
         GrayScaleSensor_ReadAnalog(&GrayScaleSensor, GrayScaleData);
@@ -23,6 +30,7 @@ void vMainTaskCode(void *pvParameters) {
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+    */
 }
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LED); }

@@ -194,6 +194,8 @@ typedef struct {
     float RawAccGyro[6];
     float CalibratedAccGyro[9];
 
+    FlagStatus CalibrationFinished;
+
     float    q[4];
     float    AccSensitivity;
     float    GyroSensitivity;

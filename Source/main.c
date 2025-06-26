@@ -24,9 +24,9 @@ int main() {
     //     MQSensor_Init(&MQSensor[i]);
     // }
 
-    // ICM42688_Init(&ICM42688);
+    ICM42688_Init(&ICM42688);
 
-    GrayScaleSensor_Init(&GrayScaleSensor);
+    // GrayScaleSensor_Init(&GrayScaleSensor);
 
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
 

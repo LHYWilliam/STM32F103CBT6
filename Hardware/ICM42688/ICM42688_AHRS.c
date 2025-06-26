@@ -5,8 +5,8 @@
 #include "RTC.h"
 
 float invSqrt1(float x);
-void  ICM42688_AHRS_CalculateGyroVariance(float *RawGyro, int Length,
-                                          float *GyroVariance,
+void  ICM42688_AHRS_CalculateGyroVariance(ICM42688_t *Self, float *RawGyro,
+                                          int Length, float *GyroVariance,
                                           float *GyroAverage);
 void  ICM42688_AHRS_CalculateCalibratedAccGyro(ICM42688_t *Self);
 void  ICM42688_AHRS_CalculateQ(ICM42688_t *Self);
@@ -58,8 +58,8 @@ void ICM42688_AHRS_CalculateCalibratedAccGyro(ICM42688_t *Self) {
     static int   CalCount      = 0;
 
     float GyroVariance[3], GyroAverage[3];
-    ICM42688_AHRS_CalculateGyroVariance(&Self->RawAccGyro[3], 100, GyroVariance,
-                                        GyroAverage);
+    ICM42688_AHRS_CalculateGyroVariance(Self, &Self->RawAccGyro[3], 100,
+                                        GyroVariance, GyroAverage);
 
     if (GyroVariance[0] < 0.02f && GyroVariance[1] < 0.02f &&
         GyroVariance[2] < 0.02f && CalCount >= 99) {
@@ -179,16 +179,15 @@ void ICM42688_AHRS_CalculateAngle(ICM42688_t *Self) {
         180 / M_PI;
 }
 
-void ICM42688_AHRS_CalculateGyroVariance(float *RawGyro, int Length,
-                                         float *GyroVariance,
+void ICM42688_AHRS_CalculateGyroVariance(ICM42688_t *Self, float *RawGyro,
+                                         int Length, float *GyroVariance,
                                          float *GyroAverage) {
     static double GyroSum[3];
     static int    GyroCount = 0;
     static double GyroBuffer[3][300];
     static double GyroSquareSum[3];
-    static int    CalibrationFlag = 0;
 
-    if (CalibrationFlag == 0) {
+    if (Self->CalibrationFinished == RESET) {
         for (uint8_t i = 0; i < 3; i++) {
             GyroSum[i] += RawGyro[i];
             GyroBuffer[i][GyroCount] = RawGyro[i];
@@ -214,11 +213,11 @@ void ICM42688_AHRS_CalculateGyroVariance(float *RawGyro, int Length,
     GyroCount++;
 
     if (GyroCount >= Length) {
-        GyroCount       = 0;
-        CalibrationFlag = 1;
+        GyroCount                 = 0;
+        Self->CalibrationFinished = SET;
     }
 
-    if (CalibrationFlag == 0) {
+    if (Self->CalibrationFinished == RESET) {
         return;
     }
 

@@ -10,7 +10,7 @@ ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
 
     GraySacleSensor_SWI2C_Init(Self);
 
-    if (!GrayScaleSensor_ScanAddress(Self)) {
+    if (GrayScaleSensor_ScanAddress(Self) == ERROR) {
         return ERROR;
     }
 
