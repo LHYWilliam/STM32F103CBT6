@@ -16,7 +16,8 @@
 
 // #include "W25Q64.h"
 // #include "MQSensor.h"
-
+#include "GrayScaleSensor.h"
+#include "GrayScaleSensor_I2C.h"
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
 #include "ICM42688_SPI.h"
@@ -33,8 +34,8 @@ extern Serial_t Serial;
 
 // extern W25Q64_t   W25Q64;
 // extern MQSensor_t MQSensor[4];
-
-extern ICM42688_t ICM42688;
+extern ICM42688_t        ICM42688;
+extern GrayScaleSensor_t GrayScaleSensor;
 
 extern TaskHandle_t xMainTaskHandle;
 

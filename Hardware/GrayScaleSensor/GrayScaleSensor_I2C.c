@@ -1,217 +1,186 @@
-/*
- * Copyright (c) 2023 感为智能科技(济南)
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- */
+#include "Delay.h"
+#include "GPIO.h"
 
 #include "GrayScaleSensor_I2C.h"
 
-#define ACK       0x0 // acknowledge (SDA LOW)
-#define NACK      0x1 // not acknowledge (SDA HIGH)
+void GraySacleSensor_SWI2C_Init(GrayScaleSensor_t *Self) {
+    GPIO_t GPIO;
 
-#define LOW       0x0
-#define HIGH      0x1
+    GPIO.Mode = GPIO_Mode_Out_OD;
+    GPIO_InitPin(&GPIO, Self->SCL);
+    GPIO_InitPin(&GPIO, Self->SDA);
 
-#define I2C_READ  0x1
-#define I2C_WRITE 0x0
+    Self->SCL_GPIO = GPIOx(Self->SCL);
+    Self->SCL_Pin  = GPIO_Pinx(Self->SCL);
+    Self->SDA_GPIO = GPIOx(Self->SDA);
+    Self->SDA_Pin  = GPIO_Pinx(Self->SDA);
 
-static void sw_i2c_hal_start(sw_i2c_interface_t *i2c_interface);
-static void sw_i2c_hal_stop(sw_i2c_interface_t *i2c_interface);
-
-static void    sw_i2c_hal_write_bit(sw_i2c_interface_t *i2c_interface,
-                                    uint8_t             bit);
-static uint8_t sw_i2c_hal_read_bit(sw_i2c_interface_t *i2c_interface);
-
-static uint8_t sw_i2c_hal_write_byte(sw_i2c_interface_t *i2c_interface,
-                                     uint8_t             byte);
-static uint8_t sw_i2c_hal_read_byte(sw_i2c_interface_t *i2c_interface,
-                                    uint8_t             ack);
-
-int8_t sw_i2c_read(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                   uint8_t *data, uint8_t data_length) {
-    uint8_t i;
-    uint8_t ack_bit;
-
-    /* 起始位 */
-    sw_i2c_hal_start(i2c_interface);
-
-    /* 地址+读写位 */
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, dev_addr | I2C_READ);
-    if (ack_bit) {
-        /* 从设备没有回复ACK,直接退出 */
-        sw_i2c_hal_stop(i2c_interface);
-        return 1;
-    }
-
-    /* 连续读取N-1个数据 给ACK */
-    for (i = 0; i < data_length - 1; ++i) {
-        data[i] = sw_i2c_hal_read_byte(i2c_interface, ACK);
-    }
-
-    /* 最后一个数据给 NACK */
-    data[i] = sw_i2c_hal_read_byte(i2c_interface, NACK);
-
-    /* 停止位 */
-    sw_i2c_hal_stop(i2c_interface);
-    return 0;
+    GPIO_SetBits(Self->SCL_GPIO, Self->SCL_Pin);
+    GPIO_SetBits(Self->SDA_GPIO, Self->SDA_Pin);
 }
 
-int8_t sw_i2c_write(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                    const uint8_t *data, uint8_t data_length) {
-    uint8_t i;
-    uint8_t ack_bit;
+void GraySacleSensor_SWI2C_SDAOut(GrayScaleSensor_t *Self, uint8_t Bit) {
+    GPIO_WriteBit(Self->SDA_GPIO, Self->SDA_Pin, (BitAction)Bit);
 
-    /* 起始位 */
-    sw_i2c_hal_start(i2c_interface);
-
-    /* 地址+读写位 */
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, dev_addr | I2C_WRITE);
-    if (ack_bit) {
-        /* 从设备没有回复ACK,直接退出 */
-        sw_i2c_hal_stop(i2c_interface);
-        return 1;
-    }
-
-    /* 连续写入N个数据, 每次读取1 bit的 ACK */
-    for (i = 0; i < data_length; ++i) {
-        ack_bit = sw_i2c_hal_write_byte(i2c_interface, data[i]);
-    }
-
-    /* 停止位 */
-    sw_i2c_hal_stop(i2c_interface);
-    return 0;
+    Delay_us(10);
 }
 
-int8_t sw_i2c_read_byte(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                        uint8_t *data) {
-    return sw_i2c_read(i2c_interface, dev_addr, data, 1);
-}
-
-int8_t sw_i2c_write_byte(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                         const uint8_t data) {
-    return sw_i2c_write(i2c_interface, dev_addr, &data, 1);
-}
-
-int8_t sw_i2c_mem_read(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                       uint8_t mem_addr, uint8_t *data, uint8_t data_length) {
-    uint8_t ack_bit;
-    sw_i2c_hal_start(i2c_interface);
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, dev_addr | I2C_WRITE);
-    if (ack_bit) {
-        sw_i2c_hal_stop(i2c_interface);
-        return 1;
-    }
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, mem_addr);
-
-    return sw_i2c_read(i2c_interface, dev_addr, data, data_length);
-}
-
-int8_t sw_i2c_mem_write(sw_i2c_interface_t *i2c_interface, uint8_t dev_addr,
-                        uint8_t mem_addr, const uint8_t *data,
-                        uint8_t data_length) {
-    uint8_t ack_bit;
-    sw_i2c_hal_start(i2c_interface);
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, dev_addr | I2C_WRITE);
-    if (ack_bit) {
-        sw_i2c_hal_stop(i2c_interface);
-        return 1;
-    }
-    ack_bit = sw_i2c_hal_write_byte(i2c_interface, mem_addr);
-
-    return sw_i2c_write(i2c_interface, dev_addr, data, data_length);
-}
-
-/***************************
- * 基礎操作抽象层
- **************************/
-
-/**
- * @brief send start bit by driving sda and scl LOW
- * @param i2c_interface
- */
-static void sw_i2c_hal_start(sw_i2c_interface_t *i2c_interface) {
-    i2c_interface->sda_out(HIGH, i2c_interface->user_data);
-    i2c_interface->scl_out(HIGH, i2c_interface->user_data);
-    i2c_interface->sda_out(LOW, i2c_interface->user_data);
-    i2c_interface->scl_out(LOW, i2c_interface->user_data);
-}
-
-/**
- * @brief send stop bit
- * @param i2c_interface
- */
-static void sw_i2c_hal_stop(sw_i2c_interface_t *i2c_interface) {
-    i2c_interface->sda_out(LOW, i2c_interface->user_data);
-    i2c_interface->scl_out(HIGH, i2c_interface->user_data);
-    i2c_interface->sda_out(HIGH, i2c_interface->user_data);
-}
-
-/**
- * @brief 输出 sda 电平,然后 scl 输出一个时钟
- * @param i2c_interface
- * @param bit bit level to send, 0:LOW, 1:HIGH
- */
-static void sw_i2c_hal_write_bit(sw_i2c_interface_t *i2c_interface,
-                                 uint8_t             bit) {
-    i2c_interface->sda_out(bit, i2c_interface->user_data);
-    i2c_interface->scl_out(HIGH, i2c_interface->user_data);
-    i2c_interface->scl_out(LOW, i2c_interface->user_data);
-}
-
-/**
- * @brief 读 sda 电平值,然后 scl 输出一个时钟
- * @param i2c_interface
- * @return 返回 SDA 电平值, 0:LOW, 1:HIGH
- */
-static uint8_t sw_i2c_hal_read_bit(sw_i2c_interface_t *i2c_interface) {
+uint8_t GraySacleSensor_SWI2C_SDAIn(GrayScaleSensor_t *Self) {
     uint8_t bit;
-    i2c_interface->sda_out(HIGH, i2c_interface->user_data);
-    i2c_interface->scl_out(HIGH, i2c_interface->user_data);
-    bit = i2c_interface->sda_in(i2c_interface->user_data);
-    i2c_interface->scl_out(LOW, i2c_interface->user_data);
+    bit = (uint8_t)GPIO_ReadInputDataBit(Self->SDA_GPIO, Self->SDA_Pin);
+
+    Delay_us(10);
     return bit;
 }
 
-/**
- * @brief 向IIC输出一个字节
- * @param i2c_interface
- * @param byte
- * @return 从设备反馈的 ACK 电平值
- */
-static uint8_t sw_i2c_hal_write_byte(sw_i2c_interface_t *i2c_interface,
-                                     uint8_t             byte) {
-    uint8_t i;
-    uint8_t ack;
+void GraySacleSensor_SWI2C_SCLOut(GrayScaleSensor_t *Self, uint8_t Bit) {
+    GPIO_WriteBit(Self->SCL_GPIO, Self->SCL_Pin, (BitAction)Bit);
 
-    for (i = 0; i < 8; ++i) {
-        sw_i2c_hal_write_bit(i2c_interface, byte & (0x80 >> i));
-    }
-
-    ack = sw_i2c_hal_read_bit(i2c_interface);
-    return ack;
+    Delay_us(10);
 }
 
-/**
- * @brief 从IIC总线上读取一个字节
- * @param i2c_interface
- * @param ack 向从设备反馈 ACK 或者 NACK
- * @return 读取到的字节
- */
-static uint8_t sw_i2c_hal_read_byte(sw_i2c_interface_t *i2c_interface,
-                                    uint8_t             ack) {
-    uint8_t byte = 0;
-    uint8_t i;
+void GraySacleSensor_SWI2C_Start(GrayScaleSensor_t *Self) {
+    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+    GraySacleSensor_SWI2C_SDAOut(Self, LOW);
+    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+}
 
-    i2c_interface->sda_out(HIGH, i2c_interface->user_data);
-    for (i = 0; i < 8; ++i) {
-        i2c_interface->scl_out(HIGH, i2c_interface->user_data);
-        byte <<= 1;
-        byte |= i2c_interface->sda_in(i2c_interface->user_data);
-        i2c_interface->scl_out(LOW, i2c_interface->user_data);
+void GraySacleSensor_SWI2C_Stop(GrayScaleSensor_t *Self) {
+    GraySacleSensor_SWI2C_SDAOut(Self, LOW);
+    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+}
+
+void GraySacleSensor_SWI2C_WriteBit(GrayScaleSensor_t *Self, uint8_t Bit) {
+    GraySacleSensor_SWI2C_SDAOut(Self, Bit);
+    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+}
+
+uint8_t GraySacleSensor_SWI2C_ReadBit(GrayScaleSensor_t *Self) {
+    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+    uint8_t Bit = GraySacleSensor_SWI2C_SDAIn(Self);
+    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+
+    return Bit;
+}
+
+uint8_t GraySacleSensor_SWI2C_WriteByte(GrayScaleSensor_t *Self, uint8_t Byte) {
+    for (uint8_t i = 0; i < 8; ++i) {
+        GraySacleSensor_SWI2C_WriteBit(Self, Byte & (0x80 >> i));
     }
 
-    sw_i2c_hal_write_bit(i2c_interface, ack);
-    return byte;
+    uint8_t Ack = GraySacleSensor_SWI2C_ReadBit(Self);
+
+    return Ack;
+}
+
+uint8_t GraySacleSensor_SWI2C_ReadByte(GrayScaleSensor_t *Self, uint8_t Ack) {
+    uint8_t Byte = 0;
+
+    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+
+    for (uint8_t i = 0; i < 8; ++i) {
+        GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+        Byte <<= 1;
+        Byte |= GraySacleSensor_SWI2C_SDAIn(Self);
+        GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+    }
+
+    GraySacleSensor_SWI2C_WriteBit(Self, Ack);
+
+    return Byte;
+}
+
+int8_t GraySacleSensor_SWI2C_NowAddrReadBytes(GrayScaleSensor_t *Self,
+                                              uint8_t DevAddr, uint8_t *Bytes,
+                                              uint8_t Length) {
+
+    GraySacleSensor_SWI2C_Start(Self);
+
+    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_READ);
+    if (Ack) {
+        GraySacleSensor_SWI2C_Stop(Self);
+        return 1;
+    }
+
+    uint8_t i;
+    for (i = 0; i < Length - 1; ++i) {
+        Bytes[i] = GraySacleSensor_SWI2C_ReadByte(Self, ACK);
+    }
+
+    Bytes[i] = GraySacleSensor_SWI2C_ReadByte(Self, NACK);
+
+    GraySacleSensor_SWI2C_Stop(Self);
+
+    return 0;
+}
+
+int8_t GraySacleSensor_SWI2C_NowAddrWriteBytes(GrayScaleSensor_t *Self,
+                                               uint8_t            DevAddr,
+                                               const uint8_t     *Bytes,
+                                               uint8_t            Length) {
+    GraySacleSensor_SWI2C_Start(Self);
+
+    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    if (Ack) {
+        GraySacleSensor_SWI2C_Stop(Self);
+        return 1;
+    }
+
+    for (uint8_t i = 0; i < Length; ++i) {
+        Ack = GraySacleSensor_SWI2C_WriteByte(Self, Bytes[i]);
+    }
+
+    GraySacleSensor_SWI2C_Stop(Self);
+
+    return 0;
+}
+
+int8_t GraySacleSensor_SWI2C_NowAddrReadByte(GrayScaleSensor_t *Self,
+                                             uint8_t DevAddr, uint8_t *data) {
+    return GraySacleSensor_SWI2C_NowAddrReadBytes(Self, DevAddr, data, 1);
+}
+
+int8_t GraySacleSensor_SWI2C_NowAddrWriteByte(GrayScaleSensor_t *Self,
+                                              uint8_t            DevAddr,
+                                              const uint8_t      Byte) {
+    return GraySacleSensor_SWI2C_NowAddrWriteBytes(Self, DevAddr, &Byte, 1);
+}
+
+int8_t GraySacleSensor_SWI2C_SingedAddrReadBytes(GrayScaleSensor_t *Self,
+                                                 uint8_t            DevAddr,
+                                                 uint8_t            MemAddr,
+                                                 uint8_t           *Bytes,
+                                                 uint8_t            Length) {
+    GraySacleSensor_SWI2C_Start(Self);
+
+    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    if (Ack) {
+        GraySacleSensor_SWI2C_Stop(Self);
+        return 1;
+    }
+    Ack = GraySacleSensor_SWI2C_WriteByte(Self, MemAddr);
+
+    return GraySacleSensor_SWI2C_NowAddrReadBytes(Self, DevAddr, Bytes, Length);
+}
+
+int8_t GraySacleSensor_SWI2C_SingedAddrWriteBytes(GrayScaleSensor_t *Self,
+                                                  uint8_t            DevAddr,
+                                                  uint8_t            MemAddr,
+                                                  const uint8_t     *Bytes,
+                                                  uint8_t            Length) {
+    GraySacleSensor_SWI2C_Start(Self);
+
+    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    if (Ack) {
+        GraySacleSensor_SWI2C_Stop(Self);
+        return 1;
+    }
+    Ack = GraySacleSensor_SWI2C_WriteByte(Self, MemAddr);
+
+    return GraySacleSensor_SWI2C_NowAddrWriteBytes(Self, DevAddr, Bytes,
+                                                   Length);
 }

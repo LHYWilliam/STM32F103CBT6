@@ -109,6 +109,13 @@ ICM42688_t ICM42688 = {
     .Ki   = 0.001f,
 };
 
+GrayScaleSensor_t GrayScaleSensor = {
+    .SCL  = A0,
+    .SDA  = A1,
+    .Addr = 0x4C,
+    .Mode = GrayScaleSensorMode_Analog,
+};
+
 TaskHandle_t xMainTaskHandle;
 
 void vMainTaskCode(void *pvParameters);
