@@ -78,11 +78,3 @@ int fputc(int ch, FILE *f) {
 
     return ch;
 }
-
-int GetKey(void) {
-
-    while (!(DefaultSerial->USARTx->SR & USART_FLAG_RXNE))
-        ;
-
-    return ((int)(DefaultSerial->USARTx->DR & 0x1FF));
-}

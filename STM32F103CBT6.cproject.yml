@@ -71,10 +71,6 @@ project:
         - file: Source/Task.c
         - file: Source/Define.c
         - file: Source/Interrupt.c
-        - file: Source/Menu/Click.c
-        - file: Source/Menu/Rotation.c
-        - file: Source/Menu/Show.c
-        - file: Source/Menu/Update.c
     - group: Util
       files:
         - file: Util/Delay.c

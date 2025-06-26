@@ -409,26 +409,6 @@
               <FileType>1</FileType>
               <FilePath>.\Source\Interrupt.c</FilePath>
             </File>
-            <File>
-              <FileName>Click.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Menu\Click.c</FilePath>
-            </File>
-            <File>
-              <FileName>Rotation.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Menu\Rotation.c</FilePath>
-            </File>
-            <File>
-              <FileName>Show.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Menu\Show.c</FilePath>
-            </File>
-            <File>
-              <FileName>Update.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Menu\Update.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
