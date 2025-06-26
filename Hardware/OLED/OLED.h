@@ -11,14 +11,6 @@
     ((Index) * (Width - 1) / (Length - 1) + X)
 #define OLED_ADCToY(ADC, Y, Height) ((4095 - ADC) * (Height - 1) / 4095 + Y)
 
-#define U8G2                        0
-
-#if U8G2
-
-#include "u8g2.h"
-
-#endif
-
 typedef struct OLED_t {
     FunctionalState I2C;
     I2C_TypeDef    *I2Cx;
@@ -56,24 +48,9 @@ typedef struct OLED_t {
     OLEDFont Font;
     uint8_t  FontWidth;
     uint8_t  FontHeight;
-
-#if U8G2
-
-    FunctionalState U8g2;
-    u8g2_t          u8g2;
-
-#endif
-
 } OLED_t;
 
 void OLED_Init(OLED_t *Self);
-
-#if U8G2
-
-void u8g2_Printf(OLED_t *Self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
-                 ...);
-
-#endif
 
 void OLED_Fill(OLED_t *Self);
 void OLED_FillArea(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,

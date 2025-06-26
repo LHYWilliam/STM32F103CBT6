@@ -3,29 +3,6 @@
 #include "Delay.h"
 #include "OLED.h"
 
-#if U8G2
-
-uint32_t     SCL_ODR;
-uint32_t     SDA_ODR;
-I2C_TypeDef *I2Cx;
-uint8_t      u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                              void *arg_ptr);
-uint8_t      u8g2_gpio_and_delay_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                                     void *arg_ptr);
-
-uint32_t     D0_ODR;
-uint32_t     D1_ODR;
-uint32_t     RES_ODR;
-uint32_t     DC_ODR;
-uint32_t     CS_ODR;
-SPI_TypeDef *SPIx;
-uint8_t      u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                                    void *arg_ptr);
-uint8_t      u8g2_gpio_and_delay_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                                     void *arg_ptr);
-
-#endif
-
 #include "OLED_Font.h"
 #include "OLED_I2C.h"
 #include "OLED_SPI.h"
@@ -356,35 +333,16 @@ void OLED_Init(OLED_t *Self) {
         Self->SDA_ODR = GPIO_InitPin(&GPIO, Self->SDA);
 
         if (Self->I2C) {
-#if U8G2
-            if (Self->U8g2) {
-                SCL_ODR = GPIO_ODR(Self->SCL);
-                SDA_ODR = GPIO_ODR(Self->SDA);
+            GPIO_Write(Self->SCL_ODR, 1);
+            GPIO_Write(Self->SDA_ODR, 1);
 
-                GPIO_Write(SCL_ODR, 1);
-                GPIO_Write(SDA_ODR, 1);
-
-            } else {
-#endif
-                GPIO_Write(Self->SCL_ODR, 1);
-                GPIO_Write(Self->SDA_ODR, 1);
-
-                Self->OLED_WriteDatas    = OLED_SWI2C_WriteDatas;
-                Self->OLED_WriteCommand  = OLED_SWI2C_WriteCommand;
-                Self->OLED_WriteCommands = OLED_SWI2C_WriteCommands;
-#if U8G2
-            }
-#endif
+            Self->OLED_WriteDatas    = OLED_SWI2C_WriteDatas;
+            Self->OLED_WriteCommand  = OLED_SWI2C_WriteCommand;
+            Self->OLED_WriteCommands = OLED_SWI2C_WriteCommands;
         } else if (Self->I2Cx) {
-#if U8G2
-            if (!Self->U8g2) {
-#endif
-                Self->OLED_WriteDatas    = OLED_HWI2C_WriteDatas;
-                Self->OLED_WriteCommand  = OLED_HWI2C_WriteCommand;
-                Self->OLED_WriteCommands = OLED_HWI2C_WriteCommands;
-#if U8G2
-            }
-#endif
+            Self->OLED_WriteDatas    = OLED_HWI2C_WriteDatas;
+            Self->OLED_WriteCommand  = OLED_HWI2C_WriteCommand;
+            Self->OLED_WriteCommands = OLED_HWI2C_WriteCommands;
         }
 
         if (Self->I2Cx) {
@@ -400,13 +358,7 @@ void OLED_Init(OLED_t *Self) {
             I2C_Init(Self->I2Cx, &I2C_InitStructure);
 
             I2C_Cmd(Self->I2Cx, ENABLE);
-#if U8G2
-            if (Self->U8g2) {
-                I2Cx = Self->I2Cx;
-            }
-#endif
         }
-
     } else if (Self->SPI || Self->SPIx) {
         GPIO_t GPIO;
         GPIO.Mode     = Self->SPIx ? GPIO_Mode_AF_PP : GPIO_Mode_Out_PP;
@@ -418,54 +370,24 @@ void OLED_Init(OLED_t *Self) {
         Self->CS_ODR  = GPIO_InitPin(&GPIO, Self->CS);
 
         if (Self->SPI) {
-#if U8G2
-            if (Self->U8g2) {
-                D0_ODR  = GPIO_ODR(Self->D0);
-                D1_ODR  = GPIO_ODR(Self->D1);
-                RES_ODR = GPIO_ODR(Self->RES);
-                DC_ODR  = GPIO_ODR(Self->DC);
-                CS_ODR  = GPIO_ODR(Self->CS);
+            GPIO_Write(Self->D0, 1);
+            GPIO_Write(Self->D1, 1);
+            GPIO_Write(Self->RES_ODR, 1);
+            GPIO_Write(Self->DC_ODR, 1);
+            GPIO_Write(Self->CS_ODR, 1);
 
-                GPIO_Write(RES_ODR, 1);
-                GPIO_Write(DC_ODR, 1);
-                GPIO_Write(CS_ODR, 1);
+            Self->OLED_WriteDatas    = OLED_SWSPI_WriteDatas;
+            Self->OLED_WriteCommand  = OLED_SWSPI_WriteCommand;
+            Self->OLED_WriteCommands = OLED_SWSPI_WriteCommands;
 
-            } else {
-#endif
-                GPIO_Write(Self->D0, 1);
-                GPIO_Write(Self->D1, 1);
-                GPIO_Write(Self->RES_ODR, 1);
-                GPIO_Write(Self->DC_ODR, 1);
-                GPIO_Write(Self->CS_ODR, 1);
-
-                Self->OLED_WriteDatas    = OLED_SWSPI_WriteDatas;
-                Self->OLED_WriteCommand  = OLED_SWSPI_WriteCommand;
-                Self->OLED_WriteCommands = OLED_SWSPI_WriteCommands;
-#if U8G2
-            }
-#endif
         } else if (Self->SPIx) {
-#if U8G2
-            if (Self->U8g2) {
-                RES_ODR = GPIO_ODR(Self->RES);
-                DC_ODR  = GPIO_ODR(Self->DC);
-                CS_ODR  = GPIO_ODR(Self->CS);
+            GPIO_Write(Self->RES_ODR, 1);
+            GPIO_Write(Self->DC_ODR, 1);
+            GPIO_Write(Self->CS_ODR, 1);
 
-                GPIO_Write(RES_ODR, 1);
-                GPIO_Write(DC_ODR, 1);
-                GPIO_Write(CS_ODR, 1);
-            } else {
-#endif
-                GPIO_Write(Self->RES_ODR, 1);
-                GPIO_Write(Self->DC_ODR, 1);
-                GPIO_Write(Self->CS_ODR, 1);
-
-                Self->OLED_WriteDatas    = OLED_HWSPI_WriteDatas;
-                Self->OLED_WriteCommand  = OLED_HWSPI_WriteCommand;
-                Self->OLED_WriteCommands = OLED_HWSPI_WriteCommands;
-#if U8G2
-            }
-#endif
+            Self->OLED_WriteDatas    = OLED_HWSPI_WriteDatas;
+            Self->OLED_WriteCommand  = OLED_HWSPI_WriteCommand;
+            Self->OLED_WriteCommands = OLED_HWSPI_WriteCommands;
         }
 
         if (Self->SPIx) {
@@ -483,255 +405,54 @@ void OLED_Init(OLED_t *Self) {
             SPI_Init(Self->SPIx, &SPI_InitStructure);
 
             SPI_Cmd(Self->SPIx, ENABLE);
-#if U8G2
-            if (Self->U8g2) {
-                SPIx = Self->SPIx;
-            }
-#endif
         }
     }
 
-#if U8G2
-    if (Self->U8g2) {
-        if (Self->I2Cx) {
-            Delay_ms(100);
-
-            u8g2_Setup_ssd1306_i2c_128x64_noname_f(&Self->u8g2, U8G2_R0,
-                                                   u8x8_byte_hw_i2c,
-                                                   u8g2_gpio_and_delay_i2c);
-        } else if (Self->I2C) {
-            Delay_ms(100);
-
-            u8g2_Setup_ssd1306_i2c_128x64_noname_f(&Self->u8g2, U8G2_R0,
-                                                   u8x8_byte_sw_i2c,
-                                                   u8g2_gpio_and_delay_i2c);
-        } else if (Self->SPIx) {
-            GPIO_Write(RES_ODR, 0);
-            Delay_ms(100);
-            GPIO_Write(RES_ODR, 1);
-
-            u8g2_Setup_ssd1306_128x64_noname_f(&Self->u8g2, U8G2_R0,
-                                               u8x8_byte_4wire_hw_spi,
-                                               u8g2_gpio_and_delay_spi);
-        } else if (Self->SPI) {
-            GPIO_Write(RES_ODR, 0);
-            Delay_ms(100);
-            GPIO_Write(RES_ODR, 1);
-
-            u8g2_Setup_ssd1306_128x64_noname_f(&Self->u8g2, U8G2_R0,
-                                               u8x8_byte_4wire_sw_spi,
-                                               u8g2_gpio_and_delay_spi);
-        }
-
-        u8g2_InitDisplay(&Self->u8g2);
-        u8g2_SetPowerSave(&Self->u8g2, 0);
-
-    } else {
-#endif
-        if (Self->SPI || Self->SPIx) {
-            GPIO_Write(Self->RES_ODR, 0);
-        }
-        Delay_ms(100);
-        if (Self->SPI || Self->SPIx) {
-            GPIO_Write(Self->RES_ODR, 1);
-        }
-
-        Self->OLED_WriteCommand(Self, 0xAE); // 关闭显示
-
-        Self->OLED_WriteCommand(Self, 0xD5); // 设置时钟
-        Self->OLED_WriteCommand(Self, 0x80);
-
-        Self->OLED_WriteCommand(Self, 0xA8); // 设置多路复
-        Self->OLED_WriteCommand(Self, 0x3F);
-
-        Self->OLED_WriteCommand(Self, 0xD3); // 设置显示偏移
-        Self->OLED_WriteCommand(Self, 0x00);
-
-        Self->OLED_WriteCommand(Self, 0x40); // 设置起始行
-
-        Self->OLED_WriteCommand(Self, 0xA1); // 设置左右方向
-
-        Self->OLED_WriteCommand(Self, 0xC8); // 设置上下方向
-
-        Self->OLED_WriteCommand(Self, 0xDA); // 设置COM硬件引脚配置
-        Self->OLED_WriteCommand(Self, 0x12);
-
-        Self->OLED_WriteCommand(Self, 0x81); // 调节亮度
-        Self->OLED_WriteCommand(Self, 0xCF);
-
-        Self->OLED_WriteCommand(Self, 0xD9); // 设置预充电周期
-        Self->OLED_WriteCommand(Self, 0xF1);
-
-        Self->OLED_WriteCommand(Self, 0xDB); // 设置VCOMH
-        Self->OLED_WriteCommand(Self, 0x30);
-
-        Self->OLED_WriteCommand(Self, 0xA4); // 全局显示开启
-
-        Self->OLED_WriteCommand(Self, 0xA6); // 设置显示方式
-
-        Self->OLED_WriteCommand(Self, 0x8D); // 设置电荷泵
-        Self->OLED_WriteCommand(Self, 0x14);
-
-        Self->OLED_WriteCommand(Self, 0xAF); // 打开显示
-
-        OLED_Clear(Self);
-
-#if U8G2
+    if (Self->SPI || Self->SPIx) {
+        GPIO_Write(Self->RES_ODR, 0);
     }
-#endif
-}
-
-#if U8G2
-
-uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                         void *arg_ptr) {
-    switch (msg) {
-    case U8X8_MSG_BYTE_START_TRANSFER:
-        I2C_GenerateSTART(I2Cx, ENABLE);
-        while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT) != SUCCESS)
-            ;
-
-        I2C_Send7bitAddress(I2Cx, 0x78, I2C_Direction_Transmitter);
-        while (I2C_CheckEvent(
-                   I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) != SUCCESS)
-            ;
-        break;
-
-    case U8X8_MSG_BYTE_SEND:
-        for (uint8_t i = 0; i < arg_int; i++) {
-            I2C_SendData(I2Cx, ((uint8_t *)arg_ptr)[i]);
-            while (I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_TRANSMITTING) !=
-                   SUCCESS)
-                ;
-        }
-        break;
-
-    case U8X8_MSG_BYTE_END_TRANSFER:
-        I2C_GenerateSTOP(I2Cx, ENABLE);
-        break;
-
-    default:
-        break;
+    Delay_ms(100);
+    if (Self->SPI || Self->SPIx) {
+        GPIO_Write(Self->RES_ODR, 1);
     }
 
-    return 1;
+    Self->OLED_WriteCommand(Self, 0xAE); // 关闭显示
+
+    Self->OLED_WriteCommand(Self, 0xD5); // 设置时钟
+    Self->OLED_WriteCommand(Self, 0x80);
+
+    Self->OLED_WriteCommand(Self, 0xA8); // 设置多路复
+    Self->OLED_WriteCommand(Self, 0x3F);
+
+    Self->OLED_WriteCommand(Self, 0xD3); // 设置显示偏移
+    Self->OLED_WriteCommand(Self, 0x00);
+
+    Self->OLED_WriteCommand(Self, 0x40); // 设置起始行
+
+    Self->OLED_WriteCommand(Self, 0xA1); // 设置左右方向
+
+    Self->OLED_WriteCommand(Self, 0xC8); // 设置上下方向
+
+    Self->OLED_WriteCommand(Self, 0xDA); // 设置COM硬件引脚配置
+    Self->OLED_WriteCommand(Self, 0x12);
+
+    Self->OLED_WriteCommand(Self, 0x81); // 调节亮度
+    Self->OLED_WriteCommand(Self, 0xCF);
+
+    Self->OLED_WriteCommand(Self, 0xD9); // 设置预充电周期
+    Self->OLED_WriteCommand(Self, 0xF1);
+
+    Self->OLED_WriteCommand(Self, 0xDB); // 设置VCOMH
+    Self->OLED_WriteCommand(Self, 0x30);
+
+    Self->OLED_WriteCommand(Self, 0xA4); // 全局显示开启
+
+    Self->OLED_WriteCommand(Self, 0xA6); // 设置显示方式
+
+    Self->OLED_WriteCommand(Self, 0x8D); // 设置电荷泵
+    Self->OLED_WriteCommand(Self, 0x14);
+
+    Self->OLED_WriteCommand(Self, 0xAF); // 打开显示
+
+    OLED_Clear(Self);
 }
-
-uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                               void *arg_ptr) {
-    switch (msg) {
-    case U8X8_MSG_BYTE_SET_DC:
-        GPIO_Write(DC_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_BYTE_START_TRANSFER:
-        GPIO_Write(CS_ODR, 0);
-        break;
-
-    case U8X8_MSG_BYTE_SEND:
-        for (uint8_t i = 0; i < arg_int; i++) {
-            while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_TXE) != SET)
-                ;
-            SPI_I2S_SendData(SPIx, ((uint8_t *)arg_ptr)[i]);
-        }
-        break;
-
-    case U8X8_MSG_BYTE_END_TRANSFER:
-        GPIO_Write(CS_ODR, 1);
-        break;
-
-    default:
-        break;
-    }
-
-    return 1;
-}
-
-uint8_t u8g2_gpio_and_delay_i2c(U8X8_UNUSED u8x8_t *u8x8,
-                                U8X8_UNUSED uint8_t msg,
-                                U8X8_UNUSED uint8_t arg_int,
-                                U8X8_UNUSED void   *arg_ptr) {
-    switch (msg) {
-    case U8X8_MSG_GPIO_I2C_CLOCK:
-        GPIO_Write(SCL_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_I2C_DATA:
-        GPIO_Write(SDA_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_DELAY_MILLI:
-        Delay_ms(arg_int);
-        break;
-
-    case U8X8_MSG_DELAY_10MICRO:
-        Delay_us(10);
-        break;
-
-    case U8X8_MSG_DELAY_100NANO:
-        __NOP();
-        break;
-
-    default:
-        break;
-    }
-
-    return 1;
-}
-
-uint8_t u8g2_gpio_and_delay_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
-                                void *arg_ptr) {
-    switch (msg) {
-    case U8X8_MSG_GPIO_SPI_CLOCK:
-        GPIO_Write(D0_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_SPI_DATA:
-        GPIO_Write(D1_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_CS:
-        GPIO_Write(CS_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_DC:
-        GPIO_Write(DC_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_GPIO_RESET:
-        GPIO_Write(RES_ODR, arg_int);
-        break;
-
-    case U8X8_MSG_DELAY_MILLI:
-        Delay_ms(arg_int);
-        break;
-
-    case U8X8_MSG_DELAY_10MICRO:
-        Delay_us(10);
-        break;
-
-    case U8X8_MSG_DELAY_100NANO:
-        __NOP();
-        break;
-
-    case U8X8_MSG_DELAY_NANO:
-        break;
-
-    default:
-        break;
-    }
-
-    return 1;
-}
-
-void u8g2_Printf(OLED_t *Self, uint16_t x, uint16_t y, const char *format,
-                 ...) {
-    va_list arg;
-    va_start(arg, format);
-    vsprintf((char *)Self->PrintfBuffer, format, arg);
-    va_end(arg);
-
-    u8g2_DrawUTF8(&Self->u8g2, x, y, (char *)Self->PrintfBuffer);
-}
-
-#endif
