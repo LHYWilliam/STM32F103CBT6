@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\Source;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\ICM42688</IncludePath>
+              <IncludePath>.\Util;.\Source;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\ICM42688;.\Hardware\GrayScaleSensor</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -763,6 +763,26 @@
               <FileName>ICM42688_SPI.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\ICM42688\ICM42688_SPI.h</FilePath>
+            </File>
+            <File>
+              <FileName>GrayScaleSensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\GrayScaleSensor\GrayScaleSensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>GrayScaleSensor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\GrayScaleSensor\GrayScaleSensor.h</FilePath>
+            </File>
+            <File>
+              <FileName>GrayScaleSensor_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\GrayScaleSensor\GrayScaleSensor_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>GrayScaleSensor_I2C.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\GrayScaleSensor\GrayScaleSensor_I2C.h</FilePath>
             </File>
           </Files>
         </Group>
